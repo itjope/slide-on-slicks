@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/spritesheet_vehicles.png" type="Texture" id=2]
+
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 33.5763
+height = 69.743
+
+[node name="Opponent" type="KinematicBody2D"]
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="."]
+show_behind_parent = true
+rotation = 1.5708
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+region_enabled = true
+region_rect = Rect2( 288, 132, 70, 133 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+scale = Vector2( 0.5, 0.5 )
+shape = SubResource( 1 )

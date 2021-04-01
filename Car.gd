@@ -14,14 +14,36 @@ var traction_slow = 0.25
 var acceleration = Vector2.ZERO
 var velocity = Vector2.ZERO
 var steer_direction
+func _ready():
+	if not is_network_master():
+		remove_child($Camera2D)
 
 func _physics_process(delta):
-	acceleration = Vector2.ZERO
-	get_input()
-	apply_friction()
-	calculate_steering(delta)
-	velocity += acceleration * delta
-	velocity = move_and_slide(velocity)
+	if is_network_master():
+		acceleration = Vector2.ZERO
+		get_input()
+		apply_friction()
+		calculate_steering(delta)
+		velocity += acceleration * delta
+		var collision = move_and_collide(velocity * delta)
+		# velocity = velocity.normalized()
+		if (collision):
+			velocity = velocity.bounce(collision.normal)
+		rpc_unreliable("update_position_rotation", position, rotation)
+
+
+	#else:
+	#velocity = move_and_slide(velocity)
+	# var peer = get_tree().get_network_peer()
+	
+	# get_node("../Server").send_player_position(self.position)
+	#print(collision)
+	# velocity = collision.collider_velocity
+
+
+puppet func update_position_rotation(pos, rot):
+		position = pos
+		rotation = rot
 
 func apply_friction():
 	if velocity.length() < 5:
@@ -32,17 +54,20 @@ func apply_friction():
 	
 	
 func get_input():
+
 	var turn = 0
-	if Input.is_action_pressed("steer_right"):
-		turn += 1
-	if Input.is_action_pressed("steer_left"):
-		turn -= 1
+	if is_network_master():
+		if Input.is_action_pressed("steer_right"):
+			turn += 1
+		if Input.is_action_pressed("steer_left"):
+			turn -= 1
+		if Input.is_action_pressed("accelerate"):
+			acceleration = transform.x * engine_power
+		if Input.is_action_pressed("brake"):
+			acceleration = transform.x * braking
+
 	steer_direction = turn * deg2rad(steering_angle)
-	if Input.is_action_pressed("accelerate"):
-		acceleration = transform.x * engine_power
-	if Input.is_action_pressed("brake"):
-		acceleration = transform.x * braking
-		
+	
 func calculate_steering(delta):
 	var rear_wheel = position - transform.x * wheel_base/2.0
 	var front_wheel = position + transform.x * wheel_base/2.0
