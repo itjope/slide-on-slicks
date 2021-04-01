@@ -187,50 +187,22 @@ tile_data = PoolIntArray( -1, 2, 0, -65536, 2, 0, -65535, 2, 0, -65534, 2, 0, -6
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="ControlPanel" parent="CanvasLayer" instance=ExtResource( 4 )]
-margin_left = 55.9731
-margin_top = 60.1003
-margin_right = 55.9731
-margin_bottom = 60.1003
+visible = false
+margin_left = 8.35583
+margin_top = 14.7676
+margin_right = 8.35583
+margin_bottom = 14.7676
 
 [node name="Server" parent="." instance=ExtResource( 5 )]
 
 [node name="Label" type="Label" parent="Server"]
+visible = false
 margin_left = 543.305
 margin_top = 12.6533
 margin_right = 695.305
 margin_bottom = 51.6533
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Ouput"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="JoinServer" type="Button" parent="Server"]
-margin_left = 414.491
-margin_top = 356.937
-margin_right = 776.491
-margin_bottom = 443.937
-text = "Join Server"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="StartServer" type="Button" parent="Server"]
-margin_left = 6.62048
-margin_top = 353.949
-margin_right = 368.62
-margin_bottom = 440.949
-text = "Start Server"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="StartGame" type="Button" parent="Server"]
-margin_left = 6.62036
-margin_top = 461.52
-margin_right = 368.62
-margin_bottom = 548.52
-text = "Start Game"
 __meta__ = {
 "_edit_use_anchors_": false
 }

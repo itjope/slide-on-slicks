@@ -2,14 +2,21 @@ extends Node
 
 const PORT        = 5000
 const Car = preload("res://Car.tscn")
+const ServerOrJoin = preload("res://ServerOrJoin.tscn")
+const PlayerLobby = preload("res://Lobby.tscn")
 
 var player_info = {}
 var my_info = { name = "Player 1" }
+var serverOrJoin = ServerOrJoin.instance()
+var lobby = PlayerLobby.instance()
 
 func _ready():
-	self.get_node("StartServer").connect("pressed", self, "_start_server")
-	self.get_node("JoinServer").connect("pressed", self, "_start_client")
-	self.get_node("StartGame").connect("pressed", self, "start")
+	
+	
+	self.add_child(serverOrJoin)
+	serverOrJoin.get_node("StartServer").connect("pressed", self, "_start_server")
+	serverOrJoin.get_node("JoinServer").connect("pressed", self, "_start_client")
+	lobby.get_node("StartGame").connect("pressed", self, "start")
 
 	for child in self.get_children():
 		print(child.get_name())
@@ -26,29 +33,32 @@ func _ready():
 	get_tree().connect("connection_failed", self, "_connected_fail")
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
 
-func _button_pressed():
-	print("connecting to server")
-	get_tree().connect('connected_to_server', self, 'on_connected_to_server')
-	var peer = NetworkedMultiplayerENet.new()
-	var result = peer.create_client('127.0.0.1', PORT)
-	if result == OK:
-		get_tree().set_network_peer(peer)
-		print("Connecting to server...")
-		return true
-	else:
-		return false
-	
 
 func _start_server():
+	_serverOrJoinCompleted()
 	var peer = NetworkedMultiplayerENet.new()
-	peer.create_server(PORT, 2)
+	peer.create_server(PORT, 4)
 	get_tree().network_peer = peer
-
+	
+	
+	
+	
+func _serverOrJoinCompleted():
+	my_info.name = serverOrJoin.get_node("PlayerNameInput").text
+	lobby.get_node("Players").add_item(my_info.name)
+	
+	serverOrJoin.hide()
+	self.add_child(lobby)
 
 func _start_client():
 	var peer = NetworkedMultiplayerENet.new()
-	peer.create_client("127.0.0.1", PORT)
+	var serverInputValue = serverOrJoin.get_node("ServerInput").text
+	var serverHost = serverInputValue.split(":")[0]
+	var serverPort = serverInputValue.split(":")[1]
+	peer.create_client(serverHost, PORT)
 	get_tree().network_peer = peer
+	_serverOrJoinCompleted()
+	
 
 
 func start():
@@ -71,9 +81,11 @@ remote func start_game():
 		remoteCar.set_name(str(p))
 		remoteCar.set_network_master(p)
 		get_parent().add_child(remoteCar)
+	lobby.hide()
 
 
 func _player_connected(id):
+	print("Player connected")
 	rpc_id(id, "register_player", my_info)
 
 func _player_disconnected(id):
@@ -92,6 +104,7 @@ func _connected_fail():
 
 remote func register_player(info):
 	var id = get_tree().get_rpc_sender_id()
+	lobby.get_node("Players").add_item(info.name)
 	player_info[id] = info
 
 # func on_connected_to_server():
