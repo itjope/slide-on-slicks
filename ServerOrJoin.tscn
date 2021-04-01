@@ -1,0 +1,103 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://fonts/xolonium/Xolonium.tres" type="DynamicFont" id=1]
+[ext_resource path="res://ServerOrJoin.gd" type="Script" id=2]
+
+[node name="ServerOrJoin" type="Control"]
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_top = -1.0
+margin_right = 4633.0
+margin_bottom = 2549.0
+color = Color( 0, 0, 0, 0.882353 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PlayerNameLabel" type="Label" parent="."]
+margin_left = 339.5
+margin_top = 4.0
+margin_right = 697.5
+margin_bottom = 69.0
+rect_pivot_offset = Vector2( 241.194, 39.9018 )
+custom_fonts/font = ExtResource( 1 )
+text = "Player name"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ServerHostLabel" type="Label" parent="."]
+margin_left = 338.5
+margin_top = 166.5
+margin_right = 696.5
+margin_bottom = 231.5
+rect_pivot_offset = Vector2( 241.194, 39.9018 )
+custom_fonts/font = ExtResource( 1 )
+text = "Server host"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PlayerNameInput" type="LineEdit" parent="."]
+margin_left = 336.0
+margin_top = 66.0
+margin_right = 701.0
+margin_bottom = 131.0
+custom_fonts/font = ExtResource( 1 )
+text = "SquirmyBroom"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="StartServer" type="Button" parent="."]
+margin_left = 346.5
+margin_top = 480.0
+margin_right = 708.5
+margin_bottom = 545.0
+custom_fonts/font = ExtResource( 1 )
+text = "Start Server"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="JoinServer" type="Button" parent="."]
+margin_left = 340.5
+margin_top = 304.0
+margin_right = 702.5
+margin_bottom = 369.0
+custom_fonts/font = ExtResource( 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "Connect"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="InstructionLabel" type="Label" parent="."]
+margin_left = 348.0
+margin_top = 417.5
+margin_right = 706.0
+margin_bottom = 482.5
+rect_pivot_offset = Vector2( 241.194, 39.9018 )
+custom_fonts/font = ExtResource( 1 )
+text = "Host a game"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ServerInput" type="LineEdit" parent="."]
+margin_left = 338.0
+margin_top = 230.0
+margin_right = 703.0
+margin_bottom = 295.0
+custom_fonts/font = ExtResource( 1 )
+text = "127.0.0.1:5000"
+__meta__ = {
+"_edit_use_anchors_": false
+}
