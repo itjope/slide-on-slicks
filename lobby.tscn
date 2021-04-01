@@ -1,27 +1,37 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://fonts/xolonium/Xolonium.tres" type="DynamicFont" id=1]
+[ext_resource path="res://Lobby.gd" type="Script" id=2]
 
 [node name="Lobby" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="ColorRect" type="ColorRect" parent="."]
-margin_top = -1.0
-margin_right = 4633.0
-margin_bottom = 2549.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -2.78677
+margin_right = 1.0
+margin_bottom = 0.213257
 color = Color( 0, 0, 0, 0.882353 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="PlayerNameLabel" type="Label" parent="."]
-margin_left = 22.0
-margin_top = 10.5
-margin_right = 380.0
-margin_bottom = 75.5
-rect_pivot_offset = Vector2( 241.194, 39.9018 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -491.081
+margin_top = -238.184
+margin_right = -133.081
+margin_bottom = -173.184
+rect_pivot_offset = Vector2( 3.31009, 41.3653 )
 custom_fonts/font = ExtResource( 1 )
 text = "Lobby"
 valign = 1
@@ -29,11 +39,227 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="LapsLabel" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -19.8278
+margin_top = -186.42
+margin_right = 253.172
+margin_bottom = -143.42
+rect_pivot_offset = Vector2( 3.31009, 41.3653 )
+custom_fonts/font = ExtResource( 1 )
+text = "Race length"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LapsValueLabel" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = 286.172
+margin_top = -188.016
+margin_right = 447.172
+margin_bottom = -145.016
+rect_pivot_offset = Vector2( 3.31009, 41.3653 )
+custom_fonts/font = ExtResource( 1 )
+text = "5 laps"
+align = 2
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LapsSlider" type="HSlider" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -19.2483
+margin_top = -147.193
+margin_right = 446.752
+margin_bottom = -117.193
+grow_vertical = 2
+size_flags_vertical = 2
+size_flags_stretch_ratio = 0.0
+min_value = 1.0
+max_value = 20.0
+value = 5.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="QualifyLabel" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -18.5008
+margin_top = -24.1927
+margin_right = 254.499
+margin_bottom = 18.8073
+rect_pivot_offset = Vector2( 3.31009, 41.3653 )
+custom_fonts/font = ExtResource( 1 )
+text = "Qualifying"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="QualifyValueLabel" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = 248.115
+margin_top = -26.1929
+margin_right = 448.115
+margin_bottom = 16.8071
+rect_pivot_offset = Vector2( 3.31009, 41.3653 )
+custom_fonts/font = ExtResource( 1 )
+text = "Off"
+align = 2
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="QualifySlider" type="HSlider" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -17.9213
+margin_top = 15.0348
+margin_right = 448.079
+margin_bottom = 45.0348
+grow_vertical = 2
+size_flags_vertical = 2
+size_flags_stretch_ratio = 0.0
+max_value = 20.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PracticeLabel" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -17.6161
+margin_top = -108.239
+margin_right = 255.384
+margin_bottom = -65.2389
+rect_pivot_offset = Vector2( 3.31009, 41.3653 )
+custom_fonts/font = ExtResource( 1 )
+text = "Practice"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PracticeValueLabel" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = 232.115
+margin_top = -110.193
+margin_right = 449.115
+margin_bottom = -67.1929
+rect_pivot_offset = Vector2( 3.31009, 41.3653 )
+custom_fonts/font = ExtResource( 1 )
+text = "Off"
+align = 2
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PracticeSlider" type="HSlider" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -17.0366
+margin_top = -69.0114
+margin_right = 448.963
+margin_bottom = -39.0114
+grow_vertical = 2
+size_flags_vertical = 2
+size_flags_stretch_ratio = 0.0
+max_value = 20.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TracksLabel" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -20.2701
+margin_top = 54.1028
+margin_right = 252.73
+margin_bottom = 97.1028
+rect_pivot_offset = Vector2( 3.31009, 41.3653 )
+custom_fonts/font = ExtResource( 1 )
+text = "Tracks"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TracksValueLabel" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = 246.346
+margin_top = 52.1027
+margin_right = 446.346
+margin_bottom = 95.1027
+rect_pivot_offset = Vector2( 3.31009, 41.3653 )
+custom_fonts/font = ExtResource( 1 )
+text = "1"
+align = 2
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TracksSlider" type="HSlider" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -19.6906
+margin_top = 93.3304
+margin_right = 446.309
+margin_bottom = 123.33
+grow_vertical = 2
+size_flags_vertical = 2
+size_flags_stretch_ratio = 0.0
+min_value = 1.0
+max_value = 2.0
+value = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="StartGame" type="Button" parent="."]
-margin_left = 347.5
-margin_top = 500.5
-margin_right = 709.5
-margin_bottom = 565.5
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -173.644
+margin_top = 194.961
+margin_right = 188.356
+margin_bottom = 259.961
 custom_fonts/font = ExtResource( 1 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "Start Game"
@@ -42,10 +268,14 @@ __meta__ = {
 }
 
 [node name="Players" type="ItemList" parent="."]
-margin_left = 25.0
-margin_top = 70.0
-margin_right = 450.0
-margin_bottom = 336.0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -493.0
+margin_top = -177.0
+margin_right = -54.0
+margin_bottom = 116.0
 custom_fonts/font = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false

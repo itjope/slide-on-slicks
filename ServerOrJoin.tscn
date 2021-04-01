@@ -4,25 +4,34 @@
 [ext_resource path="res://ServerOrJoin.gd" type="Script" id=2]
 
 [node name="ServerOrJoin" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="ColorRect" type="ColorRect" parent="."]
-margin_top = -1.0
-margin_right = 4633.0
-margin_bottom = 2549.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 1.0
+margin_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color( 0, 0, 0, 0.882353 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="PlayerNameLabel" type="Label" parent="."]
-margin_left = 339.5
-margin_top = 4.0
-margin_right = 697.5
-margin_bottom = 69.0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -186.792
+margin_top = -273.455
+margin_right = 171.208
+margin_bottom = -208.455
 rect_pivot_offset = Vector2( 241.194, 39.9018 )
 custom_fonts/font = ExtResource( 1 )
 text = "Player name"
@@ -32,10 +41,14 @@ __meta__ = {
 }
 
 [node name="ServerHostLabel" type="Label" parent="."]
-margin_left = 338.5
-margin_top = 166.5
-margin_right = 696.5
-margin_bottom = 231.5
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -187.792
+margin_top = -110.955
+margin_right = 170.208
+margin_bottom = -45.9551
 rect_pivot_offset = Vector2( 241.194, 39.9018 )
 custom_fonts/font = ExtResource( 1 )
 text = "Server host"
@@ -45,10 +58,14 @@ __meta__ = {
 }
 
 [node name="PlayerNameInput" type="LineEdit" parent="."]
-margin_left = 336.0
-margin_top = 66.0
-margin_right = 701.0
-margin_bottom = 131.0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -190.292
+margin_top = -211.455
+margin_right = 174.708
+margin_bottom = -146.455
 custom_fonts/font = ExtResource( 1 )
 text = "SquirmyBroom"
 __meta__ = {
@@ -56,10 +73,14 @@ __meta__ = {
 }
 
 [node name="StartServer" type="Button" parent="."]
-margin_left = 346.5
-margin_top = 480.0
-margin_right = 708.5
-margin_bottom = 545.0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -179.792
+margin_top = 202.545
+margin_right = 182.208
+margin_bottom = 267.545
 custom_fonts/font = ExtResource( 1 )
 text = "Start Server"
 __meta__ = {
@@ -67,10 +88,14 @@ __meta__ = {
 }
 
 [node name="JoinServer" type="Button" parent="."]
-margin_left = 340.5
-margin_top = 304.0
-margin_right = 702.5
-margin_bottom = 369.0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -185.792
+margin_top = 26.5449
+margin_right = 176.208
+margin_bottom = 91.5449
 custom_fonts/font = ExtResource( 1 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "Connect"
@@ -79,10 +104,14 @@ __meta__ = {
 }
 
 [node name="InstructionLabel" type="Label" parent="."]
-margin_left = 348.0
-margin_top = 417.5
-margin_right = 706.0
-margin_bottom = 482.5
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -178.292
+margin_top = 140.045
+margin_right = 179.708
+margin_bottom = 205.045
 rect_pivot_offset = Vector2( 241.194, 39.9018 )
 custom_fonts/font = ExtResource( 1 )
 text = "Host a game"
@@ -92,10 +121,14 @@ __meta__ = {
 }
 
 [node name="ServerInput" type="LineEdit" parent="."]
-margin_left = 338.0
-margin_top = 230.0
-margin_right = 703.0
-margin_bottom = 295.0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -188.292
+margin_top = -47.4551
+margin_right = 176.708
+margin_bottom = 17.5449
 custom_fonts/font = ExtResource( 1 )
 text = "127.0.0.1:5000"
 __meta__ = {
