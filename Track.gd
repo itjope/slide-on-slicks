@@ -24,6 +24,7 @@ func _on_Checkpoints_body_shape_entered(body_id, body, body_shape, area_shape):
 	
 	if (prev == last && cur == 0):
 		print("finished_lap: " + str(body))
-		emit_signal("finished_lap", body)
-	
-	prev_checkpoint[body_id] = cur
+		emit_signal("finished_lap", body)	
+		prev_checkpoint[body_id] = cur
+	elif (prev + 1 == cur):
+		prev_checkpoint[body_id] = cur
