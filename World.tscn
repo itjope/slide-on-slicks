@@ -245,5 +245,5 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 [connection signal="body_entered" from="Track/Checkpoints" to="." method="_on_Checkpoint1_body_entered"]
-[connection signal="body_shape_entered" from="Track/Checkpoints" to="Track" method="_on_Checkpoints_body_shape_entered"]
 [connection signal="body_shape_entered" from="Track/Checkpoints" to="." method="_on_Checkpoints_body_shape_entered"]
+[connection signal="body_shape_entered" from="Track/Checkpoints" to="Track" method="_on_Checkpoints_body_shape_entered"]
