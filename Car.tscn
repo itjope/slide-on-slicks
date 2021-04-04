@@ -4,8 +4,8 @@
 [ext_resource path="res://assets/spritesheet_vehicles.png" type="Texture" id=2]
 
 [sub_resource type="CapsuleShape2D" id=1]
-radius = 33.5763
-height = 69.743
+radius = 19.2848
+height = 28.0694
 
 [node name="Car" type="KinematicBody2D"]
 script = ExtResource( 1 )
@@ -18,9 +18,10 @@ show_behind_parent = true
 rotation = 1.5708
 texture = ExtResource( 2 )
 region_enabled = true
-region_rect = Rect2( 290, 0, 72, 132 )
+region_rect = Rect2( 636.358, 67.3656, 36.9383, 64.1975 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, -1 )
 rotation = 1.5708
 shape = SubResource( 1 )
 
