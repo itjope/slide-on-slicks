@@ -1,11 +1,12 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://World.gd" type="Script" id=1]
 [ext_resource path="res://assets/spritesheet_tiles.png" type="Texture" id=2]
 [ext_resource path="res://Track.gd" type="Script" id=3]
 [ext_resource path="res://ControlPanel.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Server.tscn" type="PackedScene" id=5]
-[ext_resource path="res://Race.gd" type="Script" id=6]
+[ext_resource path="res://RaceInfo.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Race.gd" type="Script" id=7]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 points = PoolVector2Array( 0, 64, 128, 64, 128, 128, 0, 128 )
@@ -280,7 +281,14 @@ polygon = PoolVector2Array( -1247.8, -795.293, -558.269, -795.293, -554.906, -50
 polygon = PoolVector2Array( -440.544, 654.412, -440.544, 1165.68, -147.912, 1169.04, -158.002, 644.321 )
 
 [node name="Race" type="CanvasLayer" parent="."]
-script = ExtResource( 6 )
+script = ExtResource( 7 )
+
+[node name="RaceInfo" parent="Race" instance=ExtResource( 6 )]
+modulate = Color( 0.0431373, 0.0431373, 0.0431373, 1 )
+margin_left = 25.6271
+margin_top = 18.9706
+margin_right = 402.628
+margin_bottom = 378.971
 
 [node name="ControlPanel" parent="Race" instance=ExtResource( 4 )]
 visible = false
@@ -303,3 +311,4 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 [connection signal="body_shape_entered" from="Track/Checkpoints" to="Track" method="_on_Checkpoints_body_shape_entered"]
+[connection signal="body_shape_entered" from="Track/Checkpoints" to="." method="_on_Checkpoints_body_shape_entered"]

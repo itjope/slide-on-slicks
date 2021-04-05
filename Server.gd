@@ -9,6 +9,8 @@ var player_info = {}
 var my_info = { name = "Player 1" }
 var serverOrJoin = ServerOrJoin.instance()
 var lobby = PlayerLobby.instance()
+signal start_game(my_info, player_info)
+
 
 func _ready():
 	
@@ -81,6 +83,8 @@ remote func start_game():
 		remoteCar.set_name(str(p))
 		remoteCar.set_network_master(p)
 		get_parent().add_child(remoteCar)
+	
+	emit_signal("start_game", my_info, player_info)
 	lobby.hide()
 
 
