@@ -74,7 +74,7 @@ remote func start_game():
 	car.set_name(str(selfPeerID))
 	car.set_network_master(selfPeerID)
 	get_parent().add_child(car)
-	get_parent().get_node("Track").get_node("ControlPanel").start(car)
+	get_parent().get_node("Race").get_node("ControlPanel").start(car)
 
 	for p in player_info:
 		var remoteCar = Car.instance()
