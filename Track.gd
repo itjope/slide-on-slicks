@@ -1,15 +1,28 @@
 extends TileMap
 
 signal finished_lap(body)
+signal start_positions(positions)
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
 var prev_checkpoint = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	var start_positions = []
+	
+	for up in get_used_cells_by_id(3):
+		start_positions.append({"pos": (map_to_world(up) + cell_size / 2), "angle": deg2rad(-90)})
+
+	for down in get_used_cells_by_id(4):
+		start_positions.append({"pos": (map_to_world(down) + cell_size / 2), "angle": deg2rad(90)})
+
+	for right in get_used_cells_by_id(5):
+		start_positions.append({"pos": (map_to_world(right) + cell_size / 2), "angle": deg2rad(0)})
+
+	for left in get_used_cells_by_id(6):
+		start_positions.append({"pos": (map_to_world(left) + cell_size / 2), "angle": deg2rad(180)})
+
+	print("start_positions=" + str(start_positions))
+	emit_signal("start_positions", start_positions)
 
 
 func _on_Checkpoints_body_shape_entered(body_id, body, _body_shape, area_shape):
