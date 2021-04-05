@@ -1,4 +1,4 @@
-extends CanvasLayer
+extends TileMap
 
 signal finished_lap(body)
 
@@ -12,14 +12,9 @@ func _ready():
 	pass # Replace with function body.
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
-
-
-func _on_Checkpoints_body_shape_entered(body_id, body, body_shape, area_shape):
+func _on_Checkpoints_body_shape_entered(body_id, body, _body_shape, area_shape):
 	var cur = area_shape
-	var prev = prev_checkpoint.get(body_id)
+	var prev = prev_checkpoint.get(body_id, 0)
 	var last = get_node("Checkpoints").get_child_count()-1
 	
 	if (prev == last && cur == 0):
