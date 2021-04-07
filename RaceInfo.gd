@@ -33,7 +33,7 @@ func on_finished_lap(body):
 	render()
 	
 func on_start_game(my_info, player_info):
-	raceStart = OS.get_ticks_msec()
+	self.show()
 	var myId = get_tree().get_network_unique_id()
 	allPlayers[myId] = createPlayerEntry(my_info.name)
 
@@ -41,6 +41,9 @@ func on_start_game(my_info, player_info):
 		allPlayers[key] = createPlayerEntry(player_info[key].name)
 	render()
 
+func on_race_start():
+	raceStart = OS.get_ticks_msec()
+	
 remote func update_laps(player):
 	var playerId = get_tree().get_rpc_sender_id()
 	allPlayers[playerId] = player
