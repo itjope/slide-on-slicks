@@ -297,18 +297,17 @@ polygon = PoolVector2Array( -440.544, 654.412, -440.544, 1165.68, -147.912, 1169
 script = ExtResource( 7 )
 
 [node name="RaceInfo" parent="Race" instance=ExtResource( 6 )]
-modulate = Color( 0.0431373, 0.0431373, 0.0431373, 1 )
-margin_left = 31.6271
-margin_top = 14.7676
-margin_right = 408.628
-margin_bottom = 374.768
+margin_left = 25.6271
+margin_top = 18.9706
+margin_right = 402.628
+margin_bottom = 378.971
 
 [node name="ControlPanel" parent="Race" instance=ExtResource( 4 )]
 visible = false
 margin_left = 8.35583
-margin_top = 14.7676
+margin_top = 178.817
 margin_right = 8.35583
-margin_bottom = 14.7676
+margin_bottom = 178.817
 
 [node name="TrafficLight" type="AnimatedSprite" parent="Race"]
 visible = false
