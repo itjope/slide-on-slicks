@@ -338,3 +338,4 @@ __meta__ = {
 [connection signal="green_light" from="Race/TrafficLight" to="Race" method="_on_TrafficLight_green_light"]
 [connection signal="timeout" from="Race/TrafficLight/Timer" to="Race/TrafficLight" method="_on_Timer_timeout"]
 [connection signal="start_game" from="Server" to="Race/TrafficLight" method="_on_Server_start_game"]
+[connection signal="start_game" from="Server" to="Track" method="_on_Server_start_game"]

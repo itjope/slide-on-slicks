@@ -1,7 +1,6 @@
 extends Node
 
 const PORT        = 5000
-const Car = preload("res://Car.tscn")
 const ServerOrJoin = preload("res://ServerOrJoin.tscn")
 const PlayerLobby = preload("res://Lobby.tscn")
 
@@ -9,8 +8,8 @@ var player_info = {}
 var my_info = { name = "Player 1" }
 var serverOrJoin = ServerOrJoin.instance()
 var lobby = PlayerLobby.instance()
-signal start_game(my_info, player_info)
 
+signal start_game(my_info, player_info)
 
 func _ready():
 	
@@ -69,21 +68,7 @@ func start():
 
 	start_game()
 
-remote func start_game():
-	var selfPeerID = get_tree().get_network_unique_id()
-	var car = Car.instance()
-	car.position=Vector2(2036.365, 1634.47)
-	car.set_name(str(selfPeerID))
-	car.set_network_master(selfPeerID)
-	get_parent().add_child(car)
-	get_parent().get_node("Race").get_node("ControlPanel").start(car)
-
-	for p in player_info:
-		var remoteCar = Car.instance()
-		remoteCar.set_name(str(p))
-		remoteCar.set_network_master(p)
-		get_parent().add_child(remoteCar)
-	
+remote func start_game():	
 	emit_signal("start_game", my_info, player_info)
 	lobby.hide()
 
