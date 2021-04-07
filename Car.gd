@@ -6,6 +6,7 @@ var engine_power = 1600
 var friction = -0.7
 var drag = -0.001
 var braking = -820
+var max_speed = 1000
 var max_speed_reverse = 250
 var slip_speed = 280
 var traction_fast = 0.01
@@ -39,7 +40,7 @@ func _physics_process(delta):
 	#else:
 	#velocity = move_and_slide(velocity)
 	# var peer = get_tree().get_network_peer()
-	
+
 	# get_node("../Server").send_player_position(self.position)
 	#print(collision)
 	# velocity = collision.collider_velocity
@@ -55,24 +56,32 @@ func apply_friction():
 	var friction_force = velocity * friction
 	var drag_force = velocity * velocity.length() * drag
 	acceleration += drag_force + friction_force
-	
-	
+
 func get_input():
 
 	var turn = 0
 
 	if race_started && is_network_master():
 		if Input.is_action_pressed("steer_right"):
-			turn += 1
+			turn += calculate_turn()
 		if Input.is_action_pressed("steer_left"):
-			turn -= 1
+			turn -= calculate_turn()
 		if Input.is_action_pressed("accelerate"):
 			acceleration = transform.x * engine_power
 		if Input.is_action_pressed("brake"):
 			acceleration = transform.x * braking
 
 	steer_direction = turn * deg2rad(steering_angle)
-	
+
+func calculate_turn():
+	var car_speed = velocity.length()
+	if car_speed > max_speed:
+		return 2
+	elif car_speed == 0:
+		return 1
+	else:
+		return (car_speed / max_speed) + 1
+
 func calculate_steering(delta):
 	var rear_wheel = position - transform.x * wheel_base/2.0
 	var front_wheel = position + transform.x * wheel_base/2.0
@@ -88,6 +97,6 @@ func calculate_steering(delta):
 	if d < 0:
 		velocity = -new_heading * min(velocity.length(), max_speed_reverse)
 	rotation = new_heading.angle()
-	
+
 func _on_race_start():
 	race_started = true
