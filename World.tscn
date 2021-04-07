@@ -297,6 +297,7 @@ polygon = PoolVector2Array( -440.544, 654.412, -440.544, 1165.68, -147.912, 1169
 script = ExtResource( 7 )
 
 [node name="RaceInfo" parent="Race" instance=ExtResource( 6 )]
+visible = false
 margin_left = 25.6271
 margin_top = 18.9706
 margin_right = 402.628
@@ -332,8 +333,8 @@ text = "Ouput"
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="body_shape_entered" from="Track/Checkpoints" to="." method="_on_Checkpoints_body_shape_entered"]
 [connection signal="body_shape_entered" from="Track/Checkpoints" to="Track" method="_on_Checkpoints_body_shape_entered"]
+[connection signal="body_shape_entered" from="Track/Checkpoints" to="." method="_on_Checkpoints_body_shape_entered"]
 [connection signal="green_light" from="Race/TrafficLight" to="Race" method="_on_TrafficLight_green_light"]
 [connection signal="timeout" from="Race/TrafficLight/Timer" to="Race/TrafficLight" method="_on_Timer_timeout"]
 [connection signal="start_game" from="Server" to="Race/TrafficLight" method="_on_Server_start_game"]
