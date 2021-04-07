@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://World.gd" type="Script" id=1]
 [ext_resource path="res://assets/spritesheet_tiles.png" type="Texture" id=2]
@@ -7,6 +7,11 @@
 [ext_resource path="res://Server.tscn" type="PackedScene" id=5]
 [ext_resource path="res://RaceInfo.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Race.gd" type="Script" id=7]
+[ext_resource path="res://assets/traficlight-yellowlight.png" type="Texture" id=8]
+[ext_resource path="res://assets/traficlight-redlight.png" type="Texture" id=9]
+[ext_resource path="res://assets/traficlight-greenlight.png" type="Texture" id=10]
+[ext_resource path="res://assets/traficlight-lightsout.png" type="Texture" id=11]
+[ext_resource path="res://TrafficLight.gd" type="Script" id=12]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 points = PoolVector2Array( 0, 64, 128, 64, 128, 128, 0, 128 )
@@ -252,6 +257,14 @@ func _ready():
 #	pass
 "
 
+[sub_resource type="SpriteFrames" id=15]
+animations = [ {
+"frames": [ ExtResource( 11 ), ExtResource( 9 ), ExtResource( 8 ), ExtResource( 10 ) ],
+"loop": false,
+"name": "traffic-light",
+"speed": 5.0
+} ]
+
 [node name="World" type="Node2D"]
 script = ExtResource( 1 )
 
@@ -285,10 +298,10 @@ script = ExtResource( 7 )
 
 [node name="RaceInfo" parent="Race" instance=ExtResource( 6 )]
 modulate = Color( 0.0431373, 0.0431373, 0.0431373, 1 )
-margin_left = 25.6271
-margin_top = 18.9706
-margin_right = 402.628
-margin_bottom = 378.971
+margin_left = 31.6271
+margin_top = 14.7676
+margin_right = 408.628
+margin_bottom = 374.768
 
 [node name="ControlPanel" parent="Race" instance=ExtResource( 4 )]
 visible = false
@@ -296,6 +309,16 @@ margin_left = 8.35583
 margin_top = 14.7676
 margin_right = 8.35583
 margin_bottom = 14.7676
+
+[node name="TrafficLight" type="AnimatedSprite" parent="Race"]
+visible = false
+position = Vector2( 951.646, 131.768 )
+scale = Vector2( 0.694552, 0.694552 )
+frames = SubResource( 15 )
+animation = "traffic-light"
+script = ExtResource( 12 )
+
+[node name="Timer" type="Timer" parent="Race/TrafficLight"]
 
 [node name="Server" parent="." instance=ExtResource( 5 )]
 
@@ -310,5 +333,8 @@ text = "Ouput"
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="body_shape_entered" from="Track/Checkpoints" to="Track" method="_on_Checkpoints_body_shape_entered"]
 [connection signal="body_shape_entered" from="Track/Checkpoints" to="." method="_on_Checkpoints_body_shape_entered"]
+[connection signal="body_shape_entered" from="Track/Checkpoints" to="Track" method="_on_Checkpoints_body_shape_entered"]
+[connection signal="green_light" from="Race/TrafficLight" to="Race" method="_on_TrafficLight_green_light"]
+[connection signal="timeout" from="Race/TrafficLight/Timer" to="Race/TrafficLight" method="_on_Timer_timeout"]
+[connection signal="start_game" from="Server" to="Race/TrafficLight" method="_on_Server_start_game"]

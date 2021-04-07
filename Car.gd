@@ -14,9 +14,13 @@ var traction_slow = 0.25
 var acceleration = Vector2.ZERO
 var velocity = Vector2.ZERO
 var steer_direction
+
+var race_started = false
+
 func _ready():
 	if not is_network_master():
 		remove_child($Camera2D)
+	get_parent().get_node("Race").connect("race_start", self, "_on_race_start")
 
 func _physics_process(delta):
 	if is_network_master():
@@ -56,7 +60,8 @@ func apply_friction():
 func get_input():
 
 	var turn = 0
-	if is_network_master():
+
+	if race_started && is_network_master():
 		if Input.is_action_pressed("steer_right"):
 			turn += 1
 		if Input.is_action_pressed("steer_left"):
@@ -84,12 +89,5 @@ func calculate_steering(delta):
 		velocity = -new_heading * min(velocity.length(), max_speed_reverse)
 	rotation = new_heading.angle()
 	
-	
-
-
-
-		
-		
-	
-		
-	
+func _on_race_start():
+	race_started = true
