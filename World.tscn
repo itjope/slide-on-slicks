@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://World.gd" type="Script" id=1]
 [ext_resource path="res://assets/spritesheet_tiles.png" type="Texture" id=2]
@@ -333,9 +333,12 @@ text = "Ouput"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+[connection signal="finished_lap" from="Track" to="Race" method="_on_Track_finished_lap"]
 [connection signal="body_shape_entered" from="Track/Checkpoints" to="Track" method="_on_Checkpoints_body_shape_entered"]
 [connection signal="body_shape_entered" from="Track/Checkpoints" to="." method="_on_Checkpoints_body_shape_entered"]
+[connection signal="race_stats" from="Race" to="Race/RaceInfo" method="_on_Race_race_stats"]
 [connection signal="green_light" from="Race/TrafficLight" to="Race" method="_on_TrafficLight_green_light"]
 [connection signal="timeout" from="Race/TrafficLight/Timer" to="Race/TrafficLight" method="_on_Timer_timeout"]
+[connection signal="start_game" from="Server" to="Race" method="_on_Server_start_game"]
 [connection signal="start_game" from="Server" to="Race/TrafficLight" method="_on_Server_start_game"]
 [connection signal="start_game" from="Server" to="Track" method="_on_Server_start_game"]

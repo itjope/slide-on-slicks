@@ -1,60 +1,8 @@
 extends Control
 
-var allPlayers = {}
-var raceStart = null
-var lapStart = null
 var purple = Color(0.85, 0, 1, 1)
 var white = Color(1, 1, 1, 1)
-func _ready():
-	pass
-
-func on_finished_lap(body):
-	if (body.is_network_master()):
-		var playerId = int(body.get_name())
-		
-		# Lap Timing
-		var currentTime = OS.get_ticks_msec()
-		var lapTime = null
-		if (lapStart):
-			lapTime = currentTime - lapStart
-		else:
-			lapTime = currentTime - raceStart
-		
-		allPlayers[playerId].lapTimes.push_back(lapTime)
-
-		lapStart = currentTime
-		# Lap Timing end
-
-		if (allPlayers[playerId].has("laps")):
-			allPlayers[playerId].laps = allPlayers[playerId].laps + 1
-		else:
-			allPlayers[playerId].laps = 1
-		rpc("update_laps", allPlayers[playerId])
-	render()
 	
-func on_start_game(my_info, player_info):
-	self.show()
-	var myId = get_tree().get_network_unique_id()
-	allPlayers[myId] = createPlayerEntry(my_info.name)
-
-	for key in player_info.keys():
-		allPlayers[key] = createPlayerEntry(player_info[key].name)
-	render()
-
-func on_race_start():
-	raceStart = OS.get_ticks_msec()
-	
-remote func update_laps(player):
-	var playerId = get_tree().get_rpc_sender_id()
-	allPlayers[playerId] = player
-	render()
-
-func createPlayerEntry(name):
-	return {
-		name = name,
-		laps = 0,
-		lapTimes = []
-	}
 func createGridChild(text, color = white):
 	var label = Label.new()
 	label.text = text
@@ -107,7 +55,7 @@ func getFastestLap(playersDict):
 			lapCounter += 1
 	return fastestLap
 
-func render(): 
+func render(allPlayers): 
 	var grid = self.get_node("TimingGrid")
 	clearGrid(grid)
 	var fastestLap = getFastestLap(allPlayers)
@@ -149,7 +97,7 @@ func render():
 		grid.add_child(createGridChild(str(fastestLap.lap)))
 
 		grid.add_child(createGridChild(msToDuration(fastestLap.lapTime)))	
-	
-			
 
-	
+func _on_Race_race_stats(allPlayers):
+	self.show()
+	render(allPlayers)
