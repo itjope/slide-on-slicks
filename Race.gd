@@ -10,10 +10,9 @@ signal race_start
 signal race_end
 signal race_stats(allPlayers)
 
-func _on_Track_finished_lap(body):
-	if (body.is_network_master()):
+func _on_Track_finished_lap(body):	
+	if (body.is_network_master()):		
 		var playerId = int(body.get_name())
-		
 		# Lap Timing
 		var currentTime = OS.get_ticks_msec()
 		var lapTime = null
@@ -29,12 +28,16 @@ func _on_Track_finished_lap(body):
 
 		var laps = allPlayers[playerId].get("laps", 0) + 1
 		var weHaveAWinner = we_have_a_winner() || laps == maxLaps
+		var lastLap = laps == maxLaps - 1
 
 		allPlayers[playerId]["laps"] = laps
 		allPlayers[playerId]["finished"] = weHaveAWinner
 		
 		rpc("update_laps", allPlayers[playerId])
-				
+
+		$WhiteFlag.visible = lastLap
+		$CheckeredFlag.visible = weHaveAWinner
+					
 	if (is_race_over()):
 		 rpc("race_is_over")
 
