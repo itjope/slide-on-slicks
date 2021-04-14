@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=2]
+[gd_scene load_steps=46 format=2]
 
 [ext_resource path="res://World.gd" type="Script" id=1]
 [ext_resource path="res://assets/spritesheet_tiles.png" type="Texture" id=2]
@@ -12,6 +12,22 @@
 [ext_resource path="res://assets/traficlight-greenlight.png" type="Texture" id=10]
 [ext_resource path="res://assets/traficlight-lightsout.png" type="Texture" id=11]
 [ext_resource path="res://TrafficLight.gd" type="Script" id=12]
+[ext_resource path="res://assets/flags/checkered-flag-5.png" type="Texture" id=13]
+[ext_resource path="res://assets/flags/white-flag-5.png" type="Texture" id=16]
+[ext_resource path="res://assets/flags/white-flag-4.png" type="Texture" id=18]
+[ext_resource path="res://assets/flags/checkered-flag-4.png" type="Texture" id=19]
+[ext_resource path="res://assets/flags/white-flag-8.png" type="Texture" id=21]
+[ext_resource path="res://assets/flags/checkered-flag-6.png" type="Texture" id=23]
+[ext_resource path="res://assets/flags/checkered-flag-1.png" type="Texture" id=24]
+[ext_resource path="res://assets/flags/checkered-flag-8.png" type="Texture" id=25]
+[ext_resource path="res://assets/flags/white-flag-6.png" type="Texture" id=27]
+[ext_resource path="res://assets/flags/checkered-flag-7.png" type="Texture" id=29]
+[ext_resource path="res://assets/flags/white-flag-7.png" type="Texture" id=32]
+[ext_resource path="res://assets/flags/checkered-flag-3.png" type="Texture" id=35]
+[ext_resource path="res://assets/flags/white-flag-3.png" type="Texture" id=36]
+[ext_resource path="res://assets/flags/white-flag-1.png" type="Texture" id=38]
+[ext_resource path="res://assets/flags/white-flag-2.png" type="Texture" id=42]
+[ext_resource path="res://assets/flags/checkered-flag-2.png" type="Texture" id=44]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 points = PoolVector2Array( 0, 64, 128, 64, 128, 128, 0, 128 )
@@ -265,6 +281,22 @@ animations = [ {
 "speed": 5.0
 } ]
 
+[sub_resource type="SpriteFrames" id=16]
+animations = [ {
+"frames": [ ExtResource( 24 ), ExtResource( 44 ), ExtResource( 35 ), ExtResource( 19 ), ExtResource( 13 ), ExtResource( 23 ), ExtResource( 29 ), ExtResource( 25 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+} ]
+
+[sub_resource type="SpriteFrames" id=17]
+animations = [ {
+"frames": [ ExtResource( 38 ), ExtResource( 42 ), ExtResource( 36 ), ExtResource( 18 ), ExtResource( 16 ), ExtResource( 27 ), ExtResource( 32 ), ExtResource( 21 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+} ]
+
 [node name="World" type="Node2D"]
 script = ExtResource( 1 )
 
@@ -320,6 +352,19 @@ script = ExtResource( 12 )
 
 [node name="Timer" type="Timer" parent="Race/TrafficLight"]
 
+[node name="CheckeredFlag" type="AnimatedSprite" parent="Race"]
+visible = false
+position = Vector2( 887.4, 101.938 )
+frames = SubResource( 16 )
+frame = 5
+playing = true
+
+[node name="WhiteFlag" type="AnimatedSprite" parent="Race"]
+visible = false
+position = Vector2( 887.4, 100.07 )
+frames = SubResource( 17 )
+playing = true
+
 [node name="Server" parent="." instance=ExtResource( 5 )]
 
 [node name="Label" type="Label" parent="Server"]
@@ -334,11 +379,11 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 [connection signal="finished_lap" from="Track" to="Race" method="_on_Track_finished_lap"]
-[connection signal="body_shape_entered" from="Track/Checkpoints" to="Track" method="_on_Checkpoints_body_shape_entered"]
 [connection signal="body_shape_entered" from="Track/Checkpoints" to="." method="_on_Checkpoints_body_shape_entered"]
+[connection signal="body_shape_entered" from="Track/Checkpoints" to="Track" method="_on_Checkpoints_body_shape_entered"]
 [connection signal="race_stats" from="Race" to="Race/RaceInfo" method="_on_Race_race_stats"]
 [connection signal="green_light" from="Race/TrafficLight" to="Race" method="_on_TrafficLight_green_light"]
 [connection signal="timeout" from="Race/TrafficLight/Timer" to="Race/TrafficLight" method="_on_Timer_timeout"]
-[connection signal="start_game" from="Server" to="Race" method="_on_Server_start_game"]
 [connection signal="start_game" from="Server" to="Race/TrafficLight" method="_on_Server_start_game"]
+[connection signal="start_game" from="Server" to="Race" method="_on_Server_start_game"]
 [connection signal="start_game" from="Server" to="Track" method="_on_Server_start_game"]
