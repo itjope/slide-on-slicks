@@ -17,7 +17,7 @@ func _ready():
 	self.add_child(serverOrJoin)
 	serverOrJoin.get_node("StartServer").connect("pressed", self, "_start_server")
 	serverOrJoin.get_node("JoinServer").connect("pressed", self, "_start_client")
-	lobby.get_node("StartGame").connect("pressed", self, "start")
+	lobby.connect("game_options", self, "start")
 
 	for child in self.get_children():
 		print(child.get_name())
@@ -62,14 +62,14 @@ func _start_client():
 	
 
 
-func start():
+func start(gameOptions):
 	for p in player_info:
-		rpc_id(p, "start_game")
+		rpc_id(p, "start_game", gameOptions)
 
-	start_game()
+	start_game(gameOptions)
 
-remote func start_game():	
-	emit_signal("start_game", my_info, player_info)
+remote func start_game(gameOptions):	
+	emit_signal("start_game", my_info, player_info, gameOptions)
 	lobby.hide()
 
 

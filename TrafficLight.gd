@@ -13,6 +13,6 @@ func _on_Timer_timeout():
 		frame += 1
 
 
-func _on_Server_start_game(my_info, player_info):
+func _on_Server_start_game(my_info, player_info, _game_options):
 	visible = true
 	$Timer.start()

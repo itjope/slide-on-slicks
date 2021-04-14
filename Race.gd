@@ -58,7 +58,9 @@ func is_race_over():
 remotesync func race_is_over():
 	emit_signal("race_end")
 		
-func _on_Server_start_game(my_info, player_info):
+func _on_Server_start_game(my_info, player_info, game_options):
+	maxLaps = game_options.laps
+	
 	var myId = get_tree().get_network_unique_id()
 	allPlayers[myId] = createPlayerEntry(my_info.name)
 

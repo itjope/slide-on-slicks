@@ -1,11 +1,12 @@
 extends Control
 
+signal game_options(game_options)
 
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
 var gameOptions = {
-	race = 5,
+	laps = 5,
 	practice = 0,
 	qualifying = 0,
 	tracks = 1
@@ -17,6 +18,7 @@ func _ready():
 	self.get_node("QualifySlider").connect("value_changed", self, "_on_qualify_changed")
 	self.get_node("PracticeSlider").connect("value_changed", self, "_on_practice_changed")
 	self.get_node("TracksSlider").connect("value_changed", self, "_on_tracks_changed")
+	self.get_node("StartGame").connect("pressed", self, "_on_start_game")
 	
 func _to_minutes_str(minutes):
 	var value = str(minutes) + " minutes"
@@ -34,7 +36,7 @@ func _to_laps_str(laps):
 	return value
 
 func _on_laps_changed(laps):
-	gameOptions.race = laps
+	gameOptions.laps = laps
 	self.get_node("LapsValueLabel").text = _to_laps_str(laps)
 
 
@@ -49,3 +51,6 @@ func _on_practice_changed(laps):
 func _on_tracks_changed(tracks):
 	gameOptions.tracks = tracks
 	self.get_node("TracksValueLabel").text = str(tracks)
+	
+func _on_start_game():
+	emit_signal("game_options", gameOptions)
