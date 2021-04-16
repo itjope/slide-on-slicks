@@ -32,19 +32,13 @@ func msToDuration(duration):
 	
 	return str(minutes) + ":" + str(seconds) + "." + str(milliseconds) 
 
-func dictToArr(dict):
-	var arr = []
-	for key in dict.keys():
-		arr.push_back(dict[key])
-	return arr
-
-func getFastestLap(playersDict): 
+func getFastestLap(players): 
 	var fastestLap = {
 		lapTime = null,
 		name = null,
 		lap = null
 	}
-	var players = dictToArr(playersDict)
+	
 	for player in players:
 		var lapCounter = 1
 		for lapTime in player.lapTimes:
@@ -55,10 +49,10 @@ func getFastestLap(playersDict):
 			lapCounter += 1
 	return fastestLap
 
-func render(allPlayers): 
+func render(players): 
 	var grid = self.get_node("TimingGrid")
 	clearGrid(grid)
-	var fastestLap = getFastestLap(allPlayers)
+	var fastestLap = getFastestLap(players)
 	
 	# Headings
 	grid.add_child(createGridChild("Player"))
@@ -66,7 +60,6 @@ func render(allPlayers):
 	grid.add_child(createGridChild("Time"))
 	
 	# Sort players by number of laps
-	var players = dictToArr(allPlayers)
 	players.sort_custom(self, "sortByLaps")
 
 	# Add players to grid
