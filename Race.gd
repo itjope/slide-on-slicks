@@ -35,13 +35,11 @@ func _on_Track_finished_lap(body):
 		
 		rpc("update_laps", allPlayers[playerId])
 
-		$WhiteFlag.visible = lastLap
 		$CheckeredFlag.visible = weHaveAWinner
+		$WhiteFlag.visible = lastLap && !$CheckeredFlag.visible
 					
 	if (is_race_over()):
 		 rpc("race_is_over")
-
-	emit_signal("race_stats", allPlayers)
 		
 func we_have_a_winner():
 	var weHaveAWinner = false
@@ -64,7 +62,7 @@ func _on_Server_start_game(my_info, player_info):
 
 	for key in player_info.keys():
 		allPlayers[key] = createPlayerEntry(player_info[key].name)
-	emit_signal("race_stats", allPlayers)
+	emit_signal("race_stats", allPlayers.values())
 
 func createPlayerEntry(name):
 	return {
@@ -77,11 +75,33 @@ func createPlayerEntry(name):
 func race_start():
 	raceStart = OS.get_ticks_msec()
 	emit_signal("race_start")
-	
-remote func update_laps(player):
+
+func sortPlayers(p1, p2):
+	if p1.laps != p2.laps:
+		return clamp(p1.laps, 0, maxLaps) > clamp(p2.laps, 0, maxLaps)
+		
+	var i = 0
+	var p1TotTime = 0
+	while i < p1.lapTimes.size() && i < maxLaps:
+		p1TotTime += p1.lapTimes[i]
+		i+=1
+
+	i = 0
+	var p2TotTime = 0
+	while i < p2.lapTimes.size() && i < maxLaps:
+		p2TotTime += p2.lapTimes[i]
+		i+=1
+
+	return p1TotTime < p2TotTime
+
+remotesync func update_laps(player):
 	var playerId = get_tree().get_rpc_sender_id()
 	allPlayers[playerId] = player
-	emit_signal("race_stats", allPlayers)
+	
+	var stats = allPlayers.values()
+	stats.sort_custom(self, "sortPlayers")
+	
+	emit_signal("race_stats", stats)
 	
 func _on_TrafficLight_green_light():
 	race_start()
