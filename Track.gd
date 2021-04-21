@@ -22,6 +22,7 @@ func _on_Checkpoints_body_shape_entered(body_id, body, _body_shape, area_shape):
 		prev_checkpoint[body_id] = cur
 
 func _on_Server_start_game(my_info, player_info, _game_options):
+	var carsNode = get_parent().get_node('Cars')
 	var start_positions = []
 	
 	for up in get_used_cells_by_id(3):
@@ -36,13 +37,17 @@ func _on_Server_start_game(my_info, player_info, _game_options):
 	for left in get_used_cells_by_id(6):
 		start_positions.append({"pos": (map_to_world(left) + cell_size / 2), "angle": deg2rad(180)})
 
+	for car in carsNode.get_children():
+		carsNode.remove_child(car)
+		
+
 	var selfPeerID = get_tree().get_network_unique_id()
 	var car = Car.instance()
 	car.position=start_positions[0]["pos"]
 	car.rotation=start_positions[0]["angle"]
 	car.set_name(str(selfPeerID))
 	car.set_network_master(selfPeerID)
-	get_parent().add_child(car)
+	carsNode.add_child(car)
 	get_parent().get_node("Race").get_node("ControlPanel").start(car)
 
 	var cars = [{"id": selfPeerID, "car": car}]
@@ -51,7 +56,7 @@ func _on_Server_start_game(my_info, player_info, _game_options):
 		var remoteCar = Car.instance()
 		remoteCar.set_name(str(p))
 		remoteCar.set_network_master(p)
-		get_parent().add_child(remoteCar)
+		carsNode.add_child(remoteCar)
 		cars.append({"id": p, "car": remoteCar})
 				
 	cars.sort_custom(MyCustomSorter, "sort")

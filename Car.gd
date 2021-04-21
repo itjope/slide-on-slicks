@@ -22,8 +22,8 @@ var race_ended = false
 func _ready():
 	if not is_network_master():
 		remove_child($Camera2D)
-	get_parent().get_node("Race").connect("race_start", self, "_on_race_start")
-	get_parent().get_node("Race").connect("race_end", self, "_on_race_end")
+	get_parent().get_parent().get_node("Race").connect("race_start", self, "_on_race_start")
+	get_parent().get_parent().get_node("Race").connect("race_end", self, "_on_race_end")
 
 func _physics_process(delta):
 	if is_network_master():
@@ -101,6 +101,7 @@ func calculate_steering(delta):
 	rotation = new_heading.angle()
 
 func _on_race_start():
+	race_ended = false
 	race_started = true
 
 func _on_race_end():

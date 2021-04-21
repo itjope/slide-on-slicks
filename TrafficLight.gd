@@ -9,6 +9,7 @@ func _on_Timer_timeout():
 	elif (frame == 3):
 		$Timer.stop()
 		visible = false
+		frame = 0
 	else:
 		frame += 1
 

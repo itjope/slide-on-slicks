@@ -1,39 +1,26 @@
 extends Node
 
 const PORT        = 5000
-const ServerOrJoin = preload("res://ServerOrJoin.tscn")
-const PlayerLobby = preload("res://Lobby.tscn")
 
 var player_info = {}
 var my_info = { name = "Player 1" }
-var serverOrJoin = ServerOrJoin.instance()
-var lobby = PlayerLobby.instance()
+var serverOrJoin = null
+var lobby = null
 
 signal start_game(my_info, player_info)
 
 func _ready():
-	
-	
-	self.add_child(serverOrJoin)
+	serverOrJoin = $ServerOrJoin
+	lobby = $Lobby
 	serverOrJoin.get_node("StartServer").connect("pressed", self, "_start_server")
 	serverOrJoin.get_node("JoinServer").connect("pressed", self, "_start_client")
 	lobby.connect("game_options", self, "start")
 
-	for child in self.get_children():
-		print(child.get_name())
-	
-	
-	# var opponentScene = load("res://Opponent.tscn")
-	# var opponent = opponentScene.instance()
-	# opponent.set_position(Vector2(1950, 1000))
-	# world.add_child(opponent)
-	
 	get_tree().connect("network_peer_connected", self, "_player_connected")
 	get_tree().connect("network_peer_disconnected", self, "_player_disconnected")
 	get_tree().connect("connected_to_server", self, "_connected_ok")
 	get_tree().connect("connection_failed", self, "_connected_fail")
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
-
 
 func _start_server():
 	_serverOrJoinCompleted()
@@ -41,14 +28,12 @@ func _start_server():
 	peer.create_server(PORT, 4)
 	get_tree().network_peer = peer
 	
-	
-	
-	
 func _serverOrJoinCompleted():
 	my_info.name = serverOrJoin.get_node("PlayerNameInput").text
 	lobby.get_node("Players").add_item(my_info.name)
 	
 	serverOrJoin.hide()
+	lobby.show()
 	self.add_child(lobby)
 
 func _start_client():
@@ -96,20 +81,7 @@ remote func register_player(info):
 	lobby.get_node("Players").add_item(info.name)
 	player_info[id] = info
 
-# func on_connected_to_server():
-# 	print("Connected to server.")
+
+func _on_Race_show_lobby():
+	lobby.show()
 	
-# 	self.get_node("Label").text = "connected"
-# 	var car = Car.instance()
-# 	get_parent().add_child(car)
-
-# func send_player_position(position):
-# 	rpc_unreliable("on_player_update", position)
-
-# remote func on_all_players_update(playerPositions):
-# 	for ps in playerPositions:
-# 		#
-# 		#self.get_node("Label").text = "opponent"
-# 		for pos in playerPositions.values():
-# 			# self.get_node("Opponent1").set_position(playerPositions)
-# 			print(pos)
