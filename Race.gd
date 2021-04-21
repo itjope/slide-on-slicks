@@ -9,6 +9,20 @@ var lapStart = null
 signal race_start
 signal race_end
 signal race_stats(allPlayers)
+signal show_lobby()
+
+var startNewRaceButton = null
+
+func _ready():
+	# startNewRaceButton = self.get_node("RaceControl").get_node("StartNewRace")
+	startNewRaceButton = $RaceControl/StartNewRace
+	startNewRaceButton.connect("pressed", self, "_start_new_game")
+
+
+func _start_new_game():
+	startNewRaceButton.hide()
+	emit_signal("show_lobby")
+	
 
 func _on_Track_finished_lap(body):	
 	if (body.is_network_master()):		
@@ -40,6 +54,8 @@ func _on_Track_finished_lap(body):
 					
 	if (is_race_over()):
 		 rpc("race_is_over")
+		 startNewRaceButton.show()
+		 
 		
 func we_have_a_winner():
 	var weHaveAWinner = false
@@ -58,7 +74,11 @@ remotesync func race_is_over():
 		
 func _on_Server_start_game(my_info, player_info, game_options):
 	maxLaps = game_options.laps
-	
+	raceStart = null
+	lapStart = null
+	$CheckeredFlag.visible = false
+	$WhiteFlag.visible = false
+					
 	var myId = get_tree().get_network_unique_id()
 	allPlayers[myId] = createPlayerEntry(my_info.name)
 
