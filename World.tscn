@@ -363,14 +363,14 @@ script = ExtResource( 12 )
 visible = false
 position = Vector2( 887.4, 101.938 )
 frames = SubResource( 16 )
-frame = 1
+frame = 2
 playing = true
 
 [node name="WhiteFlag" type="AnimatedSprite" parent="Race"]
 visible = false
 position = Vector2( 887.4, 100.07 )
 frames = SubResource( 17 )
-frame = 4
+frame = 2
 playing = true
 
 [node name="Server" parent="." instance=ExtResource( 5 )]
@@ -395,6 +395,6 @@ __meta__ = {
 [connection signal="show_lobby" from="Race" to="Server" method="_on_Race_show_lobby"]
 [connection signal="green_light" from="Race/TrafficLight" to="Race" method="_on_TrafficLight_green_light"]
 [connection signal="timeout" from="Race/TrafficLight/Timer" to="Race/TrafficLight" method="_on_Timer_timeout"]
-[connection signal="start_game" from="Server" to="Track" method="_on_Server_start_game"]
-[connection signal="start_game" from="Server" to="Race" method="_on_Server_start_game"]
 [connection signal="start_game" from="Server" to="Race/TrafficLight" method="_on_Server_start_game"]
+[connection signal="start_game" from="Server" to="Race" method="_on_Server_start_game"]
+[connection signal="start_game" from="Server" to="Track" method="_on_Server_start_game"]
