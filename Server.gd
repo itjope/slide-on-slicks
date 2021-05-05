@@ -3,17 +3,22 @@ extends Node
 const PORT        = 5000
 
 var player_info = {}
-var my_info = { name = "Player 1" }
+
+var my_info = { name = "Player 1", "car": 0 }
 var serverOrJoin = null
 var lobby = null
 
-signal start_game(my_info, player_info)
+signal start_game(my_info, player_info, opts)
 
 func _ready():
 	serverOrJoin = $ServerOrJoin
 	lobby = $Lobby
-	serverOrJoin.get_node("StartServer").connect("pressed", self, "_start_server")
-	serverOrJoin.get_node("JoinServer").connect("pressed", self, "_start_client")
+#	serverOrJoin.get_node("StartServer").connect("pressed", self, "_start_server")
+#	serverOrJoin.get_node("JoinServer").connect("pressed", self, "_start_client")
+
+	serverOrJoin.connect("start_server", self, "_start_server")
+	serverOrJoin.connect("join_server", self, "_start_client")
+
 	lobby.connect("game_options", self, "start")
 
 	get_tree().connect("network_peer_connected", self, "_player_connected")
@@ -22,30 +27,36 @@ func _ready():
 	get_tree().connect("connection_failed", self, "_connected_fail")
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
 
-func _start_server():
-	_serverOrJoinCompleted()
+func _start_server(opts):
+	_serverOrJoinCompleted(opts)
+
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_server(PORT, 4)
 	get_tree().network_peer = peer
 	
-func _serverOrJoinCompleted():
-	my_info.name = serverOrJoin.get_node("PlayerNameInput").text
+#	my_info.name = serverOrJoin.get_node("PlayerNameInput").text
+#	lobby.get_node("Players").add_item(my_info.name)
+	
+	self.add_child(lobby)
+
+func _start_client(opts):
+	var peer = NetworkedMultiplayerENet.new()
+	var serverInputValue = opts.server
+	var serverHost = serverInputValue.split(":")[0]
+	var serverPort = serverInputValue.split(":")[1]
+	peer.create_client(serverHost, PORT)
+	get_tree().network_peer = peer
+	_serverOrJoinCompleted(opts)
+	
+func _serverOrJoinCompleted(opts):
+	my_info.name = opts.playerName
+	my_info.car = opts.car
 	lobby.get_node("Players").add_item(my_info.name)
 	
 	serverOrJoin.hide()
 	lobby.show()
 	self.add_child(lobby)
-
-func _start_client():
-	var peer = NetworkedMultiplayerENet.new()
-	var serverInputValue = serverOrJoin.get_node("ServerInput").text
-	var serverHost = serverInputValue.split(":")[0]
-	var serverPort = serverInputValue.split(":")[1]
-	peer.create_client(serverHost, PORT)
-	get_tree().network_peer = peer
-	_serverOrJoinCompleted()
 	
-
 
 func start(gameOptions):
 	for p in player_info:

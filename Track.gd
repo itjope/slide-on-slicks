@@ -43,6 +43,7 @@ func _on_Server_start_game(my_info, player_info, _game_options):
 
 	var selfPeerID = get_tree().get_network_unique_id()
 	var car = Car.instance()
+	car.get_node("Sprite").frame = my_info.car
 	car.position=start_positions[0]["pos"]
 	car.rotation=start_positions[0]["angle"]
 	car.set_name(str(selfPeerID))
