@@ -1,11 +1,8 @@
 extends CharacterBody2D
 
 
-# Called when the node enters the scene tree for the first time.
-
-
-
 var speed = 10
+var velocityHistory = []
 
 func _ready(): 
 	if not is_multiplayer_authority(): return
@@ -19,15 +16,14 @@ func _physics_process(delta):
 	if  not is_multiplayer_authority(): return
 	
 	get_input()
-	#move_and_slide()
-	var collision = move_and_collide(velocity * delta)
+	
+	var collision = move_and_collide(velocity * delta, false, 0.08, false)
 	if collision:
 		var collider = collision.get_collider()
 		if collider.is_class("CharacterBody2D"):
-			velocity = velocity.bounce(collision.get_normal())
+			velocity = velocity.slide(collision.get_normal()) * 0.8 + (velocity.bounce(collision.get_normal()) / 5)
 		else:
-			move_and_slide()	#
+			velocity = (velocity.slide(collision.get_normal()) + (velocity.bounce(collision.get_normal()) / 5) ) / 2
+			
 func _enter_tree():
 	set_multiplayer_authority(str(name).to_int())
-	
-

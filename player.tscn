@@ -4,8 +4,8 @@
 [ext_resource type="Script" path="res://addons/smoothing/smoothing_2d.gd" id="2_4674m"]
 [ext_resource type="Texture2D" uid="uid://cogwue5xo7o4r" path="res://car1.png" id="2_ri1f2"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_aespd"]
-size = Vector2(35.5, 36)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_22jpn"]
+size = Vector2(36, 36)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ks71c"]
 properties/0/path = NodePath(".:position")
@@ -30,8 +30,7 @@ motion_mode = 1
 script = ExtResource("1_ttov1")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0.25, 0)
-shape = SubResource("RectangleShape2D_aespd")
+shape = SubResource("RectangleShape2D_22jpn")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_ks71c")
