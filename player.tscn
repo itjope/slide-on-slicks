@@ -39,6 +39,5 @@ replication_config = SubResource("SceneReplicationConfig_ks71c")
 script = ExtResource("2_4674m")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Smoothing2D"]
-scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_t4c1a")
 animation = &"idle"

@@ -3,16 +3,16 @@
 [ext_resource type="Script" path="res://world.gd" id="1_f8kds"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0ddpk"]
-size = Vector2(32.75, 676)
+size = Vector2(33, 1323)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l2row"]
-size = Vector2(1150, 27)
+size = Vector2(2338, 27)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v6y4e"]
-size = Vector2(33.5, 676)
+size = Vector2(33.75, 1296)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4osci"]
-size = Vector2(1218, 30)
+size = Vector2(2371.5, 30)
 
 [node name="World" type="Node2D"]
 script = ExtResource("1_f8kds")
@@ -20,20 +20,27 @@ script = ExtResource("1_f8kds")
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(-17.625, 311)
+position = Vector2(-16.5, 634.5)
 shape = SubResource("RectangleShape2D_0ddpk")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(575, -14)
+position = Vector2(1169, -13.5)
 shape = SubResource("RectangleShape2D_l2row")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(1166.25, 310)
+position = Vector2(2321.12, 648)
 shape = SubResource("RectangleShape2D_v6y4e")
 
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(574, 663)
+position = Vector2(1152.25, 1311)
 shape = SubResource("RectangleShape2D_4osci")
+
+[node name="Polygon2D3" type="CollisionPolygon2D" parent="StaticBody2D"]
+position = Vector2(-46, -8)
+polygon = PackedVector2Array(860, 223, 493, 224, 356, 337, 356, 804, 433, 969, 574, 1051, 1816, 1083, 1856, 1058, 1869, 1011, 1830, 961, 1587, 944, 1394, 869, 1338, 694, 1375, 522, 1548, 380, 1708, 336, 1765, 314, 1790, 277, 1767, 230, 1625, 213)
+
+[node name="Polygon2D4" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PackedVector2Array(2318, 370, 2179, 449, 2032, 475, 1937, 544, 1825, 569, 1798, 651, 1822, 708, 1920, 725, 2063, 742, 2143, 782, 2207, 847, 2256, 911, 2280, 979, 2308, 1063)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -89,6 +96,15 @@ text = "Dedicated server"
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("res://player.tscn")
 spawn_path = NodePath("..")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+position = Vector2(-46, -8)
+color = Color(0.254902, 0.254902, 0.254902, 1)
+polygon = PackedVector2Array(860, 223, 493, 224, 356, 337, 356, 804, 433, 969, 574, 1051, 1816, 1083, 1856, 1058, 1869, 1011, 1830, 961, 1587, 944, 1394, 869, 1338, 694, 1375, 522, 1548, 380, 1708, 336, 1765, 314, 1790, 277, 1767, 230, 1625, 213)
+
+[node name="Polygon2D2" type="Polygon2D" parent="."]
+color = Color(0.25098, 0.25098, 0.25098, 1)
+polygon = PackedVector2Array(2318, 370, 2179, 449, 2032, 475, 1937, 544, 1825, 569, 1798, 651, 1822, 708, 1920, 725, 2063, 742, 2143, 782, 2207, 847, 2256, 911, 2280, 979, 2308, 1063)
 
 [connection signal="pressed" from="CanvasLayer/MainManu/MarginContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainManu/MarginContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
