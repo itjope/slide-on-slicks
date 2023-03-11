@@ -2,21 +2,24 @@
 
 [ext_resource type="Script" path="res://car.gd" id="1_ttov1"]
 [ext_resource type="Script" path="res://addons/smoothing/smoothing_2d.gd" id="2_4674m"]
-[ext_resource type="Texture2D" uid="uid://cogwue5xo7o4r" path="res://car1.png" id="2_ri1f2"]
+[ext_resource type="Texture2D" uid="uid://bvuudps3hvgpt" path="res://car2.svg" id="3_a2g8y"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_22jpn"]
-size = Vector2(36, 36)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_aespd"]
+size = Vector2(23.5, 16)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ks71c"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/sync = true
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/sync = true
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_t4c1a"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_ri1f2")
+"texture": ExtResource("3_a2g8y")
 }],
 "loop": true,
 "name": &"idle",
@@ -30,14 +33,19 @@ motion_mode = 1
 script = ExtResource("1_ttov1")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_22jpn")
+position = Vector2(-5.75, 4)
+shape = SubResource("RectangleShape2D_aespd")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_ks71c")
 
 [node name="Smoothing2D" type="Node2D" parent="."]
 script = ExtResource("2_4674m")
+flags = 7
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Smoothing2D"]
+position = Vector2(-5.59699, 3.78404)
+rotation = 1.5708
+scale = Vector2(0.0455645, 0.0468663)
 sprite_frames = SubResource("SpriteFrames_t4c1a")
 animation = &"idle"

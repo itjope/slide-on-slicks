@@ -3,16 +3,16 @@
 [ext_resource type="Script" path="res://world.gd" id="1_f8kds"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0ddpk"]
-size = Vector2(33, 1323)
+size = Vector2(32.75, 676)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l2row"]
-size = Vector2(2338, 27)
+size = Vector2(1150, 27)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v6y4e"]
-size = Vector2(33.75, 1296)
+size = Vector2(33.5, 676)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4osci"]
-size = Vector2(2371.5, 30)
+size = Vector2(1218, 30)
 
 [node name="World" type="Node2D"]
 script = ExtResource("1_f8kds")
@@ -20,27 +20,52 @@ script = ExtResource("1_f8kds")
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(-16.5, 634.5)
+position = Vector2(-17.625, 311)
 shape = SubResource("RectangleShape2D_0ddpk")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(1169, -13.5)
+position = Vector2(575, -14)
 shape = SubResource("RectangleShape2D_l2row")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(2321.12, 648)
+position = Vector2(1166.25, 310)
 shape = SubResource("RectangleShape2D_v6y4e")
 
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(1152.25, 1311)
+position = Vector2(574, 663)
 shape = SubResource("RectangleShape2D_4osci")
 
-[node name="Polygon2D3" type="CollisionPolygon2D" parent="StaticBody2D"]
-position = Vector2(-46, -8)
-polygon = PackedVector2Array(860, 223, 493, 224, 356, 337, 356, 804, 433, 969, 574, 1051, 1816, 1083, 1856, 1058, 1869, 1011, 1830, 961, 1587, 944, 1394, 869, 1338, 694, 1375, 522, 1548, 380, 1708, 336, 1765, 314, 1790, 277, 1767, 230, 1625, 213)
+[node name="StaticBody2D2" type="StaticBody2D" parent="."]
 
-[node name="Polygon2D4" type="CollisionPolygon2D" parent="StaticBody2D"]
-polygon = PackedVector2Array(2318, 370, 2179, 449, 2032, 475, 1937, 544, 1825, 569, 1798, 651, 1822, 708, 1920, 725, 2063, 742, 2143, 782, 2207, 847, 2256, 911, 2280, 979, 2308, 1063)
+[node name="Polygon2D" type="Polygon2D" parent="StaticBody2D2"]
+position = Vector2(-16, 0)
+color = Color(0.415686, 0.415686, 0.415686, 1)
+polygon = PackedVector2Array(654, 148, 321, 144, 246, 151, 234, 194, 245, 231, 302, 243, 383, 245, 507, 234, 597, 238, 670, 250, 727, 340, 729, 394, 718, 442, 689, 491, 633, 503, 579, 510, 507, 513, 412, 510, 340, 509, 264, 507, 222, 511, 186, 519, 174, 531, 180, 548, 218, 551, 258, 547, 306, 540, 362, 543, 402, 544, 446, 545, 508, 547, 587, 548, 652, 547, 695, 543, 735, 540, 803, 540, 808, 533, 816, 527, 830, 521, 843, 511, 870, 491, 909, 456, 940, 409, 1017, 345, 1017, 319, 1012, 295, 1006, 265, 991, 245, 970, 246, 935, 256, 896, 265, 857, 271, 806, 275, 761, 271, 747, 260, 743, 243, 749, 222, 769, 201, 801, 171, 803, 157, 808, 146, 815, 127, 816, 104, 806, 83, 792, 70, 769, 73, 747, 74, 732, 87, 708, 103, 658, 148)
+
+[node name="Polygon2D2" type="Polygon2D" parent="StaticBody2D2"]
+color = Color(0.415686, 0.415686, 0.415686, 1)
+polygon = PackedVector2Array(206, 356, -6, 353, -11, 406, 510, 402, 540, 381, 534, 362, 525, 354, 484, 359)
+
+[node name="Polygon2D3" type="Polygon2D" parent="StaticBody2D2"]
+color = Color(0.415686, 0.415686, 0.415686, 1)
+polygon = PackedVector2Array(916, 658, 1163, 386, 1161, 663)
+
+[node name="Polygon2D4" type="Polygon2D" parent="StaticBody2D2"]
+color = Color(0.415686, 0.415686, 0.415686, 1)
+polygon = PackedVector2Array(1018, -4, 974, 54, 939, 86, 937, 109, 932, 129, 941, 145, 960, 152, 979, 155, 1006, 156, 1031, 156, 1064, 160, 1087, 164, 1107, 163, 1126, 169, 1138, 172, 1159, 182, 1157, 153, 1168, -3)
+
+[node name="Polygon2D5" type="CollisionPolygon2D" parent="StaticBody2D2"]
+position = Vector2(-16, 0)
+polygon = PackedVector2Array(654, 148, 321, 144, 246, 151, 234, 194, 245, 231, 302, 243, 383, 245, 507, 234, 597, 238, 670, 250, 727, 340, 729, 394, 718, 442, 689, 491, 633, 503, 579, 510, 507, 513, 412, 510, 340, 509, 264, 507, 222, 511, 186, 519, 174, 531, 180, 548, 218, 551, 258, 547, 306, 540, 362, 543, 402, 544, 446, 545, 508, 547, 587, 548, 652, 547, 695, 543, 735, 540, 803, 540, 808, 533, 816, 527, 830, 521, 843, 511, 870, 491, 909, 456, 940, 409, 1017, 345, 1017, 319, 1012, 295, 1006, 265, 991, 245, 970, 246, 935, 256, 896, 265, 857, 271, 806, 275, 761, 271, 747, 260, 743, 243, 749, 222, 769, 201, 801, 171, 803, 157, 808, 146, 815, 127, 816, 104, 806, 83, 792, 70, 769, 73, 747, 74, 732, 87, 708, 103, 658, 148)
+
+[node name="Polygon2D6" type="CollisionPolygon2D" parent="StaticBody2D2"]
+polygon = PackedVector2Array(206, 356, -6, 353, -11, 406, 510, 402, 540, 381, 534, 362, 525, 354, 484, 359)
+
+[node name="Polygon2D7" type="CollisionPolygon2D" parent="StaticBody2D2"]
+polygon = PackedVector2Array(916, 658, 1163, 386, 1161, 663)
+
+[node name="Polygon2D8" type="CollisionPolygon2D" parent="StaticBody2D2"]
+polygon = PackedVector2Array(1018, -4, 974, 54, 939, 86, 937, 109, 932, 129, 941, 145, 960, 152, 979, 155, 1006, 156, 1031, 156, 1064, 160, 1087, 164, 1107, 163, 1126, 169, 1138, 172, 1159, 182, 1157, 153, 1168, -3)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -93,18 +118,49 @@ text = "Host"
 layout_mode = 2
 text = "Dedicated server"
 
+[node name="SettingsMenu" type="PanelContainer" parent="CanvasLayer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 329.0
+offset_top = 164.0
+offset_right = -329.0
+offset_bottom = -164.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/SettingsMenu"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SettingsMenu/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="CanvasLayer/SettingsMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Settings"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="CanvasLayer/SettingsMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Engine Power"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EnginePower" type="LineEdit" parent="CanvasLayer/SettingsMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "800"
+alignment = 1
+
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("res://player.tscn")
 spawn_path = NodePath("..")
-
-[node name="Polygon2D" type="Polygon2D" parent="."]
-position = Vector2(-46, -8)
-color = Color(0.254902, 0.254902, 0.254902, 1)
-polygon = PackedVector2Array(860, 223, 493, 224, 356, 337, 356, 804, 433, 969, 574, 1051, 1816, 1083, 1856, 1058, 1869, 1011, 1830, 961, 1587, 944, 1394, 869, 1338, 694, 1375, 522, 1548, 380, 1708, 336, 1765, 314, 1790, 277, 1767, 230, 1625, 213)
-
-[node name="Polygon2D2" type="Polygon2D" parent="."]
-color = Color(0.25098, 0.25098, 0.25098, 1)
-polygon = PackedVector2Array(2318, 370, 2179, 449, 2032, 475, 1937, 544, 1825, 569, 1798, 651, 1822, 708, 1920, 725, 2063, 742, 2143, 782, 2207, 847, 2256, 911, 2280, 979, 2308, 1063)
 
 [connection signal="pressed" from="CanvasLayer/MainManu/MarginContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainManu/MarginContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
