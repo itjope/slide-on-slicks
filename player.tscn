@@ -4,8 +4,9 @@
 [ext_resource type="Script" path="res://addons/smoothing/smoothing_2d.gd" id="2_4674m"]
 [ext_resource type="Texture2D" uid="uid://bvuudps3hvgpt" path="res://car2.svg" id="3_a2g8y"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_aespd"]
-size = Vector2(23.5, 16)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_yvsxi"]
+radius = 8.0
+height = 30.5
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ks71c"]
 properties/0/path = NodePath(".:position")
@@ -34,7 +35,8 @@ script = ExtResource("1_ttov1")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-5.75, 4)
-shape = SubResource("RectangleShape2D_aespd")
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_yvsxi")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_ks71c")

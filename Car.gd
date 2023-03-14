@@ -1,22 +1,30 @@
 extends CharacterBody2D
 
-var wheel_base = 20
-var steering_angle = 15
-var engine_power = 800
-var friction = -0.01
-var drag = -0.006
-var braking = -600
-var max_speed = 1500
-var max_speed_reverse = 500
-var slip_speed = 300
-var traction_fast = 0.001
-var traction_slow = 0.05
+var wheel_base = 25
 
+var steering_angle_default = 30
+var steering_angle_during_kryckan = 27
+var steering_angle_during_acceleration = 17
+
+var kryckan_slownown_factor = 0.2
+
+var engine_power = 700
+var friction = -0.0035
+var drag = -0.005
+var braking = -600
+var max_speed = 1000
+var max_speed_reverse = 200
+var slip_speed = 300
+var traction_fast = 0.002
+var traction_slow = 0.02
+var steering_angle = steering_angle_default
 var acceleration = Vector2.ZERO
 var steer_direction
 
 func _ready(): 
 	if not is_multiplayer_authority(): return
+	set_motion_mode(CharacterBody2D.MOTION_MODE_FLOATING)
+	set_floor_snap_length(0.0)
 	
 	
 func _process(delta):
@@ -33,21 +41,26 @@ func get_input():
 	if not is_multiplayer_authority(): return
 	
 	var turn = 0
-
 	
 	if Input.is_action_pressed("steerRight"):
 		turn += calculate_turn()
 	if Input.is_action_pressed("steerLeft"):
 		turn -= calculate_turn()
 	if Input.is_action_pressed("accelerate"):
+		steering_angle = steering_angle_during_acceleration
 		acceleration = transform.x * engine_power
+	else:
+		if steering_angle < steering_angle_default: 
+			steering_angle = steering_angle + 0.2
+		else:
+			steering_angle = steering_angle_default
+	
 	if Input.is_action_pressed("break"):
 		acceleration = transform.x * braking
+	
 	if Input.is_action_pressed("kryckan"): 
-		steering_angle = 35
-		acceleration = acceleration + transform.x * -100
-	else:
-		steering_angle = 15
+		steering_angle = steering_angle_during_kryckan
+		acceleration = acceleration * kryckan_slownown_factor
 
 	steer_direction = turn * deg_to_rad(steering_angle)
 
@@ -83,13 +96,9 @@ func _physics_process(delta):
 	apply_friction()
 	calculate_steering(delta)
 	velocity += acceleration * delta
-	var collision = move_and_collide(velocity * delta, false, 0.08, false)
-	if collision:
-		var collider = collision.get_collider()
-		if collider.is_class("CharacterBody2D"):
-			velocity = velocity.slide(collision.get_normal()) * 0.8 + (velocity.bounce(collision.get_normal()) / 5)
-		else:
-			velocity = velocity.slide(collision.get_normal()) * 0.95
+	move_and_slide()
+	if get_slide_collision_count() > 0:
+		velocity = velocity * 0.90 
 	
 func _enter_tree():
 	set_multiplayer_authority(str(name).to_int())
