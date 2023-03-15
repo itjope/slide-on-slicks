@@ -1,21 +1,21 @@
 extends CharacterBody2D
 
-var wheel_base = 16
+var wheel_base = 14
 
-var steering_angle_default = 30
-var steering_angle_during_kryckan = 27
-var steering_angle_during_acceleration = 17
+var steering_angle_default = 40
+var steering_angle_during_kryckan = 30
+var steering_angle_during_acceleration = 16
 
 var kryckan_slownown_factor = 0.2
 
-var engine_power = 700
+var engine_power = 450
 var friction = -0.0035
-var drag = -0.005
-var braking = -600
+var drag = -0.007
+var braking = -350
 var max_speed = 1000
-var max_speed_reverse = 200
-var slip_speed = 300
-var traction_fast = 0.002
+var max_speed_reverse = 300
+var slip_speed = 190
+var traction_fast = 0.0025
 var traction_slow = 0.02
 var steering_angle = steering_angle_default
 var acceleration = Vector2.ZERO
@@ -47,7 +47,7 @@ func get_input():
 		acceleration = transform.x * engine_power
 	else:
 		if steering_angle < steering_angle_default: 
-			steering_angle = steering_angle + 0.2
+			steering_angle = steering_angle + 0.3
 		else:
 			steering_angle = steering_angle_default
 	
@@ -57,7 +57,7 @@ func get_input():
 	if Input.is_action_pressed("kryckan"): 
 		steering_angle = steering_angle_during_kryckan
 		acceleration = acceleration * kryckan_slownown_factor
-
+		
 	steer_direction = turn * deg_to_rad(steering_angle)
 
 func calculate_turn():
@@ -79,10 +79,10 @@ func calculate_steering(delta):
 	if velocity.length() > slip_speed:
 		traction = traction_fast
 	var d = new_heading.dot(velocity.normalized())
-	if d > 0:
-		velocity = velocity.lerp(new_heading * velocity.length(), traction)
-	if d < 0:
-		velocity = -new_heading * min(velocity.length(), max_speed_reverse)
+	#if d >= 0:
+	velocity = velocity.lerp(new_heading * velocity.length(), traction)
+	#if d < 0:
+		#velocity = -new_heading * min(velocity.length(), max_speed_reverse)
 	rotation = new_heading.angle()
 
 func _physics_process(delta):
