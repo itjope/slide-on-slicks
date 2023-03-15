@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-var wheel_base = 25
+var wheel_base = 16
 
 var steering_angle_default = 30
 var steering_angle_during_kryckan = 27
@@ -25,10 +25,6 @@ func _ready():
 	if not is_multiplayer_authority(): return
 	set_motion_mode(CharacterBody2D.MOTION_MODE_FLOATING)
 	set_floor_snap_length(0.0)
-	
-	
-func _process(delta):
-	pass
 	
 func apply_friction():
 	if velocity.length() < 5:

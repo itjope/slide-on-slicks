@@ -2,11 +2,11 @@
 
 [ext_resource type="Script" path="res://car.gd" id="1_ttov1"]
 [ext_resource type="Script" path="res://addons/smoothing/smoothing_2d.gd" id="2_4674m"]
-[ext_resource type="Texture2D" uid="uid://bvuudps3hvgpt" path="res://car2.svg" id="3_a2g8y"]
+[ext_resource type="Texture2D" uid="uid://bsrxijrgft7ev" path="res://SlimCar16Blue.png" id="3_vxi5v"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_yvsxi"]
 radius = 8.0
-height = 30.5
+height = 20.0
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ks71c"]
 properties/0/path = NodePath(".:position")
@@ -20,7 +20,7 @@ properties/1/sync = true
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_a2g8y")
+"texture": ExtResource("3_vxi5v")
 }],
 "loop": true,
 "name": &"idle",
@@ -29,12 +29,11 @@ animations = [{
 
 [node name="CharacterBody2D" type="CharacterBody2D"]
 visibility_layer = 2
-position = Vector2(315, 202)
+position = Vector2(312, 203)
 motion_mode = 1
 script = ExtResource("1_ttov1")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-5.75, 4)
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_yvsxi")
 
@@ -46,8 +45,7 @@ script = ExtResource("2_4674m")
 flags = 7
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Smoothing2D"]
-position = Vector2(-5.59699, 3.78404)
+position = Vector2(7.62939e-06, 0)
 rotation = 1.5708
-scale = Vector2(0.0455645, 0.0468663)
 sprite_frames = SubResource("SpriteFrames_t4c1a")
 animation = &"idle"
