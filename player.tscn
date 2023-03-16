@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://b7vs3725r21pu"]
+[gd_scene load_steps=17 format=3 uid="uid://b7vs3725r21pu"]
 
 [ext_resource type="Script" path="res://car.gd" id="1_ttov1"]
 [ext_resource type="Script" path="res://addons/smoothing/smoothing_2d.gd" id="2_4674m"]
 [ext_resource type="Texture2D" uid="uid://bsrxijrgft7ev" path="res://SlimCar16Blue.png" id="3_vxi5v"]
+[ext_resource type="Texture2D" uid="uid://pdk4f2ydoajn" path="res://SlimCar16Blue_sprite.png" id="4_kseun"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_yvsxi"]
 radius = 8.0
@@ -16,6 +17,42 @@ properties/1/path = NodePath(".:rotation")
 properties/1/spawn = true
 properties/1/sync = true
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_itvo3"]
+atlas = ExtResource("4_kseun")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jhdh2"]
+atlas = ExtResource("4_kseun")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s236w"]
+atlas = ExtResource("4_kseun")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nl3rb"]
+atlas = ExtResource("4_kseun")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1kcqx"]
+atlas = ExtResource("4_kseun")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y0ej0"]
+atlas = ExtResource("4_kseun")
+region = Rect2(32, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1j44g"]
+atlas = ExtResource("4_kseun")
+region = Rect2(0, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lupgx"]
+atlas = ExtResource("4_kseun")
+region = Rect2(16, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kb0ob"]
+atlas = ExtResource("4_kseun")
+region = Rect2(32, 32, 16, 16)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_t4c1a"]
 animations = [{
 "frames": [{
@@ -25,11 +62,43 @@ animations = [{
 "loop": true,
 "name": &"idle",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_itvo3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jhdh2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s236w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nl3rb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1kcqx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y0ej0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1j44g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lupgx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kb0ob")
+}],
+"loop": true,
+"name": &"running",
+"speed": 60.0
 }]
 
 [node name="CharacterBody2D" type="CharacterBody2D"]
 visibility_layer = 2
-position = Vector2(312, 203)
+position = Vector2(30, 367)
 motion_mode = 1
 script = ExtResource("1_ttov1")
 
@@ -48,4 +117,4 @@ flags = 7
 position = Vector2(7.62939e-06, 0)
 rotation = 1.5708
 sprite_frames = SubResource("SpriteFrames_t4c1a")
-animation = &"idle"
+animation = &"running"

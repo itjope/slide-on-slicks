@@ -21,10 +21,14 @@ var steering_angle = steering_angle_default
 var acceleration = Vector2.ZERO
 var steer_direction
 
+var animation_node: AnimatedSprite2D
+
 func _ready(): 
+	animation_node = self.get_node("Smoothing2D/AnimatedSprite2D")
 	if not is_multiplayer_authority(): return
 	set_motion_mode(CharacterBody2D.MOTION_MODE_FLOATING)
 	set_floor_snap_length(0.0)
+	
 	
 func apply_friction():
 	if velocity.length() < 5:
@@ -85,8 +89,21 @@ func calculate_steering(delta):
 		#velocity = -new_heading * min(velocity.length(), max_speed_reverse)
 	rotation = new_heading.angle()
 
+
+func _process(delta):
+	if velocity.length() > 10:
+		var animationSpeed  = min(velocity.length() / 200, 1)
+		animation_node.play("running", animationSpeed)
+		
+	else:
+		animation_node.play("idle")
+	
+
 func _physics_process(delta):
-	if  not is_multiplayer_authority(): return
+	if not is_multiplayer_authority():
+		move_and_slide()
+		return
+	
 	acceleration = Vector2.ZERO
 	get_input()
 	apply_friction()
