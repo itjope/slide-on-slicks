@@ -11,10 +11,10 @@ height = 20.0
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ks71c"]
 properties/0/path = NodePath(".:position")
-properties/0/spawn = true
+properties/0/spawn = false
 properties/0/sync = true
 properties/1/path = NodePath(".:rotation")
-properties/1/spawn = true
+properties/1/spawn = false
 properties/1/sync = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_itvo3"]
@@ -98,7 +98,7 @@ animations = [{
 
 [node name="CharacterBody2D" type="CharacterBody2D"]
 visibility_layer = 2
-position = Vector2(30, 367)
+position = Vector2(515, 257)
 motion_mode = 1
 script = ExtResource("1_ttov1")
 
@@ -111,6 +111,7 @@ replication_config = SubResource("SceneReplicationConfig_ks71c")
 
 [node name="Smoothing2D" type="Node2D" parent="."]
 script = ExtResource("2_4674m")
+target = NodePath("..")
 flags = 7
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Smoothing2D"]

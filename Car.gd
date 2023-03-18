@@ -20,16 +20,20 @@ var traction_slow = 0.02
 var steering_angle = steering_angle_default
 var acceleration = Vector2.ZERO
 var steer_direction
+var gridPosition = Vector2.ZERO
 
-var animation_node: AnimatedSprite2D
+enum race_states {GRID, STARTED}
+var race_state = race_states.GRID
+var jumped_start = 0
+
+@onready var animation_node = $Smoothing2D/AnimatedSprite2D
+@onready var collision_shape = $CollisionShape2D
 
 func _ready(): 
-	animation_node = self.get_node("Smoothing2D/AnimatedSprite2D")
 	if not is_multiplayer_authority(): return
 	set_motion_mode(CharacterBody2D.MOTION_MODE_FLOATING)
 	set_floor_snap_length(0.0)
-	
-	
+
 func apply_friction():
 	if velocity.length() < 5:
 		velocity = Vector2.ZERO
@@ -58,9 +62,13 @@ func get_input():
 	if Input.is_action_pressed("break"):
 		acceleration = transform.x * braking
 	
-	if Input.is_action_pressed("kryckan"): 
+	if Input.is_action_pressed("kryckan"):
 		steering_angle = steering_angle_during_kryckan
 		acceleration = acceleration * kryckan_slownown_factor
+	
+	if jumped_start > 0:
+		acceleration = acceleration * 0.5
+		jumped_start = jumped_start - 1
 		
 	steer_direction = turn * deg_to_rad(steering_angle)
 
@@ -82,26 +90,50 @@ func calculate_steering(delta):
 	var traction = traction_slow
 	if velocity.length() > slip_speed:
 		traction = traction_fast
+
 	var d = new_heading.dot(velocity.normalized())
+
 	#if d >= 0:
 	velocity = velocity.lerp(new_heading * velocity.length(), traction)
 	#if d < 0:
 		#velocity = -new_heading * min(velocity.length(), max_speed_reverse)
 	rotation = new_heading.angle()
 
+func set_grid(pos: Vector2):
+	if not is_multiplayer_authority():
+		return
+	
+	print_debug("set grid on player ", pos)
+	gridPosition = pos
+	set_global_position(pos)
+	find_child("Smoothing2D").teleport()
+
+func race_restart():
+	if not is_multiplayer_authority():
+		return
+	race_state = race_states.GRID
+	set_global_position(gridPosition)
+	rotation = 0
+	await get_tree().create_timer(6).timeout
+	race_state = race_states.STARTED
 
 func _process(delta):
 	if velocity.length() > 10:
 		var animationSpeed  = min(velocity.length() / 200, 1)
 		animation_node.play("running", animationSpeed)
-		
+
 	else:
 		animation_node.play("idle")
-	
 
 func _physics_process(delta):
 	if not is_multiplayer_authority():
 		move_and_slide()
+		return
+	
+	if race_state == race_states.GRID: 
+		velocity = Vector2.ZERO
+		if Input.is_action_pressed("accelerate"):
+			jumped_start = min(jumped_start + 1, 50)
 		return
 	
 	acceleration = Vector2.ZERO
