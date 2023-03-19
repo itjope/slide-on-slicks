@@ -8,7 +8,7 @@ var steering_angle_during_acceleration = 16
 
 var kryckan_slownown_factor = 0.2
 
-var engine_power = 450
+var engine_power = 500
 var friction = -0.0035
 var drag = -0.007
 var braking = -350
@@ -23,7 +23,7 @@ var steer_direction
 var gridPosition = Vector2.ZERO
 
 enum race_states {GRID, STARTED}
-var race_state = race_states.GRID
+var race_state = race_states.STARTED
 var jumped_start = 0
 
 @onready var animation_node = $Smoothing2D/AnimatedSprite2D
@@ -33,6 +33,12 @@ func _ready():
 	if not is_multiplayer_authority(): return
 	set_motion_mode(CharacterBody2D.MOTION_MODE_FLOATING)
 	set_floor_snap_length(0.0)
+
+func _input(event):
+	if event.is_pressed() && event.as_text() == "N":
+		for child in get_children():
+			if child.get_class() == "PointLight2D":
+				child.visible = !child.visible 
 
 func apply_friction():
 	if velocity.length() < 5:
@@ -46,13 +52,18 @@ func get_input():
 	
 	var turn = 0
 	
+	
+	
 	if Input.is_action_pressed("steerRight"):
 		turn += calculate_turn()
 	if Input.is_action_pressed("steerLeft"):
 		turn -= calculate_turn()
+		
+	
 	if Input.is_action_pressed("accelerate"):
 		steering_angle = steering_angle_during_acceleration
 		acceleration = transform.x * engine_power
+		
 	else:
 		if steering_angle < steering_angle_default: 
 			steering_angle = steering_angle + 0.3

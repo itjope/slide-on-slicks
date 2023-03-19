@@ -4,6 +4,7 @@ extends Node2D
 @onready var addressEntry = $CanvasLayer/MainManu/MarginContainer/VBoxContainer/AddressEntry
 @onready var dedicatedServerCheckbox = $CanvasLayer/MainManu/MarginContainer/VBoxContainer/DedicatedServerCheckbox
 @onready var networkNode = $Network
+@onready var canvasModulate = $CanvasModulate
 var Player = preload("res://player.tscn")
 var start_lights = preload("res://start_lights.tscn")
 var PORT = 9999
@@ -11,7 +12,7 @@ var enetPeer = ENetMultiplayerPeer.new()
 var gridPositions = [Vector2(25, 325), Vector2(25, 350), Vector2(75, 325), Vector2(75, 350)]
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	
+	DisplayServer.window_set_size(Vector2i(1920, 1080))
 	
 	if OS.get_cmdline_args().has("--server"):
 		createServer()
@@ -46,7 +47,9 @@ func _input(event):
 		print_debug("restart")
 		rpc("race_restart")
 		race_restart()
-
+	if event.is_pressed() && event.as_text() == "N":
+		canvasModulate.visible = !canvasModulate.visible
+		
 func _on_host_button_pressed():
 	createServer()
 

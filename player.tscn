@@ -1,9 +1,10 @@
-[gd_scene load_steps=17 format=3 uid="uid://b7vs3725r21pu"]
+[gd_scene load_steps=18 format=3 uid="uid://b7vs3725r21pu"]
 
 [ext_resource type="Script" path="res://car.gd" id="1_ttov1"]
 [ext_resource type="Script" path="res://addons/smoothing/smoothing_2d.gd" id="2_4674m"]
 [ext_resource type="Texture2D" uid="uid://bsrxijrgft7ev" path="res://SlimCar16Blue.png" id="3_vxi5v"]
 [ext_resource type="Texture2D" uid="uid://pdk4f2ydoajn" path="res://SlimCar16Blue_sprite.png" id="4_kseun"]
+[ext_resource type="Texture2D" uid="uid://coyo7etiyxyuq" path="res://light.png" id="6_iguve"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_yvsxi"]
 radius = 8.0
@@ -98,7 +99,7 @@ animations = [{
 
 [node name="CharacterBody2D" type="CharacterBody2D"]
 visibility_layer = 2
-position = Vector2(515, 257)
+position = Vector2(-36, 375)
 motion_mode = 1
 script = ExtResource("1_ttov1")
 
@@ -119,3 +120,27 @@ position = Vector2(7.62939e-06, 0)
 rotation = 1.5708
 sprite_frames = SubResource("SpriteFrames_t4c1a")
 animation = &"running"
+
+[node name="PointLight2D2" type="PointLight2D" parent="."]
+visible = false
+position = Vector2(-6.99997, 0.999981)
+scale = Vector2(2.90631, 1.08984)
+energy = 0.94
+shadow_enabled = true
+shadow_filter = 1
+shadow_filter_smooth = 11.5
+texture = ExtResource("6_iguve")
+offset = Vector2(100, 2.08165e-12)
+texture_scale = 0.5
+
+[node name="PointLight2D3" type="PointLight2D" parent="."]
+visible = false
+position = Vector2(-6, 0)
+scale = Vector2(1.40385, 0.355469)
+energy = 1.32
+shadow_enabled = true
+shadow_filter = 1
+shadow_filter_smooth = 11.5
+texture = ExtResource("6_iguve")
+offset = Vector2(100, 2.08165e-12)
+texture_scale = 0.5
