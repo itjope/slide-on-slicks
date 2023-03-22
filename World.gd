@@ -9,7 +9,7 @@ var Player = preload("res://player.tscn")
 var start_lights = preload("res://start_lights.tscn")
 var PORT = 9999
 var enetPeer = ENetMultiplayerPeer.new()
-var gridPositions = [Vector2(25, 325), Vector2(25, 350), Vector2(75, 325), Vector2(75, 350)]
+var gridPositions = [Vector2(200, 335), Vector2(200, 360), Vector2(250, 335), Vector2(250, 360)]
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	DisplayServer.window_set_size(Vector2i(1920, 1080))

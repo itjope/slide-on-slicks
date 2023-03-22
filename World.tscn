@@ -1,7 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://1xpslghvss7h"]
+[gd_scene load_steps=11 format=3 uid="uid://1xpslghvss7h"]
 
 [ext_resource type="Script" path="res://world.gd" id="1_f8kds"]
-[ext_resource type="Texture2D" uid="uid://dc28k687b1fwk" path="res://track.png" id="2_thtx7"]
+[ext_resource type="PackedScene" uid="uid://cf7j88014wcb3" path="res://track1.tscn" id="2_rgu1f"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0ddpk"]
 size = Vector2(32.75, 676)
@@ -27,24 +27,16 @@ polygon = PackedVector2Array(635, 258, 582, 323, 518, 361, 423, 405, 653, 409, 6
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_tmch0"]
 polygon = PackedVector2Array(-2, 127, 20, 161, 42, 178, 48, 185, 69, 193, 144, 195, 245, 202, 319, 203, 336, 202, 345, 195, 359, 191, 369, 191, 371, 201, 372, 211, 370, 218, 360, 221, 325, 223, 191, 215, 25, 215, 18, 217, 14, 230, 5, 247, 1, 263, -5, 278)
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qsmkm"]
-texture = ExtResource("2_thtx7")
-0:0/0 = 0
-1:0/0 = 0
-0:1/0 = 0
-1:1/0 = 0
-
-[sub_resource type="TileSet" id="TileSet_1hhq7"]
-sources/5 = SubResource("TileSetAtlasSource_qsmkm")
-
 [node name="World" type="Node2D"]
 script = ExtResource("1_f8kds")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
+visible = false
 color = Color(0.345098, 0.345098, 0.345098, 1)
 polygon = PackedVector2Array(-22, -11, -20, 414, 659, 418, 658, -13)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 position = Vector2(-17.625, 311)
@@ -63,55 +55,73 @@ position = Vector2(553, 415)
 shape = SubResource("RectangleShape2D_4osci")
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="."]
+visible = false
 
 [node name="Polygon2D9" type="Polygon2D" parent="StaticBody2D2"]
+visible = false
 position = Vector2(117, -4)
 color = Color(0.741385, 0.741385, 0.741385, 1)
 polygon = PackedVector2Array(123, 307, 125, 407, 141, 408, 139, 308)
 
 [node name="Polygon2D2" type="CollisionPolygon2D" parent="StaticBody2D2"]
+visible = false
 position = Vector2(-3, 4)
 polygon = PackedVector2Array(415, 406, 653, 402, 653, 236, 627, 274, 595, 308, 556, 336, 522, 357, 484, 375, 448, 392)
+disabled = true
 
 [node name="Polygon2D4" type="Polygon2D" parent="StaticBody2D2"]
+visible = false
 position = Vector2(-3, 4)
 color = Color(0.163861, 0.163861, 0.163861, 1)
 polygon = PackedVector2Array(415, 406, 653, 402, 653, 236, 627, 274, 595, 308, 556, 336, 522, 357, 484, 375, 448, 392)
 
 [node name="Polygon2D" type="Polygon2D" parent="StaticBody2D2"]
+visible = false
 position = Vector2(10, -5)
 color = Color(0.163861, 0.163861, 0.163861, 1)
 polygon = PackedVector2Array(147, 319, 377, 317, 450, 284, 499, 247, 524, 204, 531, 170, 532, 123, 516, 102, 479, 90, 442, 86, 402, 101, 323, 123, 270, 117, 186, 92, 138, 81, 120, 80, 106, 82, 98, 84, 96, 86, 95, 92, 95, 94, 96, 101, 100, 105, 106, 108, 115, 111, 139, 111, 165, 113, 201, 122, 255, 130, 315, 136, 348, 134, 380, 124, 418, 109, 467, 104, 489, 111, 505, 121, 513, 137, 514, 156, 508, 187, 502, 207, 487, 229, 452, 255, 427, 269, 404, 280, 386, 291, 353, 298, 316, 300, 276, 301, 217, 296, 192, 295, 161, 295, 134, 294, 122, 295, 119, 298, 117, 301, 117, 305, 118, 310, 119, 313, 123, 315, 129, 317, 133, 317)
 
 [node name="Polygon2D10" type="LightOccluder2D" parent="StaticBody2D2"]
+visible = false
 position = Vector2(10, -5)
 occluder = SubResource("OccluderPolygon2D_wja4g")
 
 [node name="Polygon2D3" type="CollisionPolygon2D" parent="StaticBody2D2"]
+visible = false
 position = Vector2(10, -5)
 polygon = PackedVector2Array(147, 319, 377, 317, 450, 284, 499, 247, 524, 204, 531, 170, 532, 123, 516, 102, 479, 90, 442, 86, 402, 101, 323, 123, 270, 117, 186, 92, 138, 81, 120, 80, 106, 82, 98, 84, 96, 86, 95, 92, 95, 94, 96, 101, 100, 105, 106, 108, 115, 111, 139, 111, 165, 113, 201, 122, 255, 130, 315, 136, 348, 133, 384, 122, 418, 109, 467, 104, 489, 111, 505, 121, 513, 137, 514, 156, 508, 187, 502, 207, 487, 229, 452, 255, 427, 269, 404, 280, 386, 291, 353, 298, 316, 300, 276, 301, 217, 296, 192, 295, 161, 295, 134, 294, 122, 295, 119, 298, 117, 301, 117, 305, 118, 310, 119, 313, 123, 315, 129, 317, 133, 317)
+disabled = true
 
 [node name="Polygon2D5" type="Polygon2D" parent="StaticBody2D2"]
+visible = false
 color = Color(0.163861, 0.163861, 0.163861, 1)
 polygon = PackedVector2Array(445, -2, 407, 22, 372, 27, 338, 25, 286, 19, 257, 12, 230, -5)
 
 [node name="Polygon2D6" type="CollisionPolygon2D" parent="StaticBody2D2"]
+visible = false
 polygon = PackedVector2Array(445, -2, 407, 22, 372, 27, 338, 25, 286, 19, 257, 12, 230, -5)
+disabled = true
 
 [node name="Polygon2D7" type="Polygon2D" parent="StaticBody2D2"]
+visible = false
 color = Color(0.163861, 0.163861, 0.163861, 1)
 polygon = PackedVector2Array(-6, 284, 3, 258, 9, 232, 17, 217, 30, 215, 98, 215, 187, 215, 295, 220, 328, 220, 345, 220, 360, 220, 365, 222, 368, 221, 370, 218, 371, 214, 371, 208, 371, 202, 370, 195, 366, 192, 360, 190, 355, 190, 350, 193, 347, 195, 341, 198, 335, 199, 324, 202, 316, 203, 306, 204, 268, 203, 190, 197, 160, 195, 114, 194, 89, 194, 72, 194, 59, 190, 49, 186, 47, 183, 37, 174, 30, 169, 21, 160, 17, 155, 13, 147, 6, 138, -17, 107)
 
 [node name="Polygon2D8" type="CollisionPolygon2D" parent="StaticBody2D2"]
+visible = false
 polygon = PackedVector2Array(-6, 284, 3, 258, 9, 232, 17, 217, 30, 215, 98, 215, 187, 215, 295, 220, 328, 220, 345, 220, 360, 220, 365, 222, 368, 221, 370, 218, 371, 214, 371, 208, 371, 202, 370, 195, 366, 192, 360, 190, 355, 190, 350, 193, 347, 195, 341, 198, 335, 199, 324, 202, 316, 203, 306, 204, 268, 203, 190, 197, 160, 195, 114, 194, 89, 194, 72, 194, 59, 190, 49, 186, 47, 183, 37, 174, 30, 169, 21, 160, 17, 155, 13, 147, 6, 138, -17, 107)
+disabled = true
 
 [node name="LightOccluder2D2" type="LightOccluder2D" parent="StaticBody2D2"]
+visible = false
 occluder = SubResource("OccluderPolygon2D_nbaa8")
 
 [node name="LightOccluder2D3" type="LightOccluder2D" parent="StaticBody2D2"]
+visible = false
 occluder = SubResource("OccluderPolygon2D_cqjk3")
 
 [node name="LightOccluder2D" type="LightOccluder2D" parent="StaticBody2D2"]
+visible = false
 occluder = SubResource("OccluderPolygon2D_tmch0")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -167,47 +177,16 @@ text = "Host"
 layout_mode = 2
 text = "Dedicated server"
 
-[node name="SettingsMenu" type="PanelContainer" parent="CanvasLayer"]
-visible = false
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 329.0
-offset_top = 164.0
-offset_right = -329.0
-offset_bottom = -164.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/SettingsMenu"]
-layout_mode = 2
-theme_override_constants/margin_left = 15
-theme_override_constants/margin_top = 15
-theme_override_constants/margin_right = 15
-theme_override_constants/margin_bottom = 15
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SettingsMenu/MarginContainer"]
-layout_mode = 2
-theme_override_constants/separation = 15
-
-[node name="Label" type="Label" parent="CanvasLayer/SettingsMenu/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Settings"
+[node name="Label" type="Label" parent="CanvasLayer"]
+offset_left = 6.0
+offset_top = 384.0
+offset_right = 101.0
+offset_bottom = 401.0
+theme_override_colors/font_color = Color(0.172549, 0.117647, 0.133333, 1)
+theme_override_font_sizes/font_size = 10
+text = "LAP 3 / 50       POSITION #1       LAST LAP  00:20.123       BEST LAP  00:19.123       TIRES: 89%       RAIN 10%  "
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="Label2" type="Label" parent="CanvasLayer/SettingsMenu/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Engine Power"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="EnginePower" type="LineEdit" parent="CanvasLayer/SettingsMenu/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "800"
-alignment = 1
-caret_blink = true
-caret_blink_interval = 0.5
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("res://player.tscn")
@@ -216,14 +195,11 @@ spawn_limit = 4
 
 [node name="Network" type="Node" parent="."]
 
-[node name="TileMap" type="TileMap" parent="."]
-tile_set = SubResource("TileSet_1hhq7")
-format = 2
-layer_0/tile_data = PackedInt32Array(1572864, 5, 0, 1572865, 5, 0, 1572866, 5, 0, 1572867, 5, 0, 1572868, 5, 0, 1572882, 5, 0, 1572883, 5, 0, 1572884, 5, 0, 1572885, 5, 0, 1572886, 5, 0, 1572887, 5, 0, 1572888, 5, 0, 1572889, 5, 0, 1572890, 5, 0, 1572869, 5, 1, 1572870, 5, 1, 1572871, 5, 1, 1572872, 5, 1, 1572873, 5, 1, 1572874, 5, 1, 1572875, 5, 1, 1572876, 5, 1, 1572877, 5, 1, 1572878, 5, 1, 1572879, 5, 1, 1572880, 5, 1, 1572881, 5, 1)
-
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
 visible = false
 color = Color(0.113725, 0.392157, 0.776471, 1)
+
+[node name="track1" parent="." instance=ExtResource("2_rgu1f")]
 
 [connection signal="pressed" from="CanvasLayer/MainManu/MarginContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainManu/MarginContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
