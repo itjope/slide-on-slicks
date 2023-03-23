@@ -30,7 +30,9 @@ var jumped_start = 0
 enum surfaces {TARMAC, GRASS}
 var surface = surfaces.TARMAC
 
-@onready var animation_node = $Smoothing2D/AnimatedSprite2D
+@onready var animation_node_blue = $Smoothing2D/AnimatedSpriteBlue
+@onready var animation_node_pink = $Smoothing2D/AnimatedSpritePink
+@onready var animation_node = animation_node_blue
 @onready var collision_shape = $CollisionShape2D
 @onready var grass_particles_left = $GrassParticlesLeft
 @onready var grass_particles_right = $GrassParticlesRight
@@ -38,8 +40,11 @@ var surface = surfaces.TARMAC
 @export var emit_grass_left = false
 @export var emit_grass_right = false
 
-func _ready(): 
+func _ready():
 	if not is_multiplayer_authority(): return
+	animation_node = animation_node_pink
+	animation_node_blue.visible = false
+	animation_node.visible = true
 	set_motion_mode(CharacterBody2D.MOTION_MODE_FLOATING)
 	set_floor_snap_length(0.0)
 
@@ -148,7 +153,7 @@ func _process(delta):
 		animation_node.play("running", animationSpeed)
 
 	else:
-		animation_node.play("idle")
+		animation_node.play("running", 0)
 		if is_multiplayer_authority():
 			emit_grass_left = false
 			emit_grass_right = false

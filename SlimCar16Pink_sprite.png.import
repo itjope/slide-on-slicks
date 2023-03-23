@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bsrxijrgft7ev"
-path="res://.godot/imported/SlimCar16Blue.png-02dba4ccee4ad4c0d745158894f5c373.ctex"
+uid="uid://fcxay20vnyhp"
+path="res://.godot/imported/SlimCar16Pink_sprite.png-5dbe4cff85548a90b85fe222eb3480cd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://SlimCar16Blue.png"
-dest_files=["res://.godot/imported/SlimCar16Blue.png-02dba4ccee4ad4c0d745158894f5c373.ctex"]
+source_file="res://SlimCar16Pink_sprite.png"
+dest_files=["res://.godot/imported/SlimCar16Pink_sprite.png-5dbe4cff85548a90b85fe222eb3480cd.ctex"]
 
 [params]
 
