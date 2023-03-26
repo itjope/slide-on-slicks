@@ -94,7 +94,6 @@ func get_input():
 	
 	if jumped_start > 0:
 		acceleration = acceleration * 0.5
-		jumped_start = jumped_start - 1
 		
 	steer_direction = turn * deg_to_rad(steering_angle)
 
@@ -169,9 +168,13 @@ func _physics_process(delta):
 	if race_state == race_states.GRID: 
 		velocity = Vector2.ZERO
 		if Input.is_action_pressed("accelerate"):
-			jumped_start = min(jumped_start + 1, 50)
+			jumped_start = min(jumped_start + 2, 50)
+		else: 
+			jumped_start = max(jumped_start - 1, 0)
 		return
-	
+	else:
+		jumped_start = max(jumped_start - 1, 0)
+		
 	acceleration = Vector2.ZERO
 	get_input()
 	apply_friction()

@@ -208,6 +208,8 @@ visibility_layer = 2
 position = Vector2(-36, 375)
 motion_mode = 1
 script = ExtResource("1_ttov1")
+emit_grass_left = null
+emit_grass_right = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708
