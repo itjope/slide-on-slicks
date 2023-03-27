@@ -40,6 +40,13 @@ var surface = surfaces.TARMAC
 @export var emit_grass_left = false
 @export var emit_grass_right = false
 
+@export var inputs = {
+	"steerLeft": false,
+	"steerRight": false,
+	"accelerate": false
+}
+@export var network_velocity = Vector2.ZERO
+
 func _ready():
 	if not is_multiplayer_authority(): return
 	animation_node = animation_node_pink
@@ -67,14 +74,14 @@ func get_input():
 	
 	var turn = 0
 	
-	
+	inputs.steerRight = Input.is_action_pressed("steerRight")
+	inputs.steerLeft = Input.is_action_pressed("steerLeft")
+	inputs.accelerate = Input.is_action_pressed("accelerate")
 	
 	if Input.is_action_pressed("steerRight"):
 		turn += calculate_turn()
 	if Input.is_action_pressed("steerLeft"):
 		turn -= calculate_turn()
-		
-	
 	if Input.is_action_pressed("accelerate"):
 		steering_angle = steering_angle_during_acceleration
 		acceleration = transform.x * engine_power
@@ -94,6 +101,26 @@ func get_input():
 	
 	if jumped_start > 0:
 		acceleration = acceleration * 0.5
+		
+	steer_direction = turn * deg_to_rad(steering_angle)
+
+func get_input2():
+	var turn = 0
+	
+	if inputs.steerRight:
+		turn += calculate_turn()
+	if inputs.steerLeft:
+		turn -= calculate_turn()
+	if inputs.accelerate:
+		steering_angle = steering_angle_during_acceleration
+		acceleration = transform.x * engine_power
+		
+	else:
+		if steering_angle < steering_angle_default: 
+			steering_angle = steering_angle + 0.3
+		else:
+			steering_angle = steering_angle_default
+	
 		
 	steer_direction = turn * deg_to_rad(steering_angle)
 
@@ -160,9 +187,23 @@ func _process(delta):
 	grass_particles_left.emitting = emit_grass_left
 	grass_particles_right.emitting = emit_grass_right
 
+
+func predict(delta):
+	velocity = network_velocity
+	get_input2()
+	apply_friction()
+	calculate_steering(delta)
+	move_and_slide()
+	if get_slide_collision_count() > 0:
+		velocity = velocity * 0.90
+	
+	if surface == surfaces.GRASS:
+		velocity = velocity * 0.96
+	
+
 func _physics_process(delta):
 	if not is_multiplayer_authority():
-		move_and_slide()
+		predict(delta)
 		return
 	
 	if race_state == race_states.GRID: 
@@ -186,6 +227,8 @@ func _physics_process(delta):
 		
 	if surface == surfaces.GRASS:
 		velocity = velocity * 0.96
+	
+	network_velocity = velocity
 	
 func _enter_tree():
 	set_multiplayer_authority(str(name).to_int())

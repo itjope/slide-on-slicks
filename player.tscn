@@ -19,11 +19,17 @@ properties/1/path = NodePath(".:rotation")
 properties/1/spawn = false
 properties/1/sync = true
 properties/2/path = NodePath(".:emit_grass_left")
-properties/2/spawn = true
+properties/2/spawn = false
 properties/2/sync = true
 properties/3/path = NodePath(".:emit_grass_right")
-properties/3/spawn = true
+properties/3/spawn = false
 properties/3/sync = true
+properties/4/path = NodePath(".:inputs")
+properties/4/spawn = false
+properties/4/sync = true
+properties/5/path = NodePath(".:network_velocity")
+properties/5/spawn = true
+properties/5/sync = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tkpbv"]
 atlas = ExtResource("4_kseun")
@@ -208,8 +214,6 @@ visibility_layer = 2
 position = Vector2(-36, 375)
 motion_mode = 1
 script = ExtResource("1_ttov1")
-emit_grass_left = null
-emit_grass_right = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708
