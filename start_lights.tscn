@@ -55,7 +55,7 @@ animations = [{
 [node name="start_lights" type="Node2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(303, 344)
+position = Vector2(377, 344)
 sprite_frames = SubResource("SpriteFrames_desu6")
 animation = &"starting"
 autoplay = "starting"

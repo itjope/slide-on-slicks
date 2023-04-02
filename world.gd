@@ -11,7 +11,7 @@ var Player = preload("res://player.tscn")
 var start_lights = preload("res://start_lights.tscn")
 var PORT = 9999
 var enetPeer = ENetMultiplayerPeer.new()
-var gridPositions = [Vector2(200, 335), Vector2(200, 360), Vector2(250, 335), Vector2(250, 360)]
+var gridPositions = [Vector2(220, 335), Vector2(240, 360), Vector2(280, 335), Vector2(300, 360)]
 var carColors = ["blue", "pink", "green", "yellow"]
 var isServer = false
 
