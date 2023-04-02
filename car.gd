@@ -30,23 +30,35 @@ var jumped_start = 0
 enum surfaces {TARMAC, GRASS}
 var surface = surfaces.TARMAC
 
-@onready var animation_node_blue = $Smoothing2D/AnimatedSpriteBlue
-@onready var animation_node_pink = $Smoothing2D/AnimatedSpritePink
-@onready var animation_node = animation_node_blue
+#@onready var animation_node_blue = $Smoothing2D/AnimatedSpriteBlue
+#@onready var animation_node_pink = $Smoothing2D/AnimatedSpritePink
+@onready var animation_node = $Smoothing2D/AnimatedSprite
+
+#@onready var animation_node = car_animations.blue
 @onready var collision_shape = $CollisionShape2D
 @onready var grass_particles_left = $GrassParticlesLeft
 @onready var grass_particles_right = $GrassParticlesRight
+@onready var player_nick_label = $PlayerNickLabel
 
 @export var emit_grass_left = false
 @export var emit_grass_right = false
 
+@export var inputs = {
+	"steerLeft": false,
+	"steerRight": false,
+	"accelerate": false
+}
+@export var network_velocity = Vector2.ZERO
+@export var player_nick = ""
+@export var car_animation_color = "blue"
+
 func _ready():
 	if not is_multiplayer_authority(): return
-	animation_node = animation_node_pink
-	animation_node_blue.visible = false
-	animation_node.visible = true
 	set_motion_mode(CharacterBody2D.MOTION_MODE_FLOATING)
 	set_floor_snap_length(0.0)
+	player_nick_label.text = player_nick
+	#animation_node.set_animation(car_animation_color)
+	
 
 func _input(event):
 	if event.is_pressed() && event.as_text() == "N":
@@ -67,14 +79,14 @@ func get_input():
 	
 	var turn = 0
 	
-	
+	inputs.steerRight = Input.is_action_pressed("steerRight")
+	inputs.steerLeft = Input.is_action_pressed("steerLeft")
+	inputs.accelerate = Input.is_action_pressed("accelerate")
 	
 	if Input.is_action_pressed("steerRight"):
 		turn += calculate_turn()
 	if Input.is_action_pressed("steerLeft"):
 		turn -= calculate_turn()
-		
-	
 	if Input.is_action_pressed("accelerate"):
 		steering_angle = steering_angle_during_acceleration
 		acceleration = transform.x * engine_power
@@ -94,6 +106,26 @@ func get_input():
 	
 	if jumped_start > 0:
 		acceleration = acceleration * 0.5
+		
+	steer_direction = turn * deg_to_rad(steering_angle)
+
+func get_input2():
+	var turn = 0
+	
+	if inputs.steerRight:
+		turn += calculate_turn()
+	if inputs.steerLeft:
+		turn -= calculate_turn()
+	if inputs.accelerate:
+		steering_angle = steering_angle_during_acceleration
+		acceleration = transform.x * engine_power
+		
+	else:
+		if steering_angle < steering_angle_default: 
+			steering_angle = steering_angle + 0.3
+		else:
+			steering_angle = steering_angle_default
+	
 		
 	steer_direction = turn * deg_to_rad(steering_angle)
 
@@ -136,33 +168,54 @@ func set_grid(pos: Vector2):
 	set_global_position(pos)
 	find_child("Smoothing2D").teleport()
 
+func set_nick(nick: String):
+	print_debug("setnick:", nick)
+	player_nick = nick
+	player_nick_label.text = nick
+
 func race_restart():
-	if not is_multiplayer_authority():
-		return
 	race_state = race_states.GRID
-	set_global_position(gridPosition)
 	rotation = 0
+	player_nick_label.visible = true
+	player_nick_label.text = player_nick
+	if is_multiplayer_authority():
+		set_global_position(gridPosition)
+	
 	await get_tree().create_timer(6).timeout
 	race_state = race_states.STARTED
-
-func _process(delta):
+	player_nick_label.visible = false
 	
+func _process(delta):
 	if velocity.length() > 10:
 		var animationSpeed  = min(velocity.length() / 200, 1)
-		animation_node.play("running", animationSpeed)
+		animation_node.play(car_animation_color, animationSpeed)
 
 	else:
-		animation_node.play("running", 0)
+		animation_node.play(car_animation_color, 0)
 		if is_multiplayer_authority():
 			emit_grass_left = false
 			emit_grass_right = false
 		
 	grass_particles_left.emitting = emit_grass_left
 	grass_particles_right.emitting = emit_grass_right
+	
+
+func predict(delta):
+	velocity = network_velocity
+	get_input2()
+	apply_friction()
+	calculate_steering(delta)
+	move_and_slide()
+	if get_slide_collision_count() > 0:
+		velocity = velocity * 0.90
+	
+	if surface == surfaces.GRASS:
+		velocity = velocity * 0.96
+	
 
 func _physics_process(delta):
 	if not is_multiplayer_authority():
-		move_and_slide()
+		predict(delta)
 		return
 	
 	if race_state == race_states.GRID: 
@@ -187,11 +240,11 @@ func _physics_process(delta):
 	if surface == surfaces.GRASS:
 		velocity = velocity * 0.96
 	
-func _enter_tree():
-	set_multiplayer_authority(str(name).to_int())
+	network_velocity = velocity
 	
-
-
+func _enter_tree():
+	print_debug("Enter tree ",  name)
+	set_multiplayer_authority(str(name).to_int())
 
 func _on_area_2d_area_entered(area: Area2D):
 	if area.name == "Grass":
