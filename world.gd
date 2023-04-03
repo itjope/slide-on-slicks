@@ -18,7 +18,7 @@ var carColors = ["blue", "pink", "green", "yellow"]
 var isServer = false
 
 func _ready():
-	#DisplayServer.window_set_size(Vector2i(1920, 1080))
+	DisplayServer.window_set_size(Vector2i(1920, 1080))
 	
 	if OS.get_cmdline_args().has("--server"):
 		createServer()
@@ -136,7 +136,7 @@ func removePlayer(peerId):
 
 
 func _on_network_child_entered_tree(node):
-	await get_tree().create_timer(2).timeout
+	await get_tree().create_timer(4).timeout
 	
 	rpc("player_nick_update", str(multiplayer.get_unique_id()), playerNameEntry.text)
 	if str(multiplayer.get_unique_id()) == node.name:

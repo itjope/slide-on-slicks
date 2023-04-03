@@ -8,7 +8,7 @@ var steering_angle_during_acceleration = 20
 
 var kryckan_slownown_factor = 0.2
 
-var engine_power = 450
+var engine_power = 400
 var friction = -0.0035
 var drag = -0.007
 var braking = -350
@@ -49,6 +49,7 @@ var surface = surfaces.TARMAC
 	"accelerate": false
 }
 @export var network_velocity = Vector2.ZERO
+@export var network_transform = transform
 @export var player_nick = ""
 @export var car_animation_color = "blue"
 
@@ -202,17 +203,18 @@ func _process(delta):
 	
 
 func predict(delta):
-	#velocity = network_velocity
+	transform.x = lerp(transform.x, network_transform.x, 0.8)
+	transform.y = lerp(transform.y, network_transform.y, 0.8)
 	get_input2()
 	apply_friction()
 	calculate_steering(delta)
+	velocity = lerp(acceleration * delta, network_velocity, 0.8)
 	move_and_slide()
 	if get_slide_collision_count() > 0:
 		velocity = velocity * 0.90
 	
 	if surface == surfaces.GRASS:
 		velocity = velocity * 0.96
-	
 
 func _physics_process(delta):
 	if not is_multiplayer_authority():
@@ -245,6 +247,7 @@ func _physics_process(delta):
 		velocity = velocity * 0.96
 	
 	network_velocity = velocity
+	network_transform = transform
 	
 func _enter_tree():
 	print_debug("Enter tree ",  name)

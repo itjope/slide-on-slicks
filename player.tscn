@@ -32,6 +32,9 @@ properties/4/sync = true
 properties/5/path = NodePath(".:network_velocity")
 properties/5/spawn = false
 properties/5/sync = true
+properties/6/path = NodePath(".:network_transform")
+properties/6/spawn = true
+properties/6/sync = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tkpbv"]
 atlas = ExtResource("4_kseun")
@@ -360,7 +363,7 @@ replication_config = SubResource("SceneReplicationConfig_ks71c")
 [node name="Smoothing2D" type="Node2D" parent="."]
 script = ExtResource("2_4674m")
 target = NodePath("..")
-flags = 7
+flags = 55
 
 [node name="AnimatedSprite" type="AnimatedSprite2D" parent="Smoothing2D"]
 position = Vector2(7.62939e-06, 0)
