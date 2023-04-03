@@ -1,7 +1,8 @@
-[gd_scene load_steps=11 format=3 uid="uid://1xpslghvss7h"]
+[gd_scene load_steps=12 format=3 uid="uid://1xpslghvss7h"]
 
 [ext_resource type="Script" path="res://world.gd" id="1_f8kds"]
 [ext_resource type="PackedScene" uid="uid://cf7j88014wcb3" path="res://track1.tscn" id="2_rgu1f"]
+[ext_resource type="Texture2D" uid="uid://be8i1155my3rt" path="res://splash.png" id="2_rhbwk"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0ddpk"]
 size = Vector2(32.75, 676)
@@ -126,6 +127,12 @@ occluder = SubResource("OccluderPolygon2D_tmch0")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
+[node name="SplashImage" type="TextureRect" parent="CanvasLayer"]
+self_modulate = Color(0.117647, 0.117647, 0.109804, 1)
+offset_right = 641.0
+offset_bottom = 400.0
+texture = ExtResource("2_rhbwk")
+
 [node name="MainManu" type="PanelContainer" parent="CanvasLayer"]
 anchors_preset = 15
 anchor_right = 1.0
@@ -167,14 +174,23 @@ vertical_alignment = 1
 
 [node name="HSeparator2" type="HSeparator" parent="CanvasLayer/MainManu/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 0
 
 [node name="Label" type="Label" parent="CanvasLayer/MainManu/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Server host"
+text = "Server"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="AddressList" type="ItemList" parent="CanvasLayer/MainManu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+auto_height = true
+item_count = 2
+item_0/text = "Stockholm 1"
+item_1/text = "Custom"
+
 [node name="AddressEntry" type="LineEdit" parent="CanvasLayer/MainManu/MarginContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 text = "127.0.0.1"
 placeholder_text = "Server address"
@@ -188,6 +204,7 @@ text = "Join"
 
 [node name="HSeparator" type="HSeparator" parent="CanvasLayer/MainManu/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 0
 
 [node name="HostButton" type="Button" parent="CanvasLayer/MainManu/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -197,7 +214,8 @@ text = "Host"
 layout_mode = 2
 text = "Dedicated server"
 
-[node name="Label" type="Label" parent="CanvasLayer"]
+[node name="StatusBarLabel" type="Label" parent="CanvasLayer"]
+visible = false
 offset_left = 76.0
 offset_top = 382.0
 offset_right = 569.0
@@ -222,6 +240,7 @@ color = Color(0.113725, 0.392157, 0.776471, 1)
 
 [node name="track1" parent="." instance=ExtResource("2_rgu1f")]
 
+[connection signal="item_selected" from="CanvasLayer/MainManu/MarginContainer/VBoxContainer/AddressList" to="." method="_on_address_list_item_selected"]
 [connection signal="pressed" from="CanvasLayer/MainManu/MarginContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainManu/MarginContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
 [connection signal="child_entered_tree" from="Network" to="." method="_on_network_child_entered_tree"]

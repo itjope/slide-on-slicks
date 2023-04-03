@@ -5,6 +5,8 @@ extends Node2D
 @onready var playerNameEntry = $CanvasLayer/MainManu/MarginContainer/VBoxContainer/PlayerNameEntry
 @onready var playerNameError = $CanvasLayer/MainManu/MarginContainer/VBoxContainer/LabelPlayerNameError
 @onready var dedicatedServerCheckbox = $CanvasLayer/MainManu/MarginContainer/VBoxContainer/DedicatedServerCheckbox
+@onready var serverAddressList = $CanvasLayer/MainManu/MarginContainer/VBoxContainer/AddressList
+@onready var splashImage = $CanvasLayer/SplashImage
 @onready var networkNode = $Network
 @onready var canvasModulate = $CanvasModulate
 var Player = preload("res://player.tscn")
@@ -16,7 +18,7 @@ var carColors = ["blue", "pink", "green", "yellow"]
 var isServer = false
 
 func _ready():
-	DisplayServer.window_set_size(Vector2i(1920, 1080))
+	#DisplayServer.window_set_size(Vector2i(1920, 1080))
 	
 	if OS.get_cmdline_args().has("--server"):
 		createServer()
@@ -33,6 +35,7 @@ func createServer():
 	
 	print("PORT: ", PORT)
 	mainMenu.hide()
+	splashImage.hide()
 	enetPeer.create_server(PORT)
 	
 	multiplayer.multiplayer_peer = enetPeer
@@ -69,6 +72,7 @@ func _on_join_button_pressed():
 		playerNameError.visible = true
 	else:
 		mainMenu.hide()
+		splashImage.hide()
 		var error = enetPeer.create_client(addressEntry.text, PORT)
 		if error != OK:
 			OS.alert("Failed to connect!")
@@ -132,7 +136,7 @@ func removePlayer(peerId):
 
 
 func _on_network_child_entered_tree(node):
-	await get_tree().create_timer(0).timeout
+	await get_tree().create_timer(2).timeout
 	
 	rpc("player_nick_update", str(multiplayer.get_unique_id()), playerNameEntry.text)
 	if str(multiplayer.get_unique_id()) == node.name:
@@ -150,5 +154,10 @@ func _on_network_child_entered_tree(node):
 		var gridPos = networkNode.get_child_count() - 1
 		rpc_id(int(str(node.name)), "set_grid_pos", node.name, gridPos)
 		
-		
-	
+func _on_address_list_item_selected(index):
+	if index == 0:
+		addressEntry.text = "46.246.39.82"
+		addressEntry.visible = false
+	else:
+		addressEntry.visible = true
+		addressEntry.text = "localhost"

@@ -176,14 +176,15 @@ func set_nick(nick: String):
 func race_restart():
 	race_state = race_states.GRID
 	rotation = 0
-	player_nick_label.visible = true
 	player_nick_label.text = player_nick
+	player_nick_label.visible = true
+	
 	if is_multiplayer_authority():
 		set_global_position(gridPosition)
-	
-	await get_tree().create_timer(6).timeout
-	race_state = race_states.STARTED
+	await get_tree().create_timer(4).timeout
 	player_nick_label.visible = false
+	await get_tree().create_timer(2).timeout
+	race_state = race_states.STARTED
 	
 func _process(delta):
 	if velocity.length() > 10:
@@ -201,7 +202,7 @@ func _process(delta):
 	
 
 func predict(delta):
-	velocity = network_velocity
+	#velocity = network_velocity
 	get_input2()
 	apply_friction()
 	calculate_steering(delta)
@@ -215,7 +216,10 @@ func predict(delta):
 
 func _physics_process(delta):
 	if not is_multiplayer_authority():
-		predict(delta)
+		if race_state == race_states.GRID: 
+			velocity = Vector2.ZERO
+		else:
+			predict(delta)
 		return
 	
 	if race_state == race_states.GRID: 
