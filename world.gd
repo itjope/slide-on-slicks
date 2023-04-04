@@ -9,6 +9,7 @@ extends Node2D
 @onready var splashImage = $CanvasLayer/SplashImage
 @onready var networkNode = $Network
 @onready var canvasModulate = $CanvasModulate
+
 var Player = preload("res://player.tscn")
 var start_lights = preload("res://start_lights.tscn")
 var PORT = 9999
@@ -18,11 +19,12 @@ var carColors = ["blue", "pink", "green", "yellow"]
 var isServer = false
 
 func _ready():
-	DisplayServer.window_set_size(Vector2i(1920, 1080))
+	if OS.is_debug_build():
+		DisplayServer.window_set_size(Vector2i(1920, 1080))
+		playerNameEntry.text = "P" + str(randi() % 100)
 	
 	if OS.get_cmdline_args().has("--server"):
 		createServer()
-		
 
 func createServer():
 	print("Starting server...")
@@ -45,7 +47,6 @@ func createServer():
 	if not dedicatedServerCheckbox.is_pressed() && not args.has("--server"):
 		addHostedPlayer(multiplayer.get_unique_id())
 		
-	
 	print("Server started")
 
 func _process(delta):
