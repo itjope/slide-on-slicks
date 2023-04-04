@@ -201,6 +201,11 @@ func _process(delta):
 	grass_particles_left.emitting = emit_grass_left
 	grass_particles_right.emitting = emit_grass_right
 	
+	if not is_multiplayer_authority():
+		# TODO: Use a better way to calculate weight
+		var weight = min(1, delta * 100)
+		velocity = lerp(acceleration * delta, network_velocity * delta, weight)
+	
 
 func predict(delta):
 	transform.x = lerp(transform.x, network_transform.x, 0.8)
@@ -208,7 +213,7 @@ func predict(delta):
 	get_input2()
 	apply_friction()
 	calculate_steering(delta)
-	velocity = lerp(acceleration * delta, network_velocity, 0.8)
+	
 	move_and_slide()
 	if get_slide_collision_count() > 0:
 		velocity = velocity * 0.90
