@@ -1,5 +1,6 @@
-[gd_scene load_steps=15 format=3 uid="uid://cf7j88014wcb3"]
+[gd_scene load_steps=22 format=3 uid="uid://cf7j88014wcb3"]
 
+[ext_resource type="Script" path="res://raceinfo.gd" id="1_o7s5l"]
 [ext_resource type="Texture2D" uid="uid://dc28k687b1fwk" path="res://track.png" id="1_ytogx"]
 [ext_resource type="Texture2D" uid="uid://dkmltchj7rp7f" path="res://stones.png" id="2_ckv5v"]
 
@@ -155,7 +156,26 @@ occlusion_layer_0/light_mask = 1
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_mhb6t")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2pabw"]
+size = Vector2(10, 101)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3oyoj"]
+size = Vector2(10.375, 104)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_p3had"]
+size = Vector2(120, 12)
+
+[sub_resource type="SystemFont" id="SystemFont_1dvp5"]
+font_names = PackedStringArray("Monospace")
+
+[sub_resource type="SystemFont" id="SystemFont_lj3qi"]
+font_names = PackedStringArray("Monospace")
+
+[sub_resource type="SystemFont" id="SystemFont_nq8fa"]
+font_names = PackedStringArray("Monospace")
+
 [node name="track1" type="Node2D"]
+script = ExtResource("1_o7s5l")
 
 [node name="Grass" type="Area2D" parent="."]
 
@@ -183,3 +203,71 @@ layer_0/tile_data = PackedInt32Array(0, 0, 0, 1, 196608, 2, 3, 65536, 4, 4, 1310
 tile_set = SubResource("TileSet_7ah0t")
 format = 2
 layer_0/tile_data = PackedInt32Array(1114138, 65536, 1, 1114139, 0, 1, 1114140, 65536, 1, 1114141, 65536, 1, 1114142, 65536, 1, 1114143, 65536, 1, 1114144, 65536, 1, 1114145, 65536, 2, 1572903, 65536, 2, 1572902, 65536, 1, 1572901, 65536, 1, 1572900, 65536, 1, 1572899, 65536, 1, 1572898, 65536, 1, 1572897, 65536, 1, 1572896, 65536, 1, 1572895, 65536, 1, 1572894, 65536, 1, 1572893, 65536, 1, 1572892, 65536, 1, 1572891, 65536, 1, 1572890, 65536, 1, 1572889, 65536, 1, 1572888, 65536, 1, 1572887, 65536, 1, 1572886, 65536, 1, 1572885, 65536, 1, 1572884, 65536, 1, 1572883, 65536, 1, 1572882, 65536, 1, 1572881, 65536, 1, 1572880, 65536, 1, 1572879, 65536, 1, 1572878, 65536, 1, 1572877, 65536, 1, 1572876, 65536, 1, 1572875, 65536, 1, 1572874, 65536, 1, 1572873, 65536, 1, 1572872, 65536, 1, 1572871, 65536, 1, 1572870, 65536, 1, 1572869, 65536, 1, 1572868, 65536, 1, 1572867, 65536, 1, 1572866, 65536, 1, 1572865, 65536, 1, 1572864, 65536, 0, 1114137, 65536, 0, 458760, 0, 0, 458761, 0, 0, 458762, 0, 0, 458763, 0, 0, 458766, 0, 0, 458765, 0, 0, 458764, 0, 0, 393231, 0, 0, 393232, 0, 0, 393233, 0, 0, 393234, 0, 0, 393235, 0, 0, 393236, 0, 0, 655389, 131072, 2, 589853, 131072, 0, 524317, 131072, 2, 458781, 131072, 0, 524302, 0, 3, 786450, 0, 3, 393238, 65536, 2, 1114130, 131072, 2, 1114112, 65536, 0, 1114113, 0, 1, 1114114, 65536, 1, 1114115, 65536, 1, 1114116, 65536, 2, 393246, 0, 0, 393247, 0, 0, 327711, 0, 3, 327712, 0, 3, 262176, 0, 3, 262177, 0, 3, 196641, 0, 3, 393237, 65536, 0, 458759, 131072, 0, 524295, 131072, 2, 1048594, 131072, 1, 983058, 0, 2, 917522, 0, 2, 851986, 131072, 0, 1114136, 65536, 2, 1114135, 65536, 1, 1114134, 65536, 0, 1048597, 0, 0, 983060, 0, 0, 1048595, 0, 0, 524304, 0, 3, 458768, 0, 3, 458767, 0, 3, 524303, 0, 3, 589841, 0, 3, 655378, 0, 0, 1048596, 0, 0, 983059, 0, 0, 720914, 0, 3, 131105, 0, 3, 852002, 131072, 0, 917538, 131072, 1, 983074, 131072, 2, 1048609, 0, 0, 196642, 0, 0, 131107, 0, 0, 131108, 0, 0, 131106, 0, 0)
+
+[node name="FinnishLine" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FinnishLine"]
+position = Vector2(436, 336.5)
+shape = SubResource("RectangleShape2D_2pabw")
+
+[node name="Checkpoint1" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Checkpoint1"]
+position = Vector2(347.812, 48)
+shape = SubResource("RectangleShape2D_3oyoj")
+
+[node name="Checkpoint2" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Checkpoint2"]
+position = Vector2(57, 127)
+shape = SubResource("RectangleShape2D_p3had")
+
+[node name="RaceInfo" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="PurpleRect" type="ColorRect" parent="RaceInfo"]
+visible = false
+offset_top = 384.0
+offset_right = 640.0
+offset_bottom = 400.0
+color = Color(1, 0, 1, 0.592157)
+
+[node name="LapCounter" type="Label" parent="RaceInfo"]
+offset_left = 11.0
+offset_top = 385.0
+offset_right = 73.0
+offset_bottom = 402.0
+theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = SubResource("SystemFont_1dvp5")
+theme_override_font_sizes/font_size = 13
+text = "LAP 1"
+vertical_alignment = 1
+
+[node name="LastLapTime" type="Label" parent="RaceInfo"]
+offset_left = 68.0
+offset_top = 384.0
+offset_right = 186.0
+offset_bottom = 402.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.0823529, 0.0823529, 0.0823529, 1)
+theme_override_fonts/font = SubResource("SystemFont_lj3qi")
+theme_override_font_sizes/font_size = 13
+text = "LAST LAP 0:000"
+vertical_alignment = 1
+
+[node name="SessionBestLapTime" type="Label" parent="RaceInfo"]
+offset_left = 194.0
+offset_top = 385.0
+offset_right = 335.0
+offset_bottom = 402.0
+theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.654902)
+theme_override_fonts/font = SubResource("SystemFont_nq8fa")
+theme_override_font_sizes/font_size = 13
+text = "SESSION BEST 0:000"
+vertical_alignment = 1
+
+[connection signal="body_entered" from="FinnishLine" to="." method="_on_finnish_line_body_entered"]
+[connection signal="body_entered" from="Checkpoint1" to="." method="_on_checkpoint_1_body_entered"]
+[connection signal="body_entered" from="Checkpoint2" to="." method="_on_checkpoint_2_body_entered"]

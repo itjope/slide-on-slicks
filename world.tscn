@@ -238,7 +238,9 @@ spawn_limit = 4
 visible = false
 color = Color(0.113725, 0.392157, 0.776471, 1)
 
-[node name="track1" parent="." instance=ExtResource("2_rgu1f")]
+[node name="tracks" type="Node2D" parent="."]
+
+[node name="track1" parent="tracks" instance=ExtResource("2_rgu1f")]
 
 [connection signal="item_selected" from="CanvasLayer/MainManu/MarginContainer/VBoxContainer/AddressList" to="." method="_on_address_list_item_selected"]
 [connection signal="pressed" from="CanvasLayer/MainManu/MarginContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]

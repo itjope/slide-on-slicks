@@ -8,6 +8,7 @@ extends Node2D
 @onready var serverAddressList = $CanvasLayer/MainManu/MarginContainer/VBoxContainer/AddressList
 @onready var splashImage = $CanvasLayer/SplashImage
 @onready var networkNode = $Network
+@onready var tracksNode = $tracks
 @onready var canvasModulate = $CanvasModulate
 
 var Player = preload("res://player.tscn")
@@ -100,6 +101,10 @@ func race_restart():
 	var lights = start_lights.instantiate()
 	for player in networkNode.get_children():
 		player.race_restart()
+	
+	for track in tracksNode.get_children():
+		track.resetLaps()
+		
 	add_child(lights)
 	
 	await get_tree().create_timer(6).timeout
