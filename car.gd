@@ -39,6 +39,7 @@ var surface = surfaces.TARMAC
 @onready var grass_particles_left = $GrassParticlesLeft
 @onready var grass_particles_right = $GrassParticlesRight
 @onready var player_nick_label = $PlayerNickLabel
+@onready var audio_player = $AudioStreamPlayer2D
 
 @export var emit_grass_left = false
 @export var emit_grass_right = false
@@ -89,10 +90,12 @@ func get_input():
 	if Input.is_action_pressed("steerLeft"):
 		turn -= calculate_turn()
 	if Input.is_action_pressed("accelerate"):
+		audio_player.set_pitch_scale(min(1.7, audio_player.get_pitch_scale() + 0.05))
 		steering_angle = steering_angle_during_acceleration
 		acceleration = transform.x * engine_power
 		
 	else:
+		audio_player.set_pitch_scale(max(0.2, audio_player.get_pitch_scale() - 0.05))
 		if steering_angle < steering_angle_default: 
 			steering_angle = steering_angle + 0.3
 		else:
