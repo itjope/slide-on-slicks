@@ -40,6 +40,7 @@ var surface = surfaces.TARMAC
 @onready var grass_particles_right = $GrassParticlesRight
 @onready var player_nick_label = $PlayerNickLabel
 @onready var audio_player = $AudioStreamPlayer2D
+@onready var audio_listener = $AudioListener2D
 
 @export var emit_grass_left = false
 @export var emit_grass_right = false
@@ -59,6 +60,7 @@ func _ready():
 	set_motion_mode(CharacterBody2D.MOTION_MODE_FLOATING)
 	set_floor_snap_length(0.0)
 	player_nick_label.text = player_nick
+	audio_listener.make_current()
 	#animation_node.set_animation(car_animation_color)
 	
 
@@ -90,12 +92,12 @@ func get_input():
 	if Input.is_action_pressed("steerLeft"):
 		turn -= calculate_turn()
 	if Input.is_action_pressed("accelerate"):
-		audio_player.set_pitch_scale(min(1.7, audio_player.get_pitch_scale() + 0.05))
+		audio_player.set_pitch_scale(min(1, audio_player.get_pitch_scale() + 0.05))
 		steering_angle = steering_angle_during_acceleration
 		acceleration = transform.x * engine_power
 		
 	else:
-		audio_player.set_pitch_scale(max(0.2, audio_player.get_pitch_scale() - 0.05))
+		audio_player.set_pitch_scale(max(0.2, audio_player.get_pitch_scale() - 0.02))
 		if steering_angle < steering_angle_default: 
 			steering_angle = steering_angle + 0.3
 		else:
@@ -206,6 +208,7 @@ func _process(delta):
 	
 	if not is_multiplayer_authority():
 		# TODO: Use a better way to calculate weight
+		audio_player.set_pitch_scale(1)
 		var weight = min(1, delta * 100)
 		velocity = lerp(acceleration * delta, network_velocity * delta, weight)
 	

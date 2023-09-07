@@ -167,12 +167,15 @@ size = Vector2(120, 12)
 
 [sub_resource type="SystemFont" id="SystemFont_1dvp5"]
 font_names = PackedStringArray("Monospace")
+subpixel_positioning = 0
 
 [sub_resource type="SystemFont" id="SystemFont_lj3qi"]
 font_names = PackedStringArray("Monospace")
+subpixel_positioning = 0
 
 [sub_resource type="SystemFont" id="SystemFont_nq8fa"]
 font_names = PackedStringArray("Monospace")
+subpixel_positioning = 0
 
 [node name="track1" type="Node2D"]
 script = ExtResource("1_o7s5l")
