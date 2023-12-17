@@ -23,3 +23,6 @@ export.cfg
 export_presets.cfg
 
 exports
+*.exe
+*.pck
+*.zip
