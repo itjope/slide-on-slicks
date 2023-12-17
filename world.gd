@@ -10,6 +10,12 @@ extends Node2D
 @onready var networkNode = $Network
 @onready var tracksNode = $tracks
 @onready var canvasModulate = $CanvasModulate
+@onready var raceCompleted = $RaceCompleted
+@onready var raceCompletedGrid = $RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainer
+
+# Race settings meny
+@onready var raceMenu = $RaceSettings/RaceMenu
+@onready var raceNumberOfLapsInput = $RaceSettings/RaceMenu/MarginContainer/VBoxContainer/NumerOfLapsInput
 
 var Player = preload("res://player.tscn")
 var start_lights = preload("res://start_lights.tscn")
@@ -19,6 +25,8 @@ var gridPositions = [Vector2(220, 335), Vector2(240, 360), Vector2(280, 335), Ve
 var carColors = ["blue", "pink", "green", "yellow"]
 var isServer = false
 
+var raceCompledPlayers = []
+
 func _ready():
 	if OS.is_debug_build():
 		DisplayServer.window_set_size(Vector2i(1920, 1080))
@@ -26,6 +34,9 @@ func _ready():
 	
 	if OS.get_cmdline_args().has("--server"):
 		createServer()
+		
+	
+	
 
 func createServer():
 	print("Starting server...")
@@ -55,10 +66,7 @@ func _process(delta):
 
 func _input(event):
 	if (mainMenu.visible): return
-	if event.is_pressed() && event.as_text() == "R":
-		print_debug("restart")
-		rpc("race_restart")
-		race_restart()
+	
 	if event.is_pressed() && event.as_text() == "N":
 		canvasModulate.visible = !canvasModulate.visible
 		
@@ -96,20 +104,47 @@ func set_car_color(peerId: String, color: String):
 			player.car_animation_color = color
 
 @rpc("any_peer")
-func race_restart():
-	print_debug("Race restart rpc")
+func race_restart(numberOfLaps: int):
+	raceNumberOfLapsInput.text = str(numberOfLaps)
+	raceCompledPlayers.clear()
 	var lights = start_lights.instantiate()
 	for player in networkNode.get_children():
 		player.race_restart()
 	
 	for track in tracksNode.get_children():
-		track.resetLaps()
+		track.resetLaps(numberOfLaps)
 		
 	add_child(lights)
+	raceCompleted.hide()
 	
 	await get_tree().create_timer(6).timeout
 	lights.queue_free()
 	
+@rpc("any_peer")
+func race_completed(playerState):
+	var i = 0
+	for player in raceCompledPlayers:
+		if player.name == playerState.name:
+			raceCompledPlayers.erase_at(0)
+		i += 1
+	
+	raceCompledPlayers.append(playerState)
+	raceCompledPlayers.sort_custom(func(a, b): a.raceTime - b.raceTime)
+	
+	for c in raceCompletedGrid.get_children():
+		raceCompletedGrid.remove_child(c)
+		c.queue_free()
+	
+	var p = 1
+	for player in raceCompledPlayers:
+		var labelPoistion = Label.new()
+		labelPoistion.text = "#" + str(p)
+		var labelName = Label.new()
+		labelName.text = player.name
+		p += 1
+		
+		raceCompletedGrid.add_child(labelPoistion)
+		raceCompletedGrid.add_child(labelName)
 	
 @rpc("any_peer")
 func player_nick_update(peerId: String, nick: String):	
@@ -153,8 +188,13 @@ func _on_network_child_entered_tree(node):
 	if isServer:
 		var carColor = carColors[networkNode.get_child_count() - 1]
 		node.car_animation_color = carColor
+		var carColorIndex = 0
 		for player in networkNode.get_children():
-			rpc("set_car_color", player.name, player.car_animation_color)
+			carColorIndex += 1;
+			if carColorIndex >= networkNode.get_child_count():
+				carColorIndex = 0
+			carColor = carColors[carColorIndex]
+			rpc("set_car_color", player.name, carColor)
 		
 	if isServer:
 		var gridPos = networkNode.get_child_count() - 1
@@ -167,3 +207,27 @@ func _on_address_list_item_selected(index):
 	else:
 		addressEntry.visible = true
 		addressEntry.text = "localhost"
+
+
+func _on_start_race_button_pressed():
+	raceMenu.hide()
+	var numberOfLaps = raceNumberOfLapsInput.text.to_int();
+	rpc("race_restart", numberOfLaps)
+	race_restart(numberOfLaps)
+	
+
+
+func _on_link_button_pressed():
+	raceMenu.show()
+	
+func on_race_completed(playerState):
+	rpc("race_completed", playerState)
+	race_completed(playerState)
+	raceCompleted.show()
+
+
+func _on_start_new_race_pressed():
+	var numberOfLaps = raceNumberOfLapsInput.text.to_int();
+	rpc("race_restart", numberOfLaps)
+	race_restart(numberOfLaps)
+	

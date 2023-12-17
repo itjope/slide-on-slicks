@@ -9,8 +9,23 @@ var playerLaps = {}
 @onready var purpleRect = $RaceInfo/PurpleRect
 @onready var raceInfo = $RaceInfo
 
-var lapStartTime: int = 0
+var raceState = {
+	laps = 0
+}
 	
+
+var playerState = {
+	lapStartTime = 0,
+	raceStartTime = 0,
+	lap = 0,
+	bestLap = 0,
+	checkpoint = 0,
+	lastLapTime = 0,
+	raceTime = 0,
+	name = ""
+}
+	
+
 func _ready():
 	pass # Replace with function body.
 
@@ -19,25 +34,25 @@ func _ready():
 func _process(delta):
 	pass
 
-func resetLaps():
-	for playerIndex in playerLaps:
-		playerLaps[playerIndex].lap = 1
-		updateLabels(playerIndex)
+func resetLaps(laps: int):
+	raceState.laps = laps
+	
+	playerState.lap = 1
+	updateLabels()
 		
 	purpleRect.visible = false
 	
-func updateLabels(playerId):
-	var currentPlayer =  str(multiplayer.get_unique_id())
-	if currentPlayer != playerId:
-		return 
-		
-	if not playerLaps.has(currentPlayer):
-		return
-	
+func updateLabels():
 	# Lap counter
-	lapCounterLabel.text = "LAP " + str(playerLaps[currentPlayer].lap)
+	lapCounterLabel.text = "LAP " + str(playerState.lap)
+	if raceState.laps > 0: 
+		lapCounterLabel.text += "/" + str(raceState.laps)
 	
-	var duration = playerLaps[currentPlayer].lastLapTime
+	if raceState.laps > 0 && playerState.lap > raceState.laps:
+		lapCounterLabel.text = "FINISHED"
+	
+	# Duration
+	var duration = playerState.lastLapTime
 	
 	# Last lap
 	var seconds = floor(duration / 1000)
@@ -45,63 +60,63 @@ func updateLabels(playerId):
 	lastLapTime.text = "LAST LAP " + str(seconds) + ":" + str(ms)
 	
 	# Session best lap
-	seconds = floor(playerLaps[currentPlayer].sessionBestLapTime / 1000)
-	ms = playerLaps[currentPlayer].sessionBestLapTime % 1000
+	seconds = floor(playerState.bestLap / 1000)
+	ms = playerState.bestLap % 1000
 	sessionBestLapTime.text = "SESSION BEST " + str(seconds) + ":" + str(ms)
 	
-	if playerLaps[currentPlayer].lastLapTime == playerLaps[currentPlayer].sessionBestLapTime:
+	if playerState.lastLapTime == playerState.bestLap:
 		purpleRect.visible = true
 	
 func _on_finnish_line_body_entered(body):
 	if not body.is_class("CharacterBody2D"):
 		return
+	
+	if not str(multiplayer.get_unique_id()) == body.name:
+		return
 		
+	playerState.name = body.player_nick
 	raceInfo.visible = true
 	
-	if not playerLaps.has(body.name):
-		playerLaps[body.name] = {
-			lap = 1,
-			sessionBestLapTime = 0,
-			lastLapTime = 0,
-			checkpoint = 0
-		}
-		lapStartTime = Time.get_ticks_msec()
-		return
+	if playerState.lap < 1:
+		playerState.raceStartTime = Time.get_ticks_msec()
 	
-	if playerLaps[body.name].checkpoint == 2:
+	if playerState.checkpoint == 2:
 		var currentTime = Time.get_ticks_msec()
-		var duration = currentTime - lapStartTime
-		lapStartTime = Time.get_ticks_msec()
-
+		var duration = currentTime - playerState.lapStartTime
+		print_debug("ceckpoint2: ", currentTime, " : ", playerState.lapStartTime, " : ", duration)
 		
-		if duration < playerLaps[body.name].sessionBestLapTime || playerLaps[body.name].sessionBestLapTime == 0:
-			playerLaps[body.name].sessionBestLapTime = duration
+		if duration < playerState.bestLap || playerState.bestLap == 0:
+			playerState.bestLap = duration
 
-		playerLaps[body.name].lastLapTime = duration
-		playerLaps[body.name].lap += 1
-		playerLaps[body.name].checkpoint = 0
+		playerState.lastLapTime = duration
+		playerState.lap += 1
+		playerState.checkpoint = 0
+		playerState.raceTime = currentTime - playerState.raceStartTime 
 		
-		updateLabels(body.name)
-
+		updateLabels()
+		
+		playerState.lapStartTime = Time.get_ticks_msec()
+	
+	if raceState.laps > 0 && playerState.lap > raceState.laps: 
+		self.get_parent().get_parent().on_race_completed(playerState.duplicate())
+		
 func _on_checkpoint_1_body_entered(body):
 	if not body.is_class("CharacterBody2D"):
 		return
 		
-	if not playerLaps.has(body.name):
+	if not str(multiplayer.get_unique_id()) == body.name:
 		return
 	
-	if playerLaps[body.name].checkpoint == 0:
+	if playerState.checkpoint == 0:
 		purpleRect.visible = false
-		playerLaps[body.name].checkpoint = 1
+		playerState.checkpoint = 1
 
 
 func _on_checkpoint_2_body_entered(body):
 	if not body.is_class("CharacterBody2D"):
 		return
-		
-	if not playerLaps.has(body.name):
+	if not str(multiplayer.get_unique_id()) == body.name:
 		return
 	
-	if playerLaps[body.name].checkpoint == 1:
-		playerLaps[body.name].checkpoint = 2
-
+	if playerState.checkpoint == 1:
+		playerState.checkpoint = 2

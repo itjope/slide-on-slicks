@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://1xpslghvss7h"]
+[gd_scene load_steps=14 format=3 uid="uid://1xpslghvss7h"]
 
 [ext_resource type="Script" path="res://world.gd" id="1_f8kds"]
 [ext_resource type="PackedScene" uid="uid://cf7j88014wcb3" path="res://track1.tscn" id="2_rgu1f"]
@@ -27,6 +27,12 @@ polygon = PackedVector2Array(635, 258, 582, 323, 518, 361, 423, 405, 653, 409, 6
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_tmch0"]
 polygon = PackedVector2Array(-2, 127, 20, 161, 42, 178, 48, 185, 69, 193, 144, 195, 245, 202, 319, 203, 336, 202, 345, 195, 359, 191, 369, 191, 371, 201, 372, 211, 370, 218, 360, 221, 325, 223, 191, 215, 25, 215, 18, 217, 14, 230, 5, 247, 1, 263, -5, 278)
+
+[sub_resource type="SystemFont" id="SystemFont_6hhdy"]
+font_names = PackedStringArray("Monospace")
+subpixel_positioning = 0
+
+[sub_resource type="SystemFont" id="SystemFont_c70no"]
 
 [node name="World" type="Node2D"]
 script = ExtResource("1_f8kds")
@@ -242,7 +248,104 @@ color = Color(0.113725, 0.392157, 0.776471, 1)
 
 [node name="track1" parent="tracks" instance=ExtResource("2_rgu1f")]
 
+[node name="RaceSettings" type="CanvasLayer" parent="."]
+
+[node name="RaceSettings" type="Label" parent="RaceSettings"]
+offset_left = 591.0
+offset_top = 384.0
+offset_right = 633.0
+offset_bottom = 402.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.0823529, 0.0823529, 0.0823529, 1)
+theme_override_fonts/font = SubResource("SystemFont_6hhdy")
+theme_override_font_sizes/font_size = 13
+text = "RACE
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LinkButton" type="LinkButton" parent="RaceSettings"]
+offset_left = 588.0
+offset_top = 383.0
+offset_right = 637.0
+offset_bottom = 399.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = SubResource("SystemFont_c70no")
+theme_override_font_sizes/font_size = 12
+underline = 1
+
+[node name="RaceMenu" type="PanelContainer" parent="RaceSettings"]
+visible = false
+offset_right = 643.0
+offset_bottom = 400.0
+
+[node name="MarginContainer" type="MarginContainer" parent="RaceSettings/RaceMenu"]
+layout_mode = 2
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_top = 100
+theme_override_constants/margin_right = 100
+theme_override_constants/margin_bottom = 100
+
+[node name="VBoxContainer" type="VBoxContainer" parent="RaceSettings/RaceMenu/MarginContainer"]
+layout_mode = 2
+
+[node name="NumberOfLapsLabel" type="Label" parent="RaceSettings/RaceMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Number of laps"
+horizontal_alignment = 1
+
+[node name="NumerOfLapsInput" type="LineEdit" parent="RaceSettings/RaceMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "5"
+alignment = 1
+max_length = 2
+
+[node name="StartRaceButton" type="Button" parent="RaceSettings/RaceMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Start Race"
+
+[node name="RaceCompleted" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="PanelContainer" type="PanelContainer" parent="RaceCompleted"]
+offset_right = 642.0
+offset_bottom = 401.0
+
+[node name="MarginContainer" type="MarginContainer" parent="RaceCompleted/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 200
+theme_override_constants/margin_top = 100
+theme_override_constants/margin_right = 200
+theme_override_constants/margin_bottom = 100
+
+[node name="VBoxContainer" type="VBoxContainer" parent="RaceCompleted/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RaceCompleted/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "RACE COMPLETED"
+horizontal_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="RaceCompleted/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 22
+
+[node name="GridContainer" type="GridContainer" parent="RaceCompleted/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="HSeparator" type="HSeparator" parent="RaceCompleted/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 22
+
+[node name="StartNewRace" type="Button" parent="RaceCompleted/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "START NEW RACE"
+
 [connection signal="item_selected" from="CanvasLayer/MainManu/MarginContainer/VBoxContainer/AddressList" to="." method="_on_address_list_item_selected"]
 [connection signal="pressed" from="CanvasLayer/MainManu/MarginContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainManu/MarginContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
 [connection signal="child_entered_tree" from="Network" to="." method="_on_network_child_entered_tree"]
+[connection signal="pressed" from="RaceSettings/LinkButton" to="." method="_on_link_button_pressed"]
+[connection signal="pressed" from="RaceSettings/RaceMenu/MarginContainer/VBoxContainer/StartRaceButton" to="." method="_on_start_race_button_pressed"]
+[connection signal="pressed" from="RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/StartNewRace" to="." method="_on_start_new_race_pressed"]

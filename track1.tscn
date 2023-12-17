@@ -248,10 +248,10 @@ text = "LAP 1"
 vertical_alignment = 1
 
 [node name="LastLapTime" type="Label" parent="RaceInfo"]
-offset_left = 68.0
-offset_top = 384.0
-offset_right = 186.0
-offset_bottom = 402.0
+offset_left = 98.0
+offset_top = 383.0
+offset_right = 216.0
+offset_bottom = 401.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0.0823529, 0.0823529, 0.0823529, 1)
 theme_override_fonts/font = SubResource("SystemFont_lj3qi")
@@ -260,16 +260,18 @@ text = "LAST LAP 0:000"
 vertical_alignment = 1
 
 [node name="SessionBestLapTime" type="Label" parent="RaceInfo"]
-offset_left = 194.0
-offset_top = 385.0
-offset_right = 335.0
-offset_bottom = 402.0
+offset_left = 224.0
+offset_top = 384.0
+offset_right = 368.0
+offset_bottom = 401.0
 theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.654902)
 theme_override_fonts/font = SubResource("SystemFont_nq8fa")
 theme_override_font_sizes/font_size = 13
 text = "SESSION BEST 0:000"
 vertical_alignment = 1
+
+[node name="Node2D" type="Node2D" parent="."]
 
 [connection signal="body_entered" from="FinnishLine" to="." method="_on_finnish_line_body_entered"]
 [connection signal="body_entered" from="Checkpoint1" to="." method="_on_checkpoint_1_body_entered"]
