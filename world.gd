@@ -11,7 +11,8 @@ extends Node2D
 @onready var tracksNode = $tracks
 @onready var canvasModulate = $CanvasModulate
 @onready var raceCompleted = $RaceCompleted
-@onready var raceCompletedGrid = $RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainer
+@onready var raceCompletedGrid = $RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainerRace
+@onready var championshipGrid = $RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainerChampionship
 
 # Race settings meny
 @onready var raceMenu = $RaceSettings/RaceMenu
@@ -26,6 +27,13 @@ var carColors = ["blue", "pink", "green", "yellow"]
 var isServer = false
 
 var raceCompledPlayers = []
+var playerChampionshipPoints = {}
+var positionToPoint = {
+	1: 8,
+	2: 6,
+	3: 4,
+	4: 3
+}
 
 func _ready():
 	if OS.is_debug_build():
@@ -88,7 +96,6 @@ func _on_join_button_pressed():
 			OS.alert("Failed to connect!")
 
 		multiplayer.multiplayer_peer = enetPeer
-	
 
 @rpc("any_peer")
 func set_grid_pos(peerId: String, pos: int):
@@ -141,10 +148,50 @@ func race_completed(playerState):
 		labelPoistion.text = "#" + str(p)
 		var labelName = Label.new()
 		labelName.text = player.name
-		p += 1
+		
+		if (player.name == playerState.name):
+			if (not playerChampionshipPoints.has(playerState.name)):
+				playerChampionshipPoints[playerState.name] = {
+					points = 0,
+					name = playerState.name
+				}
+			
+			playerChampionshipPoints[playerState.name].merge({
+				points = playerChampionshipPoints[playerState.name].points + positionToPoint[p]
+			}, true)
+		var labelPoints = Label.new()
+		labelPoints.text = str(positionToPoint[p]) + "p"
 		
 		raceCompletedGrid.add_child(labelPoistion)
 		raceCompletedGrid.add_child(labelName)
+		raceCompletedGrid.add_child(labelPoints)
+		
+		p += 1
+	
+	var champPoints = playerChampionshipPoints.values()
+	champPoints.sort_custom(func(a, b): a.points - b.points)
+	
+	
+	for c in championshipGrid.get_children():
+		championshipGrid.remove_child(c)
+		c.queue_free()
+	
+	var cp = 1
+	for player in champPoints:
+		
+		var labelPoistion = Label.new()
+		labelPoistion.text = "#" + str(cp)
+		var labelName = Label.new()
+		labelName.text = player.name
+		var labelPoints = Label.new()
+		labelPoints.text = str(player.points) + "p"
+		
+		championshipGrid.add_child(labelPoistion)
+		championshipGrid.add_child(labelName)
+		championshipGrid.add_child(labelPoints)
+		
+		cp += 1
+		
 	
 @rpc("any_peer")
 func player_nick_update(peerId: String, nick: String):	

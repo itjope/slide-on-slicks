@@ -134,7 +134,7 @@ occluder = SubResource("OccluderPolygon2D_tmch0")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="SplashImage" type="TextureRect" parent="CanvasLayer"]
-self_modulate = Color(0.117647, 0.117647, 0.109804, 1)
+self_modulate = Color(0.133974, 0.133974, 0.125408, 1)
 offset_right = 641.0
 offset_bottom = 400.0
 texture = ExtResource("2_rhbwk")
@@ -314,7 +314,7 @@ offset_bottom = 401.0
 [node name="MarginContainer" type="MarginContainer" parent="RaceCompleted/PanelContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 200
-theme_override_constants/margin_top = 100
+theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 200
 theme_override_constants/margin_bottom = 100
 
@@ -323,20 +323,25 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="RaceCompleted/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "RACE COMPLETED"
+text = "RACE"
 horizontal_alignment = 1
 
-[node name="HSeparator2" type="HSeparator" parent="RaceCompleted/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="GridContainerRace" type="GridContainer" parent="RaceCompleted/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 22
-
-[node name="GridContainer" type="GridContainer" parent="RaceCompleted/PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-columns = 2
+columns = 3
 
 [node name="HSeparator" type="HSeparator" parent="RaceCompleted/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 22
+
+[node name="LabelChampionship" type="Label" parent="RaceCompleted/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "CHAMPIONSHIP"
+horizontal_alignment = 1
+
+[node name="GridContainerChampionship" type="GridContainer" parent="RaceCompleted/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+columns = 3
 
 [node name="StartNewRace" type="Button" parent="RaceCompleted/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2

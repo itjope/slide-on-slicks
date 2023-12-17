@@ -42,6 +42,11 @@ func resetLaps(laps: int):
 		
 	purpleRect.visible = false
 	
+func formatDuration(duration: int):
+	var seconds = floor(duration / 1000)
+	var ms = duration % 1000
+	return str(seconds) + ":" + str(ms)
+	
 func updateLabels():
 	# Lap counter
 	lapCounterLabel.text = "LAP " + str(playerState.lap)
@@ -55,14 +60,10 @@ func updateLabels():
 	var duration = playerState.lastLapTime
 	
 	# Last lap
-	var seconds = floor(duration / 1000)
-	var ms = duration % 1000
-	lastLapTime.text = "LAST LAP " + str(seconds) + ":" + str(ms)
+	lastLapTime.text = "LAST LAP " + formatDuration(duration)
 	
 	# Session best lap
-	seconds = floor(playerState.bestLap / 1000)
-	ms = playerState.bestLap % 1000
-	sessionBestLapTime.text = "SESSION BEST " + str(seconds) + ":" + str(ms)
+	sessionBestLapTime.text = "SESSION BEST " + formatDuration(playerState.bestLap)
 	
 	if playerState.lastLapTime == playerState.bestLap:
 		purpleRect.visible = true
