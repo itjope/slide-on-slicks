@@ -23,7 +23,7 @@ var acceleration = Vector2.ZERO
 var steer_direction
 var gridPosition = Vector2.ZERO
 
-enum race_states {GRID, STARTED}
+enum race_states {GRID, STARTED, COMPLETED}
 var race_state = race_states.STARTED
 var jumped_start = 0
 
@@ -229,10 +229,10 @@ func predict(delta):
 
 func _physics_process(delta):
 	if not is_multiplayer_authority():
-		if race_state == race_states.GRID: 
-			velocity = Vector2.ZERO
-		else:
+		if race_state == race_states.STARTED: 
 			predict(delta)
+		else:
+			velocity = Vector2.ZERO
 		return
 	
 	if race_state == race_states.GRID: 

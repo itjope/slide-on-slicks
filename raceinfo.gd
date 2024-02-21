@@ -9,6 +9,7 @@ var playerLaps = {}
 @onready var purpleRect = $RaceInfo/PurpleRect
 @onready var raceInfo = $RaceInfo
 
+
 var raceState = {
 	laps = 0
 }
@@ -98,7 +99,7 @@ func _on_finnish_line_body_entered(body):
 		
 		playerState.lapStartTime = Time.get_ticks_msec()
 	
-	if raceState.laps > 0 && playerState.lap > raceState.laps: 
+	if raceState.laps > 0 && playerState.lap == raceState.laps + 1: 
 		self.get_parent().get_parent().on_race_completed(playerState.duplicate())
 		
 func _on_checkpoint_1_body_entered(body):
