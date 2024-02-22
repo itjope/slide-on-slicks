@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Slicks Champions"
 run/main_scene="res://world.tscn"
-config/features=PackedStringArray("4.0", "Forward Plus")
+config/features=PackedStringArray("4.2", "Forward Plus")
 boot_splash/image="res://splash.png"
 boot_splash/fullsize=false
 boot_splash/use_filter=false
@@ -63,6 +63,6 @@ kryckan={
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 textures/vram_compression/import_s3tc_bptc=true
 2d/snap/snap_2d_transforms_to_pixel=true
-textures/canvas_textures/default_texture_filter=0

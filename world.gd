@@ -9,6 +9,8 @@ extends Node2D
 @onready var splashImage = $CanvasLayer/SplashImage
 @onready var networkNode = $Network
 @onready var tracksNode = $tracks
+@onready var trackNode = $tracks/track1
+@onready var raceInfoNode = $RaceInfo
 @onready var canvasModulate = $CanvasModulate
 @onready var raceCompleted = $RaceCompleted
 @onready var raceCompletedGrid = $RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainerRace
@@ -39,6 +41,12 @@ func _ready():
 	if OS.is_debug_build():
 		DisplayServer.window_set_size(Vector2i(1920, 1080))
 		playerNameEntry.text = "P" + str(randi() % 100)
+	
+	trackNode.lap_completed.connect(raceInfoNode.lap_completed)
+	trackNode.race_started.connect(raceInfoNode.race_started)
+	trackNode.checkpoint_completed.connect(raceInfoNode.checkpoint_completed)
+	raceInfoNode.race_completed.connect(on_race_completed)
+	
 	
 	if OS.get_cmdline_args().has("--server"):
 		createServer()
@@ -119,7 +127,7 @@ func race_restart(numberOfLaps: int):
 		player.race_restart()
 	
 	for track in tracksNode.get_children():
-		track.resetLaps(numberOfLaps)
+		raceInfoNode.resetLaps(numberOfLaps)
 		
 	add_child(lights)
 	raceCompleted.hide()
@@ -268,6 +276,7 @@ func _on_link_button_pressed():
 	raceMenu.show()
 	
 func on_race_completed(playerState):
+	print_debug("on_race_completed", playerState)
 	rpc("race_completed", playerState)
 	race_completed(playerState)
 	raceCompleted.show()

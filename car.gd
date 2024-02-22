@@ -175,7 +175,6 @@ func set_grid(pos: Vector2):
 	find_child("Smoothing2D").teleport()
 
 func set_nick(nick: String):
-	print_debug("setnick:", nick)
 	player_nick = nick
 	player_nick_label.text = nick
 
@@ -261,7 +260,6 @@ func _physics_process(delta):
 	network_transform = transform
 	
 func _enter_tree():
-	print_debug("Enter tree ",  name)
 	set_multiplayer_authority(str(name).to_int())
 
 func _on_area_2d_area_entered(area: Area2D):

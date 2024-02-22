@@ -1,6 +1,6 @@
-[gd_scene load_steps=22 format=3 uid="uid://cf7j88014wcb3"]
+[gd_scene load_steps=19 format=3 uid="uid://cf7j88014wcb3"]
 
-[ext_resource type="Script" path="res://raceinfo.gd" id="1_o7s5l"]
+[ext_resource type="Script" path="res://track.gd" id="1_gfsj2"]
 [ext_resource type="Texture2D" uid="uid://dc28k687b1fwk" path="res://track.png" id="1_ytogx"]
 [ext_resource type="Texture2D" uid="uid://dkmltchj7rp7f" path="res://stones.png" id="2_ckv5v"]
 
@@ -165,20 +165,10 @@ size = Vector2(10.375, 104)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p3had"]
 size = Vector2(120, 12)
 
-[sub_resource type="SystemFont" id="SystemFont_1dvp5"]
-font_names = PackedStringArray("Monospace")
-subpixel_positioning = 0
-
-[sub_resource type="SystemFont" id="SystemFont_lj3qi"]
-font_names = PackedStringArray("Monospace")
-subpixel_positioning = 0
-
-[sub_resource type="SystemFont" id="SystemFont_nq8fa"]
-font_names = PackedStringArray("Monospace")
-subpixel_positioning = 0
-
-[node name="track1" type="Node2D"]
-script = ExtResource("1_o7s5l")
+[node name="track1" type="Node2D" node_paths=PackedStringArray("finishLine", "checkpoints")]
+script = ExtResource("1_gfsj2")
+finishLine = NodePath("FinnishLine")
+checkpoints = [NodePath("Checkpoint1"), NodePath("Checkpoint2")]
 
 [node name="Grass" type="Area2D" parent="."]
 
@@ -225,54 +215,4 @@ shape = SubResource("RectangleShape2D_3oyoj")
 position = Vector2(57, 127)
 shape = SubResource("RectangleShape2D_p3had")
 
-[node name="RaceInfo" type="CanvasLayer" parent="."]
-visible = false
-
-[node name="PurpleRect" type="ColorRect" parent="RaceInfo"]
-visible = false
-offset_top = 384.0
-offset_right = 640.0
-offset_bottom = 400.0
-color = Color(1, 0, 1, 0.592157)
-
-[node name="LapCounter" type="Label" parent="RaceInfo"]
-offset_left = 11.0
-offset_top = 385.0
-offset_right = 73.0
-offset_bottom = 402.0
-theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = SubResource("SystemFont_1dvp5")
-theme_override_font_sizes/font_size = 13
-text = "LAP 1"
-vertical_alignment = 1
-
-[node name="LastLapTime" type="Label" parent="RaceInfo"]
-offset_left = 98.0
-offset_top = 383.0
-offset_right = 216.0
-offset_bottom = 401.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.0823529, 0.0823529, 0.0823529, 1)
-theme_override_fonts/font = SubResource("SystemFont_lj3qi")
-theme_override_font_sizes/font_size = 13
-text = "LAST LAP 0:000"
-vertical_alignment = 1
-
-[node name="SessionBestLapTime" type="Label" parent="RaceInfo"]
-offset_left = 224.0
-offset_top = 384.0
-offset_right = 368.0
-offset_bottom = 401.0
-theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.654902)
-theme_override_fonts/font = SubResource("SystemFont_nq8fa")
-theme_override_font_sizes/font_size = 13
-text = "SESSION BEST 0:000"
-vertical_alignment = 1
-
 [node name="Node2D" type="Node2D" parent="."]
-
-[connection signal="body_entered" from="FinnishLine" to="." method="_on_finnish_line_body_entered"]
-[connection signal="body_entered" from="Checkpoint1" to="." method="_on_checkpoint_1_body_entered"]
-[connection signal="body_entered" from="Checkpoint2" to="." method="_on_checkpoint_2_body_entered"]
