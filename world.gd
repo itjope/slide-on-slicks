@@ -9,7 +9,7 @@ extends Node2D
 @onready var splashImage = $CanvasLayer/SplashImage
 @onready var networkNode = $Network
 @onready var tracksNode = $tracks
-@onready var trackNode = $tracks/track1
+#@onready var trackNode = $tracks/track1
 @onready var raceInfoNode = $RaceInfo
 @onready var canvasModulate = $CanvasModulate
 @onready var raceCompleted = $RaceCompleted
@@ -19,14 +19,23 @@ extends Node2D
 # Race settings meny
 @onready var raceMenu = $RaceSettings/RaceMenu
 @onready var raceNumberOfLapsInput = $RaceSettings/RaceMenu/MarginContainer/VBoxContainer/NumerOfLapsInput
+@onready var raceTrackList = $RaceSettings/RaceMenu/MarginContainer/VBoxContainer/TrackList
 
 var Player = preload("res://player.tscn")
 var start_lights = preload("res://start_lights.tscn")
+var track_scenes = [{
+	name = "Track #1",
+	scene = preload("res://track1.tscn")
+}, {
+	name = "Track #2",
+	scene = preload("res://track2.tscn")
+}]
 var PORT = 9999
 var enetPeer = ENetMultiplayerPeer.new()
 var gridPositions = []
 var carColors = ["blue", "pink", "green", "yellow"]
 var isServer = false
+var trackNode: Node2D
 
 
 var raceCompledPlayers = []
@@ -39,15 +48,19 @@ var positionToPoint = {
 }
 
 func _ready():
-	if OS.is_debug_build():
-		DisplayServer.window_set_size(Vector2i(1920, 1080))
-		playerNameEntry.text = "P" + str(randi() % 100)
+	#if OS.is_debug_build():
+	DisplayServer.window_set_size(Vector2i(1920, 1080))
+	playerNameEntry.text = "P" + str(randi() % 100)
 	
+	trackNode = track_scenes[0].scene.instantiate()
+	tracksNode.add_child(trackNode)
 	trackNode.lap_completed.connect(raceInfoNode.lap_completed)
 	trackNode.race_started.connect(raceInfoNode.race_started)
 	trackNode.checkpoint_completed.connect(raceInfoNode.checkpoint_completed)
 	raceInfoNode.race_completed.connect(on_race_completed)
-	
+	for track in track_scenes:
+		raceTrackList.add_item(track.name)
+	raceTrackList.select(0)
 	 
 	for grid_node in trackNode.get_node("Grid").get_children():
 		gridPositions.append(grid_node.global_position)
@@ -120,8 +133,15 @@ func set_car_color(peerId: String, color: String):
 			player.car_animation_color = color
 
 @rpc("any_peer")
-func race_restart(numberOfLaps: int):
+func race_restart(numberOfLaps: int, track_index: int):
+	for track in tracksNode.get_children():
+		tracksNode.remove_child(track)
+		track.queue_free()
+	trackNode = track_scenes[track_index].scene.instantiate()
+	tracksNode.add_child(trackNode)
+	
 	raceNumberOfLapsInput.text = str(numberOfLaps)
+	raceTrackList.select(track_index)
 	raceCompledPlayers.clear()
 	var lights = start_lights.instantiate()
 	for player in networkNode.get_children():
@@ -266,8 +286,13 @@ func _on_address_list_item_selected(index):
 func _on_start_race_button_pressed():
 	raceMenu.hide()
 	var numberOfLaps = raceNumberOfLapsInput.text.to_int();
-	rpc("race_restart", numberOfLaps)
-	race_restart(numberOfLaps)
+	var selected_track_index = 0
+	
+	for selected_track in raceTrackList.get_selected_items():
+		selected_track_index = selected_track
+		
+	rpc("race_restart", numberOfLaps, selected_track_index)
+	race_restart(numberOfLaps, selected_track_index)
 	
 
 
@@ -278,10 +303,3 @@ func on_race_completed(playerState):
 	rpc("race_completed", playerState)
 	race_completed(playerState)
 	raceCompleted.show()
-
-
-func _on_start_new_race_pressed():
-	var numberOfLaps = raceNumberOfLapsInput.text.to_int();
-	rpc("race_restart", numberOfLaps)
-	race_restart(numberOfLaps)
-	

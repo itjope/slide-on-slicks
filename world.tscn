@@ -1,7 +1,6 @@
-[gd_scene load_steps=18 format=3 uid="uid://1xpslghvss7h"]
+[gd_scene load_steps=17 format=3 uid="uid://1xpslghvss7h"]
 
 [ext_resource type="Script" path="res://world.gd" id="1_f8kds"]
-[ext_resource type="PackedScene" uid="uid://cf7j88014wcb3" path="res://track1.tscn" id="2_rgu1f"]
 [ext_resource type="Texture2D" uid="uid://be8i1155my3rt" path="res://splash.png" id="2_rhbwk"]
 [ext_resource type="Script" path="res://RaceInfo.gd" id="4_73etn"]
 
@@ -259,8 +258,6 @@ color = Color(0.113725, 0.392157, 0.776471, 1)
 
 [node name="tracks" type="Node2D" parent="."]
 
-[node name="track1" parent="tracks" instance=ExtResource("2_rgu1f")]
-
 [node name="RaceInfo" type="CanvasLayer" parent="."]
 visible = false
 script = ExtResource("4_73etn")
@@ -359,6 +356,19 @@ layout_mode = 2
 text = "5"
 alignment = 1
 max_length = 2
+
+[node name="TrackLabel" type="Label" parent="RaceSettings/RaceMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Track"
+horizontal_alignment = 1
+
+[node name="TrackList" type="ItemList" parent="RaceSettings/RaceMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+allow_search = false
+auto_height = true
+
+[node name="HSeparator" type="HSeparator" parent="RaceSettings/RaceMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
 
 [node name="StartRaceButton" type="Button" parent="RaceSettings/RaceMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
