@@ -1,4 +1,4 @@
-[gd_scene load_steps=56 format=3 uid="uid://b7vs3725r21pu"]
+[gd_scene load_steps=57 format=3 uid="uid://b7vs3725r21pu"]
 
 [ext_resource type="Script" path="res://car.gd" id="1_ttov1"]
 [ext_resource type="Script" path="res://addons/smoothing/smoothing_2d.gd" id="2_4674m"]
@@ -346,6 +346,9 @@ color = Color(0.345098, 0.666667, 0.239216, 0.356863)
 color_ramp = SubResource("GradientTexture1D_ntv5f")
 turbulence_noise_strength = 2.75
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nxn8q"]
+size = Vector2(14, 15)
+
 [node name="CharacterBody2D" type="CharacterBody2D"]
 visibility_layer = 2
 position = Vector2(-36, 375)
@@ -445,12 +448,20 @@ uppercase = true
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("9_og2ml")
 pitch_scale = 0.33
-autoplay = true
 max_distance = 100.0
 
 [node name="AudioListener2D" type="AudioListener2D" parent="."]
 
+[node name="AllWheels" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AllWheels"]
+position = Vector2(0.5, 0)
+rotation = 1.5708
+shape = SubResource("RectangleShape2D_nxn8q")
+
 [connection signal="area_entered" from="LeftWheels" to="." method="_on_area_2d_area_entered"]
-[connection signal="area_exited" from="LeftWheels" to="." method="_on_area_2d_area_exited"]
+[connection signal="area_exited" from="LeftWheels" to="." method="_on_left_wheel_area_exited"]
 [connection signal="area_entered" from="RightWheels" to="." method="_on_area_2d_area_entered"]
-[connection signal="area_exited" from="RightWheels" to="." method="_on_area_2d_area_exited"]
+[connection signal="area_exited" from="RightWheels" to="." method="_on_right_weel_area_exited"]
+[connection signal="area_entered" from="AllWheels" to="." method="_on_all_wheels_area_entered"]
+[connection signal="area_exited" from="AllWheels" to="." method="_on_all_wheels_area_exited"]

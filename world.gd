@@ -24,10 +24,10 @@ extends Node2D
 var Player = preload("res://player.tscn")
 var start_lights = preload("res://start_lights.tscn")
 var track_scenes = [{
-	name = "Track #1",
+	name = "Ettan",
 	scene = preload("res://track1.tscn")
 }, {
-	name = "Track #2",
+	name = "Olovs Oval",
 	scene = preload("res://track2.tscn")
 }]
 var PORT = 9999
@@ -62,8 +62,7 @@ func _ready():
 		raceTrackList.add_item(track.name)
 	raceTrackList.select(0)
 	 
-	for grid_node in trackNode.get_node("Grid").get_children():
-		gridPositions.append(grid_node.global_position)
+	update_grid_positions()
 	
 	if OS.get_cmdline_args().has("--server"):
 		createServer()
@@ -91,6 +90,10 @@ func createServer():
 		addHostedPlayer(multiplayer.get_unique_id())
 		
 	print("Server started")
+
+func update_grid_positions():
+	for grid_node in trackNode.get_node("Grid").get_children():
+		gridPositions.append(grid_node.global_position)
 
 func _process(delta):
 	pass
@@ -139,6 +142,8 @@ func race_restart(numberOfLaps: int, track_index: int):
 		track.queue_free()
 	trackNode = track_scenes[track_index].scene.instantiate()
 	tracksNode.add_child(trackNode)
+	
+	update_grid_positions()
 	
 	raceNumberOfLapsInput.text = str(numberOfLaps)
 	raceTrackList.select(track_index)

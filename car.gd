@@ -263,16 +263,28 @@ func _enter_tree():
 
 func _on_area_2d_area_entered(area: Area2D):
 	if area.name == "Grass":
-		surface = surfaces.GRASS
 		for a in area.get_overlapping_areas():
 			if a.name == "LeftWheels":
 				emit_grass_left = true
 			if a.name == "RightWheels":
 				emit_grass_right= true
 
+func _on_right_weel_area_exited(area):
+	if area.name == "Grass":
+		emit_grass_right = false
 
-func _on_area_2d_area_exited(area):
-	surface = surfaces.TARMAC
-	emit_grass_left = false
-	emit_grass_right = false
-	
+
+func _on_left_wheel_area_exited(area):
+	if area.name == "Grass":
+		emit_grass_left = false	
+
+
+func _on_all_wheels_area_entered(area):
+	if area.name == "Grass":
+		surface = surfaces.GRASS
+
+func _on_all_wheels_area_exited(area):
+	if area.name == "Grass":
+		surface = surfaces.TARMAC
+
+
