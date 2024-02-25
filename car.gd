@@ -169,7 +169,6 @@ func set_grid(pos: Vector2):
 	if not is_multiplayer_authority():
 		return
 	
-	print_debug("set grid on player ", pos)
 	gridPosition = pos
 	set_global_position(pos)
 	find_child("Smoothing2D").teleport()

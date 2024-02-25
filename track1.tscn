@@ -215,4 +215,16 @@ shape = SubResource("RectangleShape2D_3oyoj")
 position = Vector2(57, 127)
 shape = SubResource("RectangleShape2D_p3had")
 
-[node name="Node2D" type="Node2D" parent="."]
+[node name="Grid" type="Node2D" parent="."]
+
+[node name="Grid1" type="Node2D" parent="Grid"]
+position = Vector2(323, 325)
+
+[node name="Grid2" type="Node2D" parent="Grid"]
+position = Vector2(307, 358)
+
+[node name="Grid3" type="Node2D" parent="Grid"]
+position = Vector2(261, 324)
+
+[node name="Grid4" type="Node2D" parent="Grid"]
+position = Vector2(249, 357)

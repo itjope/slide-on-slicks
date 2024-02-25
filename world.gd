@@ -24,9 +24,10 @@ var Player = preload("res://player.tscn")
 var start_lights = preload("res://start_lights.tscn")
 var PORT = 9999
 var enetPeer = ENetMultiplayerPeer.new()
-var gridPositions = [Vector2(220, 335), Vector2(240, 360), Vector2(280, 335), Vector2(300, 360)]
+var gridPositions = []
 var carColors = ["blue", "pink", "green", "yellow"]
 var isServer = false
+
 
 var raceCompledPlayers = []
 var playerChampionshipPoints = {}
@@ -47,12 +48,13 @@ func _ready():
 	trackNode.checkpoint_completed.connect(raceInfoNode.checkpoint_completed)
 	raceInfoNode.race_completed.connect(on_race_completed)
 	
+	 
+	for grid_node in trackNode.get_node("Grid").get_children():
+		gridPositions.append(grid_node.global_position)
 	
 	if OS.get_cmdline_args().has("--server"):
 		createServer()
 		
-	
-	
 
 func createServer():
 	print("Starting server...")
@@ -113,7 +115,6 @@ func set_grid_pos(peerId: String, pos: int):
 		
 @rpc("any_peer")
 func set_car_color(peerId: String, color: String):
-	print_debug("set_car_color ", multiplayer.get_unique_id(), " ", peerId, " ", color)
 	for player in networkNode.get_children():
 		if player.name == peerId:
 			player.car_animation_color = color
@@ -126,8 +127,7 @@ func race_restart(numberOfLaps: int):
 	for player in networkNode.get_children():
 		player.race_restart()
 	
-	for track in tracksNode.get_children():
-		raceInfoNode.resetLaps(numberOfLaps)
+	raceInfoNode.resetLaps(numberOfLaps)
 		
 	add_child(lights)
 	raceCompleted.hide()
@@ -211,13 +211,11 @@ func handleConnectedPlayer(peerId):
 	var player = addPlayer(peerId)
 
 func addHostedPlayer(peerId):
-	var gridPos = networkNode.get_child_count()
+	#var gridPos = networkNode.get_child_count() - 1
 	var player = addPlayer(peerId)
-	player.set_grid(gridPositions[gridPos])
+	player.set_grid(gridPositions[0])
 			
 func addPlayer(peerId): 
-	print_debug("addPlayer: ", peerId)
-	
 	var player = Player.instantiate()
 	player.name = str(peerId)
 	
@@ -227,12 +225,13 @@ func addPlayer(peerId):
 	return player
 
 func removePlayer(peerId): 
-	print_debug("removePlayer: ", peerId)
 	get_node("Network").get_node(str(peerId)).queue_free()
 
 
-func _on_network_child_entered_tree(node):
-	await get_tree().create_timer(4).timeout
+func _on_network_child_entered_tree(node: Node2D):
+	node.visible = false
+	await get_tree().create_timer(2).timeout
+	node.visible = true
 	
 	rpc("player_nick_update", str(multiplayer.get_unique_id()), playerNameEntry.text)
 	if str(multiplayer.get_unique_id()) == node.name:
@@ -245,11 +244,11 @@ func _on_network_child_entered_tree(node):
 		node.car_animation_color = carColor
 		var carColorIndex = 0
 		for player in networkNode.get_children():
-			carColorIndex += 1;
 			if carColorIndex >= networkNode.get_child_count():
 				carColorIndex = 0
 			carColor = carColors[carColorIndex]
 			rpc("set_car_color", player.name, carColor)
+			carColorIndex += 1
 		
 	if isServer:
 		var gridPos = networkNode.get_child_count() - 1
@@ -276,7 +275,6 @@ func _on_link_button_pressed():
 	raceMenu.show()
 	
 func on_race_completed(playerState):
-	print_debug("on_race_completed", playerState)
 	rpc("race_completed", playerState)
 	race_completed(playerState)
 	raceCompleted.show()
