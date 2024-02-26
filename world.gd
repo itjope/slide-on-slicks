@@ -15,6 +15,7 @@ extends Node2D
 @onready var raceCompleted = $RaceCompleted
 @onready var raceCompletedGrid = $RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainerRace
 @onready var championshipGrid = $RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainerChampionship
+@onready var race_settings = $RaceSettings
 
 # Race settings meny
 @onready var raceMenu = $RaceSettings/RaceMenu
@@ -266,6 +267,7 @@ func _on_network_child_entered_tree(node: Node2D):
 	node.visible = false
 	await get_tree().create_timer(2).timeout
 	node.visible = true
+	race_settings.visible = true
 	
 	rpc("player_nick_update", str(multiplayer.get_unique_id()), playerNameEntry.text)
 	if str(multiplayer.get_unique_id()) == node.name:
