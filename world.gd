@@ -36,6 +36,7 @@ var gridPositions = []
 var carColors = ["blue", "pink", "green", "yellow"]
 var isServer = false
 var trackNode: Node2D
+var current_track_index:int = -1
 
 
 var raceCompledPlayers = []
@@ -52,12 +53,7 @@ func _ready():
 	DisplayServer.window_set_size(Vector2i(1920, 1080))
 	playerNameEntry.text = "P" + str(randi() % 100)
 	
-	trackNode = track_scenes[0].scene.instantiate()
-	tracksNode.add_child(trackNode)
-	trackNode.lap_completed.connect(raceInfoNode.lap_completed)
-	trackNode.race_started.connect(raceInfoNode.race_started)
-	trackNode.checkpoint_completed.connect(raceInfoNode.checkpoint_completed)
-	raceInfoNode.race_completed.connect(on_race_completed)
+	init_track(0)
 	for track in track_scenes:
 		raceTrackList.add_item(track.name)
 	raceTrackList.select(0)
@@ -67,6 +63,24 @@ func _ready():
 	if OS.get_cmdline_args().has("--server"):
 		createServer()
 		
+		
+func init_track(track_index: int): 
+	if (track_index == current_track_index): 
+		return
+		
+	for track in tracksNode.get_children():
+		tracksNode.remove_child(track)
+		track.queue_free()
+	trackNode = track_scenes[track_index].scene.instantiate()
+	tracksNode.add_child(trackNode)
+	
+	trackNode.lap_completed.connect(raceInfoNode.lap_completed)
+	trackNode.race_started.connect(raceInfoNode.race_started)
+	trackNode.checkpoint_completed.connect(raceInfoNode.checkpoint_completed)
+	raceInfoNode.race_completed.connect(on_race_completed)
+	raceInfoNode.reset_session()
+	
+	current_track_index = track_index
 
 func createServer():
 	print("Starting server...")
@@ -137,12 +151,7 @@ func set_car_color(peerId: String, color: String):
 
 @rpc("any_peer")
 func race_restart(numberOfLaps: int, track_index: int):
-	for track in tracksNode.get_children():
-		tracksNode.remove_child(track)
-		track.queue_free()
-	trackNode = track_scenes[track_index].scene.instantiate()
-	tracksNode.add_child(trackNode)
-	
+	init_track(track_index)
 	update_grid_positions()
 	
 	raceNumberOfLapsInput.text = str(numberOfLaps)
@@ -308,3 +317,7 @@ func on_race_completed(playerState):
 	rpc("race_completed", playerState)
 	race_completed(playerState)
 	raceCompleted.show()
+	
+func _on_start_new_race_pressed():
+	raceCompleted.hide()
+	raceMenu.show()

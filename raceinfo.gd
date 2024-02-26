@@ -33,6 +33,10 @@ func resetLaps(laps: int):
 		
 	purpleRect.visible = false
 	
+func reset_session():
+	playerState.bestLap = 0
+	playerState.lastLapTime = 0
+	
 func formatDuration(duration: int):
 	var seconds = floor(duration / 1000)
 	var ms = duration % 1000
