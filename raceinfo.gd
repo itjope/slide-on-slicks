@@ -4,6 +4,7 @@ extends CanvasLayer
 @onready var lastLapTime = $LastLapTime
 @onready var sessionBestLapTime = $SessionBestLapTime
 @onready var purpleRect = $PurpleRect
+@onready var tyre_health_label = $TyreHealth
 
 signal race_completed(playerState)
 
@@ -89,6 +90,10 @@ func checkpoint_completed():
 func race_started():
 	playerState.raceStartTime = Time.get_ticks_msec()
 	self.visible = true
+	
+func set_tyre_health(tyre_health):
+	var tyre_precent = ceil(tyre_health * 100)
+	tyre_health_label.text = "TYRES " + str(tyre_precent) + "%"
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

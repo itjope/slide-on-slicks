@@ -259,7 +259,6 @@ color = Color(0.113725, 0.392157, 0.776471, 1)
 [node name="tracks" type="Node2D" parent="."]
 
 [node name="RaceInfo" type="CanvasLayer" parent="."]
-visible = false
 script = ExtResource("4_73etn")
 
 [node name="PurpleRect" type="ColorRect" parent="RaceInfo"]
@@ -279,6 +278,18 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = SubResource("SystemFont_a2q2o")
 theme_override_font_sizes/font_size = 13
 text = "LAP 1"
+vertical_alignment = 1
+
+[node name="TyreHealth" type="Label" parent="RaceInfo"]
+offset_left = 425.0
+offset_top = 385.0
+offset_right = 497.0
+offset_bottom = 402.0
+theme_override_colors/font_color = Color(0.992157, 0.992157, 0.992157, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = SubResource("SystemFont_a2q2o")
+theme_override_font_sizes/font_size = 13
+text = "TYRES 100"
 vertical_alignment = 1
 
 [node name="LastLapTime" type="Label" parent="RaceInfo"]

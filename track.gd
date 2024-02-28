@@ -1,6 +1,6 @@
 extends Node2D
 
-
+@onready var pitstop_label = $PitstopLabel
 @export var finishLine: Area2D
 @export var checkpoints: Array[Area2D]
 
@@ -16,6 +16,7 @@ var playerState = {
 }
 
 func _ready():
+	pitstop_label.visible = false
 	finishLine.body_entered.connect(_on_finnish_line_body_entered)
 	for i in range(checkpoints.size()):
 		var checkpoint = checkpoints[i]
@@ -50,3 +51,6 @@ func _on_checkpoint_body_entered(body, checkpointIndex):
 	if playerState.checkpoint == checkpointIndex:
 		playerState.checkpoint = checkpointIndex + 1
 		checkpoint_completed.emit()
+
+func toggle_pit():
+	pitstop_label.visible = !pitstop_label.visible

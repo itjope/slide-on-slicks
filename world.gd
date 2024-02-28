@@ -79,6 +79,7 @@ func init_track(track_index: int):
 	trackNode.race_started.connect(raceInfoNode.race_started)
 	trackNode.checkpoint_completed.connect(raceInfoNode.checkpoint_completed)
 	raceInfoNode.race_completed.connect(on_race_completed)
+	
 	raceInfoNode.reset_session()
 	
 	current_track_index = track_index
@@ -253,6 +254,9 @@ func addHostedPlayer(peerId):
 func addPlayer(peerId): 
 	var player = Player.instantiate()
 	player.name = str(peerId)
+	
+	player.connect("tyre_health_changed", raceInfoNode.set_tyre_health)
+	player.connect("toggle_pit", trackNode.toggle_pit)
 	
 	networkNode.add_child(player)
 	player.find_child("Smoothing2D").teleport()

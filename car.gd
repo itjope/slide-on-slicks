@@ -15,7 +15,10 @@ var braking = -350
 var max_speed = 1000
 var max_speed_reverse = 300
 var slip_speed = 190
+var tyre_wear_factor = 0.999
+var initial_traction_fast = 0.0025
 var traction_fast = 0.0025
+var initial_traction_slow = 0.02
 var traction_slow = 0.02
 var traction_grass = 0.001
 var steering_angle = steering_angle_default
@@ -54,6 +57,9 @@ var surface = surfaces.TARMAC
 @export var network_transform = transform
 @export var player_nick = ""
 @export var car_animation_color = "blue"
+
+signal tyre_health_changed(tyre_health)
+signal toggle_pit()
 
 func _ready():
 	if not is_multiplayer_authority(): return
@@ -109,6 +115,9 @@ func get_input():
 	if Input.is_action_pressed("kryckan"):
 		steering_angle = steering_angle_during_kryckan
 		acceleration = acceleration * kryckan_slownown_factor
+		
+	if Input.is_action_just_pressed("togglePit"):
+		toggle_pit.emit()
 	
 	if jumped_start > 0:
 		acceleration = acceleration * 0.5
@@ -136,6 +145,9 @@ func get_input2():
 	steer_direction = turn * deg_to_rad(steering_angle)
 
 func calculate_turn():
+	traction_fast = traction_fast * tyre_wear_factor
+	traction_slow = traction_slow * tyre_wear_factor
+	
 	var car_speed = velocity.length()
 	if car_speed > max_speed:
 		return 2
@@ -203,6 +215,9 @@ func _process(delta):
 		
 	grass_particles_left.emitting = emit_grass_left
 	grass_particles_right.emitting = emit_grass_right
+	
+	if is_multiplayer_authority():
+		tyre_health_changed.emit(traction_slow / initial_traction_slow)
 	
 	if not is_multiplayer_authority():
 		# TODO: Use a better way to calculate weight
