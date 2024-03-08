@@ -36,6 +36,12 @@ properties/5/replication_mode = 1
 properties/6/path = NodePath(".:network_transform")
 properties/6/spawn = true
 properties/6/replication_mode = 1
+properties/7/path = NodePath("CollisionShape2D:disabled")
+properties/7/spawn = false
+properties/7/replication_mode = 1
+properties/8/path = NodePath("Smoothing2D/AnimatedSprite:self_modulate")
+properties/8/spawn = false
+properties/8/replication_mode = 1
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tkpbv"]
 atlas = ExtResource("4_kseun")
@@ -350,7 +356,6 @@ turbulence_noise_strength = 2.75
 size = Vector2(14, 15)
 
 [node name="CharacterBody2D" type="CharacterBody2D"]
-visibility_layer = 2
 position = Vector2(-36, 375)
 motion_mode = 1
 script = ExtResource("1_ttov1")

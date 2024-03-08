@@ -16,6 +16,7 @@ extends Node2D
 @onready var raceCompletedGrid = $RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainerRace
 @onready var championshipGrid = $RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainerChampionship
 @onready var race_settings = $RaceSettings
+@onready var pit_wrapper = $PitWrapper
 
 # Race settings meny
 @onready var raceMenu = $RaceSettings/RaceMenu
@@ -24,6 +25,7 @@ extends Node2D
 
 var Player = preload("res://player.tscn")
 var start_lights = preload("res://start_lights.tscn")
+var PitScene = preload("res://pit.tscn")
 var track_scenes = [{
 	name = "Ettan",
 	scene = preload("res://track1.tscn")
@@ -37,6 +39,8 @@ var gridPositions = []
 var carColors = ["blue", "pink", "green", "yellow"]
 var isServer = false
 var trackNode: Node2D
+var pit_node: Node2D
+var pit_is_open: bool = false
 var current_track_index:int = -1
 
 
@@ -55,6 +59,7 @@ func _ready():
 	playerNameEntry.text = "P" + str(randi() % 100)
 	
 	init_track(0)
+	init_pit()
 	for track in track_scenes:
 		raceTrackList.add_item(track.name)
 	raceTrackList.select(0)
@@ -64,7 +69,19 @@ func _ready():
 	if OS.get_cmdline_args().has("--server"):
 		createServer()
 		
+func init_pit():
+	pit_node = PitScene.instantiate()
+	pit_node.visible = false
+	pit_node.pit_stop_completed.connect(pit_completed)
+	pit_wrapper.add_child(pit_node)
 		
+func pit_completed(tyre_type):
+	print_debug("pit completed", tyre_type)
+	pit_node.visible = false
+	toggle_pit()
+	for player in networkNode.get_children():
+		player.exit_pit(tyre_type)
+	
 func init_track(track_index: int): 
 	if (track_index == current_track_index): 
 		return
@@ -75,7 +92,7 @@ func init_track(track_index: int):
 	trackNode = track_scenes[track_index].scene.instantiate()
 	tracksNode.add_child(trackNode)
 	
-	trackNode.lap_completed.connect(raceInfoNode.lap_completed)
+	trackNode.lap_completed.connect(on_lap_completed)
 	trackNode.race_started.connect(raceInfoNode.race_started)
 	trackNode.checkpoint_completed.connect(raceInfoNode.checkpoint_completed)
 	raceInfoNode.race_completed.connect(on_race_completed)
@@ -83,6 +100,14 @@ func init_track(track_index: int):
 	raceInfoNode.reset_session()
 	
 	current_track_index = track_index
+
+func on_lap_completed(player_nick: String):
+	raceInfoNode.lap_completed(player_nick)
+	print_debug("lap_completed")
+	if pit_is_open:
+		pit_node.visible = true
+		for player in networkNode.get_children():
+			player.enter_pit()
 
 func createServer():
 	print("Starting server...")
@@ -254,14 +279,14 @@ func addHostedPlayer(peerId):
 func addPlayer(peerId): 
 	var player = Player.instantiate()
 	player.name = str(peerId)
-	
-	player.connect("tyre_health_changed", raceInfoNode.set_tyre_health)
-	player.connect("toggle_pit", trackNode.toggle_pit)
-	
 	networkNode.add_child(player)
 	player.find_child("Smoothing2D").teleport()
 	
 	return player
+
+func toggle_pit(): 
+	pit_is_open = !pit_is_open
+	trackNode.toggle_pit()
 
 func removePlayer(peerId): 
 	get_node("Network").get_node(str(peerId)).queue_free()
@@ -275,7 +300,9 @@ func _on_network_child_entered_tree(node: Node2D):
 	
 	rpc("player_nick_update", str(multiplayer.get_unique_id()), playerNameEntry.text)
 	if str(multiplayer.get_unique_id()) == node.name:
-		node.set_nick(playerNameEntry.text) 
+		node.set_nick(playerNameEntry.text)
+		node.connect("tyre_health_changed", raceInfoNode.set_tyre_health)
+		node.connect("toggle_pit", toggle_pit)
 	
 	
 	rpc("set_car_color", node.name, node.car_animation_color)

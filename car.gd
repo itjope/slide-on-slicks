@@ -30,8 +30,11 @@ enum race_states {GRID, STARTED, COMPLETED}
 var race_state = race_states.STARTED
 var jumped_start = 0
 
-enum surfaces {TARMAC, GRASS}
+enum surfaces {TARMAC, GRASS, PIT}
 var surface = surfaces.TARMAC
+
+enum tyre_types {SOFT, MEDIUM, HARD, WET}
+var current_tyre = tyre_types.MEDIUM
 
 #@onready var animation_node_blue = $Smoothing2D/AnimatedSpriteBlue
 #@onready var animation_node_pink = $Smoothing2D/AnimatedSpritePink
@@ -188,7 +191,27 @@ func set_grid(pos: Vector2):
 func set_nick(nick: String):
 	player_nick = nick
 	player_nick_label.text = nick
+	
+func enter_pit(): 
+	if not is_multiplayer_authority():
+		return
+	surface = surfaces.PIT
+	collision_shape.disabled = true
+	animation_node.self_modulate = Color(1, 1, 1, 0.4)
 
+	
+func exit_pit(tyre):
+	if not is_multiplayer_authority():
+		return
+	surface = surfaces.TARMAC
+	current_tyre = tyre
+	traction_fast = initial_traction_fast
+	traction_slow = initial_traction_slow
+	collision_shape.disabled = false
+	animation_node.self_modulate = Color(1, 1, 1, 1)
+	
+	print_debug("Exit pit ", tyre)
+	
 func race_restart():
 	race_state = race_states.GRID
 	rotation = 0
@@ -248,12 +271,16 @@ func _physics_process(delta):
 			velocity = Vector2.ZERO
 		return
 	
+	
 	if race_state == race_states.GRID: 
 		velocity = Vector2.ZERO
 		if Input.is_action_pressed("accelerate"):
 			jumped_start = min(jumped_start + 2, 50)
 		else: 
 			jumped_start = max(jumped_start - 1, 0)
+		return
+	elif surface == surfaces.PIT:
+		velocity = Vector2.ZERO
 		return
 	else:
 		jumped_start = max(jumped_start - 1, 0)
