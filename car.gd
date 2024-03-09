@@ -15,10 +15,14 @@ var braking = -350
 var max_speed = 1000
 var max_speed_reverse = 300
 var slip_speed = 190
-var tyre_wear_factor = 0.999
-var initial_traction_fast = 0.0025
+var tyre_wear_factors = [0.99990, 0.99993, 0.99995, 0.999]
+var fast_tractions_by_tyre = [0.0027, 0.0025, 0.0022, 0.001]
+var slow_tractions_by_tyre = [0.025, 0.022, 0.020, 0.010]
+
+var tyre_wear_factor = 1
+#var initial_traction_fast = 0.0025
 var traction_fast = 0.0025
-var initial_traction_slow = 0.02
+#var initial_traction_slow = 0.02
 var traction_slow = 0.02
 var traction_grass = 0.001
 var steering_angle = steering_angle_default
@@ -70,7 +74,14 @@ func _ready():
 	set_floor_snap_length(0.0)
 	player_nick_label.text = player_nick
 	audio_listener.make_current()
+	update_tyre(current_tyre)
 	#animation_node.set_animation(car_animation_color)
+	
+func update_tyre(tyre):
+	current_tyre = tyre
+	tyre_wear_factor = tyre_wear_factors[tyre]
+	traction_fast = fast_tractions_by_tyre[tyre]
+	traction_slow = slow_tractions_by_tyre[tyre]
 	
 
 func _input(event):
@@ -204,9 +215,8 @@ func exit_pit(tyre):
 	if not is_multiplayer_authority():
 		return
 	surface = surfaces.TARMAC
-	current_tyre = tyre
-	traction_fast = initial_traction_fast
-	traction_slow = initial_traction_slow
+	update_tyre(tyre)
+	
 	collision_shape.disabled = false
 	animation_node.self_modulate = Color(1, 1, 1, 1)
 	
@@ -240,7 +250,7 @@ func _process(delta):
 	grass_particles_right.emitting = emit_grass_right
 	
 	if is_multiplayer_authority():
-		tyre_health_changed.emit(traction_slow / initial_traction_slow)
+		tyre_health_changed.emit(traction_slow / slow_tractions_by_tyre[current_tyre])
 	
 	if not is_multiplayer_authority():
 		# TODO: Use a better way to calculate weight
