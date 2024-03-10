@@ -1,8 +1,9 @@
-[gd_scene load_steps=17 format=3 uid="uid://1xpslghvss7h"]
+[gd_scene load_steps=20 format=3 uid="uid://1xpslghvss7h"]
 
 [ext_resource type="Script" path="res://world.gd" id="1_f8kds"]
 [ext_resource type="Texture2D" uid="uid://be8i1155my3rt" path="res://splash.png" id="2_rhbwk"]
 [ext_resource type="Script" path="res://RaceInfo.gd" id="4_73etn"]
+[ext_resource type="Texture2D" uid="uid://drtn78x5fd4h8" path="res://rainpuddle-animated.png" id="4_iqic0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0ddpk"]
 size = Vector2(32.75, 676)
@@ -27,6 +28,21 @@ polygon = PackedVector2Array(635, 258, 582, 323, 518, 361, 423, 405, 653, 409, 6
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_tmch0"]
 polygon = PackedVector2Array(-2, 127, 20, 161, 42, 178, 48, 185, 69, 193, 144, 195, 245, 202, 319, 203, 336, 202, 345, 195, 359, 191, 369, 191, 371, 201, 372, 211, 370, 218, 360, 221, 325, 223, 191, 215, 25, 215, 18, 217, 14, 230, 5, 247, 1, 263, -5, 278)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_m7bko"]
+particles_animation = true
+particles_anim_h_frames = 2
+particles_anim_v_frames = 3
+particles_anim_loop = true
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ofhjg"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(320, 200, 1)
+spread = 46.504
+gravity = Vector3(2.08165e-12, 2.08165e-12, 2.08165e-12)
+anim_speed_min = 0.84
+anim_speed_max = 0.84
 
 [sub_resource type="SystemFont" id="SystemFont_a2q2o"]
 font_names = PackedStringArray("Monospace")
@@ -256,7 +272,19 @@ spawn_limit = 4
 visible = false
 color = Color(0.113725, 0.392157, 0.776471, 1)
 
+[node name="RainCanvas" type="CanvasModulate" parent="."]
+
 [node name="tracks" type="Node2D" parent="."]
+
+[node name="RainPuddles" type="GPUParticles2D" parent="."]
+self_modulate = Color(1, 1, 1, 0.4)
+material = SubResource("CanvasItemMaterial_m7bko")
+position = Vector2(342, 188)
+amount = 55
+process_material = SubResource("ParticleProcessMaterial_ofhjg")
+texture = ExtResource("4_iqic0")
+explosiveness = 0.19
+randomness = 0.06
 
 [node name="RaceInfo" type="CanvasLayer" parent="."]
 script = ExtResource("4_73etn")

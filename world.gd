@@ -17,6 +17,8 @@ extends Node2D
 @onready var championshipGrid = $RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainerChampionship
 @onready var race_settings = $RaceSettings
 @onready var pit_wrapper = $PitWrapper
+@onready var rain_puddles = $RainPuddles
+@onready var rain_canvas = $RainCanvas
 
 # Race settings meny
 @onready var raceMenu = $RaceSettings/RaceMenu
@@ -43,6 +45,9 @@ var pit_node: Node2D
 var pit_is_open: bool = false
 var current_track_index:int = -1
 
+enum weather_conditons {SUN, LIGHTRAIN, RAIN, WET}
+var current_weather = weather_conditons.SUN
+var weather_shift_timer = Timer.new()
 
 var raceCompledPlayers = []
 var playerChampionshipPoints = {}
@@ -52,6 +57,7 @@ var positionToPoint = {
 	3: 4,
 	4: 3
 }
+var rain_tween = null
 
 func _ready():
 	#if OS.is_debug_build():
@@ -68,17 +74,30 @@ func _ready():
 	
 	if OS.get_cmdline_args().has("--server"):
 		createServer()
+	
+	if multiplayer.is_server():
+		add_child(weather_shift_timer)
+		weather_shift_timer.connect("timeout", _on_weather_timeout)
 		
 func init_pit():
 	pit_node = PitScene.instantiate()
 	pit_node.visible = false
 	pit_node.pit_stop_completed.connect(pit_completed)
 	pit_wrapper.add_child(pit_node)
+	
+func _on_weather_timeout():
+	if current_weather == weather_conditons.WET:
+		current_weather = weather_conditons.SUN
+	else:
+		current_weather += 1
+	
+	set_weather.rpc(current_weather)
+	set_weather_timeout()
 		
 func pit_completed(tyre_type):
-	print_debug("pit completed", tyre_type)
 	pit_node.visible = false
 	toggle_pit()
+	
 	for player in networkNode.get_children():
 		player.exit_pit(tyre_type)
 	
@@ -103,7 +122,6 @@ func init_track(track_index: int):
 
 func on_lap_completed(player_nick: String):
 	raceInfoNode.lap_completed(player_nick)
-	print_debug("lap_completed")
 	if pit_is_open:
 		pit_node.visible = true
 		for player in networkNode.get_children():
@@ -137,8 +155,18 @@ func update_grid_positions():
 		gridPositions.append(grid_node.global_position)
 
 func _process(delta):
-	pass
-
+	if current_weather == weather_conditons.LIGHTRAIN or current_weather == weather_conditons.RAIN:
+		rain_puddles.emitting = true
+	else:
+		rain_puddles.emitting = false
+	
+	if current_weather == weather_conditons.LIGHTRAIN:
+		rain_puddles.amount = 7
+	
+	if current_weather == weather_conditons.RAIN:
+		rain_puddles.amount = 100
+	
+	
 func _input(event):
 	if (mainMenu.visible): return
 	
@@ -164,6 +192,30 @@ func _on_join_button_pressed():
 
 		multiplayer.multiplayer_peer = enetPeer
 
+@rpc("authority", "call_local", "reliable")
+func set_weather(weather):
+	if rain_tween:
+		rain_tween.kill()
+		
+	current_weather = weather
+	for player in networkNode.get_children():
+		player.update_weather(weather)
+		
+	if current_weather == weather_conditons.LIGHTRAIN:
+		rain_tween = get_tree().create_tween()
+		rain_tween.tween_property(rain_canvas, "color", Color(0.834, 0.899, 0.994, 0.92), 3)
+		rain_tween.play()
+	
+	if current_weather == weather_conditons.RAIN:
+		rain_tween = get_tree().create_tween()
+		rain_tween.tween_property(rain_canvas, "color", Color(0.671, 0.8, 0.988, 0.929), 3)
+		rain_tween.play()
+		
+	if current_weather == weather_conditons.WET:
+		rain_tween = get_tree().create_tween()
+		rain_tween.tween_property(rain_canvas, "color", Color.WHITE, 3)
+		rain_tween.play()
+
 @rpc("any_peer")
 func set_grid_pos(peerId: String, pos: int):
 	for player in networkNode.get_children():
@@ -176,6 +228,14 @@ func set_car_color(peerId: String, color: String):
 		if player.name == peerId:
 			player.car_animation_color = color
 
+func set_weather_timeout():
+	weather_shift_timer.stop()
+	var from = 2 #seconds
+	var to = 10 #seconds
+	var next_weather_in = randi() % (to - from + 1) + from
+	weather_shift_timer.wait_time = next_weather_in
+	weather_shift_timer.start()
+	
 @rpc("any_peer")
 func race_restart(numberOfLaps: int, track_index: int):
 	init_track(track_index)
@@ -195,6 +255,11 @@ func race_restart(numberOfLaps: int, track_index: int):
 	
 	await get_tree().create_timer(6).timeout
 	lights.queue_free()
+	
+	if multiplayer.is_server():
+		set_weather_timeout()
+		
+		
 	
 @rpc("any_peer")
 func race_completed(playerState):
@@ -260,7 +325,9 @@ func race_completed(playerState):
 		championshipGrid.add_child(labelPoints)
 		
 		cp += 1
-		
+	
+	if multiplayer.is_server():
+		weather_shift_timer.stop()
 	
 @rpc("any_peer")
 func player_nick_update(peerId: String, nick: String):	

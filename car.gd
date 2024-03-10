@@ -40,20 +40,25 @@ var surface = surfaces.TARMAC
 enum tyre_types {SOFT, MEDIUM, HARD, WET}
 var current_tyre = tyre_types.MEDIUM
 
-#@onready var animation_node_blue = $Smoothing2D/AnimatedSpriteBlue
-#@onready var animation_node_pink = $Smoothing2D/AnimatedSpritePink
+enum weather_conditons {SUN, LIGHTRAIN, RAIN, WET}
+var current_weather = weather_conditons.SUN
+
 @onready var animation_node = $Smoothing2D/AnimatedSprite
 
-#@onready var animation_node = car_animations.blue
 @onready var collision_shape = $CollisionShape2D
 @onready var grass_particles_left = $GrassParticlesLeft
 @onready var grass_particles_right = $GrassParticlesRight
+@onready var water_particles_left = $WaterParticlesLeft
+@onready var water_particles_right = $WaterParticlesRight
 @onready var player_nick_label = $PlayerNickLabel
 @onready var audio_player = $AudioStreamPlayer2D
 @onready var audio_listener = $AudioListener2D
 
 @export var emit_grass_left = false
 @export var emit_grass_right = false
+
+@export var emit_water_left = false
+@export var emit_water_right = false
 
 @export var inputs = {
 	"steerLeft": false,
@@ -75,7 +80,6 @@ func _ready():
 	player_nick_label.text = player_nick
 	audio_listener.make_current()
 	update_tyre(current_tyre)
-	#animation_node.set_animation(car_animation_color)
 	
 func update_tyre(tyre):
 	current_tyre = tyre
@@ -83,6 +87,11 @@ func update_tyre(tyre):
 	traction_fast = fast_tractions_by_tyre[tyre]
 	traction_slow = slow_tractions_by_tyre[tyre]
 	
+func update_weather(weather):
+	current_weather = weather
+	if surface == surfaces.TARMAC:
+		emit_water_left = true
+		emit_water_right = true
 
 func _input(event):
 	if event.is_pressed() && event.as_text() == "N":
@@ -220,8 +229,6 @@ func exit_pit(tyre):
 	collision_shape.disabled = false
 	animation_node.self_modulate = Color(1, 1, 1, 1)
 	
-	print_debug("Exit pit ", tyre)
-	
 func race_restart():
 	race_state = race_states.GRID
 	rotation = 0
@@ -245,9 +252,18 @@ func _process(delta):
 		if is_multiplayer_authority():
 			emit_grass_left = false
 			emit_grass_right = false
+			emit_water_left = false
+			emit_water_right = false
 		
 	grass_particles_left.emitting = emit_grass_left
 	grass_particles_right.emitting = emit_grass_right
+	
+	if current_weather == weather_conditons.RAIN or current_weather == weather_conditons.WET:
+		water_particles_left.emitting = emit_water_left
+		water_particles_right.emitting = emit_water_right
+	else: 
+		water_particles_left.emitting = false
+		water_particles_right.emitting = false
 	
 	if is_multiplayer_authority():
 		tyre_health_changed.emit(traction_slow / slow_tractions_by_tyre[current_tyre])
@@ -318,17 +334,21 @@ func _on_area_2d_area_entered(area: Area2D):
 		for a in area.get_overlapping_areas():
 			if a.name == "LeftWheels":
 				emit_grass_left = true
+				emit_water_left = false
 			if a.name == "RightWheels":
-				emit_grass_right= true
-
+				emit_grass_right = true
+				emit_water_right = false
+	
 func _on_right_weel_area_exited(area):
 	if area.name == "Grass":
 		emit_grass_right = false
+		emit_water_right = true
 
 
 func _on_left_wheel_area_exited(area):
 	if area.name == "Grass":
-		emit_grass_left = false	
+		emit_grass_left = false
+		emit_water_left = true	
 
 
 func _on_all_wheels_area_entered(area):
