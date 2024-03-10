@@ -11,14 +11,13 @@ extends Node2D
 @onready var tracksNode = $tracks
 #@onready var trackNode = $tracks/track1
 @onready var raceInfoNode = $RaceInfo
-@onready var canvasModulate = $CanvasModulate
 @onready var raceCompleted = $RaceCompleted
 @onready var raceCompletedGrid = $RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainerRace
 @onready var championshipGrid = $RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainerChampionship
 @onready var race_settings = $RaceSettings
 @onready var pit_wrapper = $PitWrapper
 @onready var rain_puddles = $RainPuddles
-@onready var rain_canvas = $RainCanvas
+@onready var sun_canvas = $SunCanvas
 
 # Race settings meny
 @onready var raceMenu = $RaceSettings/RaceMenu
@@ -96,6 +95,7 @@ func _on_weather_timeout():
 		
 func pit_completed(tyre_type):
 	pit_node.visible = false
+	sun_canvas.visible = true
 	toggle_pit()
 	
 	for player in networkNode.get_children():
@@ -124,6 +124,7 @@ func on_lap_completed(player_nick: String):
 	raceInfoNode.lap_completed(player_nick)
 	if pit_is_open:
 		pit_node.visible = true
+		sun_canvas.visible = false
 		for player in networkNode.get_children():
 			player.enter_pit()
 
@@ -165,13 +166,6 @@ func _process(delta):
 	
 	if current_weather == weather_conditons.RAIN:
 		rain_puddles.amount = 100
-	
-	
-func _input(event):
-	if (mainMenu.visible): return
-	
-	if event.is_pressed() && event.as_text() == "N":
-		canvasModulate.visible = !canvasModulate.visible
 		
 func _on_host_button_pressed():
 	if playerNameEntry.text == "":
@@ -203,17 +197,17 @@ func set_weather(weather):
 		
 	if current_weather == weather_conditons.LIGHTRAIN:
 		rain_tween = get_tree().create_tween()
-		rain_tween.tween_property(rain_canvas, "color", Color(0.834, 0.899, 0.994, 0.92), 3)
+		rain_tween.tween_property(sun_canvas, "color", Color(0.834, 0.899, 0.994, 0.92), 3)
 		rain_tween.play()
 	
 	if current_weather == weather_conditons.RAIN:
 		rain_tween = get_tree().create_tween()
-		rain_tween.tween_property(rain_canvas, "color", Color(0.671, 0.8, 0.988, 0.929), 3)
+		rain_tween.tween_property(sun_canvas, "color", Color(0.671, 0.8, 0.988, 0.929), 3)
 		rain_tween.play()
 		
 	if current_weather == weather_conditons.WET:
 		rain_tween = get_tree().create_tween()
-		rain_tween.tween_property(rain_canvas, "color", Color.WHITE, 3)
+		rain_tween.tween_property(sun_canvas, "color", Color.WHITE, 3)
 		rain_tween.play()
 
 @rpc("any_peer")
@@ -230,8 +224,12 @@ func set_car_color(peerId: String, color: String):
 
 func set_weather_timeout():
 	weather_shift_timer.stop()
-	var from = 2 #seconds
-	var to = 10 #seconds
+	var from = 2 * 60 #minutes
+	var to = 10 * 60 #minutes
+	
+	if current_weather == weather_conditons.WET:
+		from = 1 * 60 #minutes
+		to = 3  * 60 #minutes
 	var next_weather_in = randi() % (to - from + 1) + from
 	weather_shift_timer.wait_time = next_weather_in
 	weather_shift_timer.start()

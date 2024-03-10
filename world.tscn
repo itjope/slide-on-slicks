@@ -268,11 +268,7 @@ spawn_limit = 4
 
 [node name="Network" type="Node" parent="."]
 
-[node name="CanvasModulate" type="CanvasModulate" parent="."]
-visible = false
-color = Color(0.113725, 0.392157, 0.776471, 1)
-
-[node name="RainCanvas" type="CanvasModulate" parent="."]
+[node name="SunCanvas" type="CanvasModulate" parent="."]
 
 [node name="tracks" type="Node2D" parent="."]
 

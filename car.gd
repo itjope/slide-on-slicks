@@ -15,9 +15,9 @@ var braking = -350
 var max_speed = 1000
 var max_speed_reverse = 300
 var slip_speed = 190
-var tyre_wear_factors = [0.99990, 0.99993, 0.99995, 0.999]
-var fast_tractions_by_tyre = [0.0027, 0.0025, 0.0022, 0.001]
-var slow_tractions_by_tyre = [0.025, 0.022, 0.020, 0.010]
+var tyre_wear_factors = [0.99990, 0.99995, 0.99999, 0.999]
+var fast_tractions_by_tyre = [0.0027, 0.0025, 0.0022, 0.0020]
+var slow_tractions_by_tyre = [0.025, 0.022, 0.020, 0.018]
 
 var tyre_wear_factor = 1
 #var initial_traction_fast = 0.0025
@@ -83,15 +83,25 @@ func _ready():
 	
 func update_tyre(tyre):
 	current_tyre = tyre
-	tyre_wear_factor = tyre_wear_factors[tyre]
-	traction_fast = fast_tractions_by_tyre[tyre]
-	traction_slow = slow_tractions_by_tyre[tyre]
+	if current_weather == weather_conditons.RAIN or current_weather == weather_conditons.WET:
+		if tyre == tyre_types.WET:
+			traction_fast = fast_tractions_by_tyre[tyre]
+			traction_slow = slow_tractions_by_tyre[tyre]
+		else:
+			traction_fast = 0.00004
+			traction_slow = 0.0004
+	else: 
+		tyre_wear_factor = tyre_wear_factors[tyre]
+		traction_fast = fast_tractions_by_tyre[tyre]
+		traction_slow = slow_tractions_by_tyre[tyre]
 	
 func update_weather(weather):
 	current_weather = weather
 	if surface == surfaces.TARMAC:
 		emit_water_left = true
 		emit_water_right = true
+	
+	update_tyre(current_tyre)
 
 func _input(event):
 	if event.is_pressed() && event.as_text() == "N":
@@ -125,12 +135,12 @@ func get_input():
 		steering_angle = steering_angle_during_acceleration
 		acceleration = transform.x * engine_power
 		
-	else:
+	#else:
 		audio_player.set_pitch_scale(max(0.2, audio_player.get_pitch_scale() - 0.02))
-		if steering_angle < steering_angle_default: 
-			steering_angle = steering_angle + 0.3
-		else:
-			steering_angle = steering_angle_default
+		#if steering_angle < steering_angle_default: 
+		#	steering_angle = steering_angle + 0.3
+		#else:
+		#	steering_angle = steering_angle_default
 	
 	if Input.is_action_pressed("break"):
 		acceleration = transform.x * braking
@@ -168,8 +178,9 @@ func get_input2():
 	steer_direction = turn * deg_to_rad(steering_angle)
 
 func calculate_turn():
-	traction_fast = traction_fast * tyre_wear_factor
-	traction_slow = traction_slow * tyre_wear_factor
+	if not current_weather == weather_conditons.RAIN and not current_weather == weather_conditons.WET:
+		traction_fast = traction_fast * tyre_wear_factor
+		traction_slow = traction_slow * tyre_wear_factor
 	
 	var car_speed = velocity.length()
 	if car_speed > max_speed:
@@ -242,6 +253,7 @@ func race_restart():
 	await get_tree().create_timer(2).timeout
 	race_state = race_states.STARTED
 	
+		
 func _process(delta):
 	if velocity.length() > 10:
 		var animationSpeed  = min(velocity.length() / 200, 1)
