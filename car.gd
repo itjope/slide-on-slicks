@@ -218,6 +218,7 @@ func set_grid(pos: Vector2):
 	gridPosition = pos
 	set_global_position(pos)
 	find_child("Smoothing2D").teleport()
+	update_tyre(current_tyre)
 
 func set_nick(nick: String):
 	player_nick = nick
