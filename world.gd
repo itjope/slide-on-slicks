@@ -261,6 +261,7 @@ func race_restart(numberOfLaps: int, track_index: int):
 	lights.queue_free()
 	
 	if multiplayer.is_server():
+		set_weather.rpc(current_weather)
 		set_weather_timeout()
 		
 		

@@ -15,7 +15,7 @@ var braking = -350
 var max_speed = 1000
 var max_speed_reverse = 300
 var slip_speed = 190
-var tyre_wear_factors = [0.99990, 0.99995, 0.99999, 0.999]
+var tyre_wear_factors = [0.99990, 0.99995, 0.99999, 0.9999]
 var fast_tractions_by_tyre = [0.0027, 0.0025, 0.0022, 0.0020]
 var slow_tractions_by_tyre = [0.025, 0.022, 0.020, 0.018]
 
@@ -83,26 +83,16 @@ func _ready():
 	
 func update_tyre(tyre):
 	current_tyre = tyre
-	if current_weather == weather_conditons.RAIN or current_weather == weather_conditons.WET:
-		if tyre == tyre_types.WET:
-			traction_fast = fast_tractions_by_tyre[tyre]
-			traction_slow = slow_tractions_by_tyre[tyre]
-		else:
-			traction_fast = 0.00004
-			traction_slow = 0.0004
-	else: 
-		tyre_wear_factor = tyre_wear_factors[tyre]
-		traction_fast = fast_tractions_by_tyre[tyre]
-		traction_slow = slow_tractions_by_tyre[tyre]
+	tyre_wear_factor = tyre_wear_factors[tyre]
+	traction_fast = fast_tractions_by_tyre[tyre]
+	traction_slow = slow_tractions_by_tyre[tyre]
 	
 func update_weather(weather):
 	current_weather = weather
-	if surface == surfaces.TARMAC:
+	if surface == surfaces.TARMAC and (current_weather == weather_conditons.WET or current_weather == weather_conditons.RAIN) :
 		emit_water_left = true
 		emit_water_right = true
 	
-	update_tyre(current_tyre)
-
 func _input(event):
 	if event.is_pressed() && event.as_text() == "N":
 		for child in get_children():
@@ -154,6 +144,14 @@ func get_input():
 	
 	if jumped_start > 0:
 		acceleration = acceleration * 0.5
+	
+	if current_weather == weather_conditons.RAIN or current_weather == weather_conditons.WET:
+		if current_tyre != tyre_types.WET:
+			if velocity.length() > 120:
+				steering_angle = 15
+			
+			if velocity.length() > 170:
+				steering_angle = 3
 		
 	steer_direction = turn * deg_to_rad(steering_angle)
 
@@ -178,7 +176,10 @@ func get_input2():
 	steer_direction = turn * deg_to_rad(steering_angle)
 
 func calculate_turn():
-	if not current_weather == weather_conditons.RAIN and not current_weather == weather_conditons.WET:
+	if not current_weather == weather_conditons.RAIN and not current_weather == weather_conditons.WET and current_tyre == tyre_types.WET:
+		traction_fast = traction_fast * ((tyre_wear_factor * 10) - 9)
+		traction_slow = traction_slow * ((tyre_wear_factor * 10) - 9)
+	else:
 		traction_fast = traction_fast * tyre_wear_factor
 		traction_slow = traction_slow * tyre_wear_factor
 	
@@ -218,7 +219,6 @@ func set_grid(pos: Vector2):
 	gridPosition = pos
 	set_global_position(pos)
 	find_child("Smoothing2D").teleport()
-	update_tyre(current_tyre)
 
 func set_nick(nick: String):
 	player_nick = nick
@@ -249,6 +249,7 @@ func race_restart():
 	
 	if is_multiplayer_authority():
 		set_global_position(gridPosition)
+		update_tyre(current_tyre)
 	await get_tree().create_timer(4).timeout
 	player_nick_label.visible = false
 	await get_tree().create_timer(2).timeout
@@ -271,9 +272,9 @@ func _process(delta):
 	grass_particles_left.emitting = emit_grass_left
 	grass_particles_right.emitting = emit_grass_right
 	
-	if current_weather == weather_conditons.RAIN or current_weather == weather_conditons.WET:
-		water_particles_left.emitting = emit_water_left
-		water_particles_right.emitting = emit_water_right
+	if velocity.length() > 100 and (current_weather == weather_conditons.RAIN or current_weather == weather_conditons.WET) :
+		water_particles_left.emitting = !grass_particles_left.is_emitting()
+		water_particles_right.emitting = !grass_particles_right.is_emitting()
 	else: 
 		water_particles_left.emitting = false
 		water_particles_right.emitting = false
@@ -347,22 +348,16 @@ func _on_area_2d_area_entered(area: Area2D):
 		for a in area.get_overlapping_areas():
 			if a.name == "LeftWheels":
 				emit_grass_left = true
-				emit_water_left = false
 			if a.name == "RightWheels":
 				emit_grass_right = true
-				emit_water_right = false
 	
 func _on_right_weel_area_exited(area):
 	if area.name == "Grass":
 		emit_grass_right = false
-		emit_water_right = true
-
 
 func _on_left_wheel_area_exited(area):
 	if area.name == "Grass":
 		emit_grass_left = false
-		emit_water_left = true	
-
 
 func _on_all_wheels_area_entered(area):
 	if area.name == "Grass":
