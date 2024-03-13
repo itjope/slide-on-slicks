@@ -381,8 +381,8 @@ animation = &"yellow"
 frame = 6
 frame_progress = 0.0316583
 
-[node name="Sprite2D" type="Sprite2D" parent="Smoothing2D"]
-self_modulate = Color(0.783953, 0.172022, 0.931, 0.6)
+[node name="TyreRimSprite" type="Sprite2D" parent="Smoothing2D"]
+self_modulate = Color(0.223875, 0.35445, 0.87978, 0.666667)
 rotation = 1.5708
 texture = ExtResource("7_aex1j")
 

@@ -43,6 +43,13 @@ var current_tyre = tyre_types.MEDIUM
 enum weather_conditons {SUN, LIGHTRAIN, RAIN, WET}
 var current_weather = weather_conditons.SUN
 
+var tyre_rim_colors = [
+	Color(0.812, 0.22, 0.957, 0.667),
+	Color(0.698, 0, 0.161, 0.686),
+	Color(0.933, 0.839, 0.102, 0.6),
+	Color(0.224, 0.354, 0.88, 0.667)
+]
+
 @onready var animation_node = $Smoothing2D/AnimatedSprite
 
 @onready var collision_shape = $CollisionShape2D
@@ -53,6 +60,8 @@ var current_weather = weather_conditons.SUN
 @onready var player_nick_label = $PlayerNickLabel
 @onready var audio_player = $AudioStreamPlayer2D
 @onready var audio_listener = $AudioListener2D
+@onready var tyre_rim_sprite = $Smoothing2D/TyreRimSprite
+
 
 @export var emit_grass_left = false
 @export var emit_grass_right = false
@@ -86,6 +95,7 @@ func update_tyre(tyre):
 	tyre_wear_factor = tyre_wear_factors[tyre]
 	traction_fast = fast_tractions_by_tyre[tyre]
 	traction_slow = slow_tractions_by_tyre[tyre]
+	tyre_rim_sprite.self_modulate = tyre_rim_colors[tyre]
 	
 func update_weather(weather):
 	current_weather = weather
