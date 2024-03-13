@@ -77,7 +77,14 @@ func _ready():
 	if multiplayer.is_server():
 		add_child(weather_shift_timer)
 		weather_shift_timer.connect("timeout", _on_weather_timeout)
-		
+
+func get_car_color():
+	var car_color = "blue"
+	for player in networkNode.get_children():
+		if str(multiplayer.get_unique_id()) == player.name:
+			car_color = player.car_animation_color
+	return car_color
+	
 func init_pit():
 	pit_node = PitScene.instantiate()
 	pit_node.visible = false
@@ -123,6 +130,7 @@ func init_track(track_index: int):
 func on_lap_completed(player_nick: String):
 	raceInfoNode.lap_completed(player_nick)
 	if pit_is_open:
+		pit_node.car_color = get_car_color()
 		pit_node.visible = true
 		sun_canvas.visible = false
 		for player in networkNode.get_children():

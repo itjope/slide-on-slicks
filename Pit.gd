@@ -10,7 +10,7 @@ var tyres: Array[Dictionary] = []
 enum tyre_types {SOFT, MEDIUM, HARD, WET}
 var selected_tyre = tyre_types.MEDIUM
 var is_input_enabled = false
-
+var car_color = "blue"
 signal pit_stop_completed(tyre_type)
  
 # Called when the node enters the scene tree for the first time.
@@ -81,13 +81,13 @@ func _on_visibility_changed():
 	if not get_tree() or not car: 
 		return
 	if visible:
-		car.play("yellow", -0.5)
+		car.play(car_color, -0.5)
 		car.global_position = Vector2(-30, 340)		
 		var car_tween = get_tree().create_tween()
 		car_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		car_tween.tween_property(car, "position", Vector2(340, 340), 1)
 		car_tween.tween_callback(func(): 
-			car.play("yellow", 0)
+			car.play(car_color, 0)
 			is_input_enabled = true
 			render_tyres()
 		)
