@@ -1,21 +1,21 @@
 extends CharacterBody2D
 
-var wheel_base = 14
+@export var wheel_base = 17
 
-var steering_angle_default = 40
+@export var steering_angle_default = 30
 var steering_angle_during_kryckan = 30
-var steering_angle_during_acceleration = 20
+@export var steering_angle_during_acceleration = 20
 
 var kryckan_slownown_factor = 0.2
 
-var engine_power = 400
-var friction = -0.0035
-var drag = -0.007
-var braking = -350
-var max_speed = 1000
+@export var engine_power = 400
+@export var friction = -0.005
+@export var drag = -0.005
+@export var braking = -350
+@export var max_speed = 1000
 var max_speed_reverse = 300
-var slip_speed = 190
-var tyre_wear_factors = [0.99990, 0.99995, 0.99999, 0.9999]
+@export var slip_speed = 190
+var tyre_wear_factors = [0.99999, 0.99995, 0.99999, 0.9999]
 var fast_tractions_by_tyre = [0.0027, 0.0025, 0.0022, 0.0020]
 var slow_tractions_by_tyre = [0.025, 0.022, 0.020, 0.018]
 
@@ -63,21 +63,21 @@ var tyre_rim_colors = [
 @onready var tyre_rim_sprite = $Smoothing2D/TyreRimSprite
 
 
-@export var emit_grass_left = false
-@export var emit_grass_right = false
+var emit_grass_left = false
+var emit_grass_right = false
 
-@export var emit_water_left = false
-@export var emit_water_right = false
+var emit_water_left = false
+var emit_water_right = false
 
-@export var inputs = {
+var inputs = {
 	"steerLeft": false,
 	"steerRight": false,
 	"accelerate": false
 }
-@export var network_velocity = Vector2.ZERO
-@export var network_transform = transform
-@export var player_nick = ""
-@export var car_animation_color = "blue"
+var network_velocity = Vector2.ZERO
+var network_transform = transform
+var player_nick = ""
+var car_animation_color = "blue"
 
 signal tyre_health_changed(tyre_health)
 signal toggle_pit()
@@ -121,7 +121,9 @@ func get_input():
 	if not is_multiplayer_authority(): return
 	
 	var turn = 0
-	
+	steering_angle = steering_angle_default
+	if velocity.length() > 190:
+		steering_angle -= 15
 	inputs.steerRight = Input.is_action_pressed("steerRight")
 	inputs.steerLeft = Input.is_action_pressed("steerLeft")
 	inputs.accelerate = Input.is_action_pressed("accelerate")
