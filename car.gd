@@ -186,7 +186,7 @@ func get_input2():
 	steer_direction = turn * deg_to_rad(steering_angle)
 
 func calculate_turn():
-	if not current_weather == weather_conditons.RAIN and not current_weather == weather_conditons.WET and current_tyre == tyre_types.WET:
+	if not current_weather == weather_conditons.LIGHTRAIN and not current_weather == weather_conditons.RAIN and not current_weather == weather_conditons.WET and current_tyre == tyre_types.WET:
 		traction_fast = traction_fast * ((tyre_wear_factor * 10) - 9)
 		traction_slow = traction_slow * ((tyre_wear_factor * 10) - 9)
 	else:
