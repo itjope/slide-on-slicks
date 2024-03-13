@@ -1,4 +1,4 @@
-[gd_scene load_steps=57 format=3 uid="uid://b7vs3725r21pu"]
+[gd_scene load_steps=58 format=3 uid="uid://b7vs3725r21pu"]
 
 [ext_resource type="Script" path="res://car.gd" id="1_ttov1"]
 [ext_resource type="Script" path="res://addons/smoothing/smoothing_2d.gd" id="2_4674m"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://bc450oasc6bup" path="res://grass_particle.png" id="6_243na"]
 [ext_resource type="Texture2D" uid="uid://coyo7etiyxyuq" path="res://light.png" id="6_iguve"]
 [ext_resource type="Texture2D" uid="uid://ciojpt7suv7yw" path="res://SlimCar16Yellow_sprite.png" id="6_ytl8k"]
+[ext_resource type="Texture2D" uid="uid://ba7ash440ccct" path="res://tyres/tyre-rim.png" id="7_aex1j"]
 [ext_resource type="AudioStream" uid="uid://6yu6j1qtyby0" path="res://car.wav" id="9_og2ml"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_4ixfm"]
@@ -377,6 +378,13 @@ position = Vector2(7.62939e-06, 0)
 rotation = 1.5708
 sprite_frames = SubResource("SpriteFrames_8l65m")
 animation = &"yellow"
+frame = 6
+frame_progress = 0.0316583
+
+[node name="Sprite2D" type="Sprite2D" parent="Smoothing2D"]
+self_modulate = Color(0.783953, 0.172022, 0.931, 0.6)
+rotation = 1.5708
+texture = ExtResource("7_aex1j")
 
 [node name="PointLight2D2" type="PointLight2D" parent="."]
 visible = false

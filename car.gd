@@ -259,7 +259,8 @@ func race_restart():
 func _process(delta):
 	if velocity.length() > 10:
 		var animationSpeed  = min(velocity.length() / 200, 1)
-		animation_node.play(car_animation_color, animationSpeed)
+		animation_node.play(car_animation_color, animationSpeed * -1)
+		
 
 	else:
 		animation_node.play(car_animation_color, 0)
