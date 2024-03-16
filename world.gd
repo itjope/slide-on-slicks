@@ -389,7 +389,7 @@ func _on_network_child_entered_tree(node: Node2D):
 		node.connect("toggle_pit", toggle_pit)
 	
 	
-	rpc("set_car_color", node.name, node.car_animation_color)
+	
 	if isServer:
 		var carColor = carColors[networkNode.get_child_count() - 1]
 		node.car_animation_color = carColor
@@ -400,6 +400,8 @@ func _on_network_child_entered_tree(node: Node2D):
 			carColor = carColors[carColorIndex]
 			rpc("set_car_color", player.name, carColor)
 			carColorIndex += 1
+	else:
+		rpc("set_car_color", node.name, node.car_animation_color)
 		
 	if isServer:
 		var gridPos = networkNode.get_child_count() - 1
