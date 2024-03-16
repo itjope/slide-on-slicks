@@ -26,7 +26,7 @@ extends Node2D
 
 var Player = preload("res://player.tscn")
 var start_lights = preload("res://start_lights.tscn")
-var PitScene = preload("res://pit.tscn")
+var PitScene = preload("res://Pit.tscn")
 var track_scenes = [{
 	name = "Ettan",
 	scene = preload("res://track1.tscn")
@@ -62,6 +62,9 @@ func _ready():
 	#if OS.is_debug_build():
 	DisplayServer.window_set_size(Vector2i(1920, 1080))
 	playerNameEntry.text = "P" + str(randi() % 100)
+	if OS.is_debug_build():
+		DisplayServer.window_set_size(Vector2i(1920, 1080))
+		playerNameEntry.text = "P" + str(randi() % 100)
 	
 	init_track(0)
 	init_pit()
@@ -232,8 +235,10 @@ func set_car_color(peerId: String, color: String):
 
 func set_weather_timeout():
 	weather_shift_timer.stop()
-	var from = 1 * 60 #minutes
-	var to = 7 * 60 #minutes
+	#var from = 3 * 60 #minutes
+	#var to = 7 * 60 #minutes
+	var from = 30 #minutes
+	var to = 60 #minutes
 	
 	if current_weather == weather_conditons.LIGHTRAIN:
 		from = 10 #seconds

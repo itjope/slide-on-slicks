@@ -360,6 +360,7 @@ size = Vector2(14, 15)
 position = Vector2(-36, 375)
 motion_mode = 1
 script = ExtResource("1_ttov1")
+friction = -0.006
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5708

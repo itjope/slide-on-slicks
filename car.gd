@@ -15,7 +15,7 @@ var kryckan_slownown_factor = 0.2
 @export var max_speed = 1000
 var max_speed_reverse = 300
 @export var slip_speed = 190
-var tyre_wear_factors = [0.99999, 0.99995, 0.99999, 0.9999]
+var tyre_wear_factors = [1.4, 1.2, 0.5, 1]
 var fast_tractions_by_tyre = [0.0027, 0.0025, 0.0022, 0.0020]
 var slow_tractions_by_tyre = [0.025, 0.022, 0.020, 0.018]
 
@@ -78,6 +78,7 @@ var network_velocity = Vector2.ZERO
 var network_transform = transform
 var player_nick = ""
 var car_animation_color = "blue"
+var tracktion_tween = null
 
 signal tyre_health_changed(tyre_health)
 signal toggle_pit()
@@ -89,6 +90,10 @@ func _ready():
 	player_nick_label.text = player_nick
 	audio_listener.make_current()
 	update_tyre(current_tyre)
+	tracktion_tween = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	tracktion_tween.parallel().tween_property(self, "traction_fast", 0, 30)
+	tracktion_tween.parallel().tween_property(self, "traction_slow", 0, 30)
+	tracktion_tween.pause()
 	
 func update_tyre(tyre):
 	current_tyre = tyre
@@ -96,6 +101,9 @@ func update_tyre(tyre):
 	traction_fast = fast_tractions_by_tyre[tyre]
 	traction_slow = slow_tractions_by_tyre[tyre]
 	tyre_rim_sprite.self_modulate = tyre_rim_colors[tyre]
+	if tracktion_tween:
+		tracktion_tween.stop()
+		tracktion_tween.set_speed_scale(tyre_wear_factor)
 	
 func update_weather(weather):
 	current_weather = weather
@@ -114,8 +122,7 @@ func apply_friction():
 		velocity = Vector2.ZERO
 	var friction_force = velocity * friction
 	var drag_force = velocity * velocity.length() * drag
-	acceleration += drag_force + friction_force
-	
+	acceleration += drag_force + friction_force		
 
 func get_input():
 	if not is_multiplayer_authority(): return
@@ -127,6 +134,12 @@ func get_input():
 	inputs.steerRight = Input.is_action_pressed("steerRight")
 	inputs.steerLeft = Input.is_action_pressed("steerLeft")
 	inputs.accelerate = Input.is_action_pressed("accelerate")
+	
+	if Input.is_action_just_pressed("steerLeft") or Input.is_action_just_pressed("steerRight"):
+		tracktion_tween.play()
+	
+	if Input.is_action_just_released("steerLeft") or Input.is_action_just_released("steerRight"):
+		tracktion_tween.pause()
 	
 	if Input.is_action_pressed("steerRight"):
 		turn += calculate_turn()
@@ -189,11 +202,9 @@ func get_input2():
 
 func calculate_turn():
 	if not current_weather == weather_conditons.LIGHTRAIN and not current_weather == weather_conditons.RAIN and not current_weather == weather_conditons.WET and current_tyre == tyre_types.WET:
-		traction_fast = traction_fast * ((tyre_wear_factor * 10) - 9)
-		traction_slow = traction_slow * ((tyre_wear_factor * 10) - 9)
+		tracktion_tween.set_speed_scale(2)
 	else:
-		traction_fast = traction_fast * tyre_wear_factor
-		traction_slow = traction_slow * tyre_wear_factor
+		tracktion_tween.set_speed_scale(tyre_wear_factor)
 	
 	var car_speed = velocity.length()
 	if car_speed > max_speed:

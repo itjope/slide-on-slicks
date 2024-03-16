@@ -5,8 +5,10 @@ extends CanvasLayer
 @onready var sessionBestLapTime = $SessionBestLapTime
 @onready var purpleRect = $PurpleRect
 @onready var tyre_health_label = $TyreHealth
+@onready var tyre_temp_label = $TyreTemp
 
 signal race_completed(playerState)
+
 
 var raceState = {
 	laps = 0
@@ -21,6 +23,8 @@ var playerState = {
 	raceTime = 0,
 	name = ""
 }
+
+var tyre_temp = 100
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -92,8 +96,10 @@ func race_started():
 	self.visible = true
 	
 func set_tyre_health(tyre_health):
-	var tyre_precent = ceil(tyre_health * 100)
+	var tyre_precent = min(ceil(tyre_health * 100), 100)
+	tyre_temp = max(tyre_temp, ceil(tyre_health * 100))
 	tyre_health_label.text = "TYRES " + str(tyre_precent) + "%"
+	tyre_temp_label.text = str(tyre_temp) + "°C"
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
