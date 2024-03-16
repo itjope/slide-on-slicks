@@ -95,11 +95,14 @@ func race_started():
 	playerState.raceStartTime = Time.get_ticks_msec()
 	self.visible = true
 	
-func set_tyre_health(tyre_health):
-	var tyre_precent = min(ceil(tyre_health * 100), 100)
-	tyre_temp = max(tyre_temp, ceil(tyre_health * 100))
-	tyre_health_label.text = "TYRES " + str(tyre_precent) + "%"
-	tyre_temp_label.text = str(tyre_temp) + "°C"
+func set_tyre_health(tyre_health, reset):
+	if (reset):
+		tyre_temp = 100
+	else:
+		var tyre_precent = min(ceil(tyre_health * 100), 100)
+		tyre_temp = max(tyre_temp, ceil(tyre_health * 100))
+		tyre_health_label.text = "TYRES " + str(tyre_precent) + "%"
+		tyre_temp_label.text = str(tyre_temp) + "°C"
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

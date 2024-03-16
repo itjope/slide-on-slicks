@@ -80,7 +80,7 @@ var player_nick = ""
 var car_animation_color = "blue"
 var tracktion_tween = null
 
-signal tyre_health_changed(tyre_health)
+signal tyre_health_changed(tyre_health, reset)
 signal toggle_pit()
 
 func _ready():
@@ -96,13 +96,16 @@ func _ready():
 	tracktion_tween.pause()
 	
 func update_tyre(tyre):
+	if tracktion_tween:
+		tracktion_tween.stop()
+		
 	current_tyre = tyre
 	tyre_wear_factor = tyre_wear_factors[tyre]
 	traction_fast = fast_tractions_by_tyre[tyre]
 	traction_slow = slow_tractions_by_tyre[tyre]
 	tyre_rim_sprite.self_modulate = tyre_rim_colors[tyre]
+	tyre_health_changed.emit(100, true)
 	if tracktion_tween:
-		tracktion_tween.stop()
 		tracktion_tween.set_speed_scale(tyre_wear_factor)
 	
 func update_weather(weather):
@@ -136,6 +139,11 @@ func get_input():
 	inputs.accelerate = Input.is_action_pressed("accelerate")
 	
 	if Input.is_action_just_pressed("steerLeft") or Input.is_action_just_pressed("steerRight"):
+		if not current_weather == weather_conditons.LIGHTRAIN and not current_weather == weather_conditons.RAIN and not current_weather == weather_conditons.WET and current_tyre == tyre_types.WET:
+			tracktion_tween.set_speed_scale(2)
+		else:
+			tracktion_tween.set_speed_scale(tyre_wear_factor)
+		
 		tracktion_tween.play()
 	
 	if Input.is_action_just_released("steerLeft") or Input.is_action_just_released("steerRight"):
@@ -201,11 +209,6 @@ func get_input2():
 	steer_direction = turn * deg_to_rad(steering_angle)
 
 func calculate_turn():
-	if not current_weather == weather_conditons.LIGHTRAIN and not current_weather == weather_conditons.RAIN and not current_weather == weather_conditons.WET and current_tyre == tyre_types.WET:
-		tracktion_tween.set_speed_scale(2)
-	else:
-		tracktion_tween.set_speed_scale(tyre_wear_factor)
-	
 	var car_speed = velocity.length()
 	if car_speed > max_speed:
 		return 2
@@ -273,6 +276,7 @@ func race_restart():
 	if is_multiplayer_authority():
 		set_global_position(gridPosition)
 		update_tyre(current_tyre)
+		
 	await get_tree().create_timer(4).timeout
 	player_nick_label.visible = false
 	await get_tree().create_timer(2).timeout
@@ -304,7 +308,7 @@ func _process(delta):
 		water_particles_right.emitting = false
 	
 	if is_multiplayer_authority():
-		tyre_health_changed.emit(traction_slow / slow_tractions_by_tyre[current_tyre])
+		tyre_health_changed.emit(traction_slow / slow_tractions_by_tyre[current_tyre], false)
 	
 	if not is_multiplayer_authority():
 		# TODO: Use a better way to calculate weight
