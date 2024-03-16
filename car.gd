@@ -41,7 +41,7 @@ enum tyre_types {SOFT, MEDIUM, HARD, WET}
 var current_tyre = tyre_types.MEDIUM
 
 enum weather_conditons {SUN, LIGHTRAIN, RAIN, WET}
-var current_weather = weather_conditons.SUN
+var current_weather = weather_conditons.RAIN
 
 var tyre_rim_colors = [
 	Color(0.812, 0.22, 0.957, 0.667),
@@ -63,11 +63,11 @@ var tyre_rim_colors = [
 @onready var tyre_rim_sprite = $Smoothing2D/TyreRimSprite
 
 
-var emit_grass_left = false
-var emit_grass_right = false
+@export var emit_grass_left = false
+@export var emit_grass_right = false
 
-var emit_water_left = false
-var emit_water_right = false
+@export var emit_water_left = false
+@export var emit_water_right = false
 
 var inputs = {
 	"steerLeft": false,
@@ -287,8 +287,6 @@ func _process(delta):
 	if velocity.length() > 10:
 		var animationSpeed  = min(velocity.length() / 200, 1)
 		animation_node.play(car_animation_color, animationSpeed * -1)
-		
-
 	else:
 		animation_node.play(car_animation_color, 0)
 		if is_multiplayer_authority():
@@ -296,16 +294,19 @@ func _process(delta):
 			emit_grass_right = false
 			emit_water_left = false
 			emit_water_right = false
-		
+			
+	if is_multiplayer_authority():	
+		if velocity.length() > 100 and (current_weather == weather_conditons.RAIN or current_weather == weather_conditons.WET) :
+			emit_water_left = !emit_grass_left
+			emit_water_right = !emit_grass_right
+		else: 
+			emit_water_left = false
+			emit_water_right = false
+			
 	grass_particles_left.emitting = emit_grass_left
 	grass_particles_right.emitting = emit_grass_right
-	
-	if velocity.length() > 100 and (current_weather == weather_conditons.RAIN or current_weather == weather_conditons.WET) :
-		water_particles_left.emitting = !grass_particles_left.is_emitting()
-		water_particles_right.emitting = !grass_particles_right.is_emitting()
-	else: 
-		water_particles_left.emitting = false
-		water_particles_right.emitting = false
+	water_particles_left.emitting = emit_water_left
+	water_particles_right.emitting = emit_water_right
 	
 	if is_multiplayer_authority():
 		tyre_health_changed.emit(traction_slow / slow_tractions_by_tyre[current_tyre], false)
@@ -372,6 +373,8 @@ func _enter_tree():
 	set_multiplayer_authority(str(name).to_int())
 
 func _on_area_2d_area_entered(area: Area2D):
+	if not is_multiplayer_authority():
+		return
 	if area.name == "Grass":
 		for a in area.get_overlapping_areas():
 			if a.name == "LeftWheels":
@@ -380,18 +383,26 @@ func _on_area_2d_area_entered(area: Area2D):
 				emit_grass_right = true
 	
 func _on_right_weel_area_exited(area):
+	if not is_multiplayer_authority():
+		return
 	if area.name == "Grass":
 		emit_grass_right = false
 
 func _on_left_wheel_area_exited(area):
+	if not is_multiplayer_authority():
+		return
 	if area.name == "Grass":
 		emit_grass_left = false
 
 func _on_all_wheels_area_entered(area):
+	if not is_multiplayer_authority():
+		return
 	if area.name == "Grass":
 		surface = surfaces.GRASS
 
 func _on_all_wheels_area_exited(area):
+	if not is_multiplayer_authority():
+		return
 	if area.name == "Grass":
 		surface = surfaces.TARMAC
 
