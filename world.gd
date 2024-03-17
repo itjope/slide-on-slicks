@@ -388,8 +388,6 @@ func _on_network_child_entered_tree(node: Node2D):
 		node.connect("tyre_health_changed", raceInfoNode.set_tyre_health)
 		node.connect("toggle_pit", toggle_pit)
 	
-	
-	
 	if isServer:
 		var carColor = carColors[networkNode.get_child_count() - 1]
 		node.car_animation_color = carColor
