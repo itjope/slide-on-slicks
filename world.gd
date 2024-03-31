@@ -14,6 +14,9 @@ extends Node2D
 @onready var raceCompleted = $RaceCompleted
 @onready var raceCompletedGrid = $RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainerRace
 @onready var championshipGrid = $RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainerChampionship
+@onready var qualifyCompleted = $QualifyCompleted
+@onready var qualifyCompletedGrid = $QualifyCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainerQualify
+
 @onready var race_settings = $RaceSettings
 @onready var pit_wrapper = $PitWrapper
 @onready var rain_puddles = $RainPuddles
@@ -22,6 +25,7 @@ extends Node2D
 # Race settings meny
 @onready var raceMenu = $RaceSettings/RaceMenu
 @onready var raceNumberOfLapsInput = $RaceSettings/RaceMenu/MarginContainer/VBoxContainer/NumerOfLapsInput
+@onready var qualifyTimeInput = $RaceSettings/RaceMenu/MarginContainer/VBoxContainer/QualifyTimeInput
 @onready var raceTrackList = $RaceSettings/RaceMenu/MarginContainer/VBoxContainer/TrackList
 
 var Player = preload("res://player.tscn")
@@ -49,6 +53,7 @@ var current_weather = weather_conditons.SUN
 var weather_shift_timer = Timer.new()
 
 var raceCompledPlayers = []
+var qualifyCompledPlayers = []
 var playerChampionshipPoints = {}
 var positionToPoint = {
 	1: 8,
@@ -56,6 +61,7 @@ var positionToPoint = {
 	3: 4,
 	4: 3
 }
+
 var rain_tween = null
 
 func _ready():
@@ -125,6 +131,7 @@ func init_track(track_index: int):
 	trackNode.race_started.connect(raceInfoNode.race_started)
 	trackNode.checkpoint_completed.connect(raceInfoNode.checkpoint_completed)
 	raceInfoNode.race_completed.connect(on_race_completed)
+	raceInfoNode.qualify_completed.connect(on_qualify_completed)
 	
 	raceInfoNode.reset_session()
 	
@@ -221,7 +228,7 @@ func set_weather(weather):
 		rain_tween.tween_property(sun_canvas, "color", Color.WHITE, 3)
 		rain_tween.play()
 
-@rpc("any_peer")
+@rpc("any_peer", "call_local")
 func set_grid_pos(peerId: String, pos: int):
 	for player in networkNode.get_children():
 		if player.name == peerId:
@@ -235,10 +242,10 @@ func set_car_color(peerId: String, color: String):
 
 func set_weather_timeout():
 	weather_shift_timer.stop()
-	#var from = 3 * 60 #minutes
-	#var to = 7 * 60 #minutes
-	var from = 30 #minutes
-	var to = 60 #minutes
+	var from = 3 * 60 #minutes
+	var to = 7 * 60 #minutes
+	#var from = 30 #minutes
+	#var to = 60 #minutes
 	
 	if current_weather == weather_conditons.LIGHTRAIN:
 		from = 10 #seconds
@@ -252,8 +259,8 @@ func set_weather_timeout():
 	weather_shift_timer.wait_time = next_weather_in
 	weather_shift_timer.start()
 	
-@rpc("any_peer")
-func race_restart(numberOfLaps: int, track_index: int):
+@rpc("any_peer", "call_local")
+func race_restart(numberOfLaps: int, track_index: int, qualify_time: int):
 	init_track(track_index)
 	update_grid_positions()
 	
@@ -265,9 +272,14 @@ func race_restart(numberOfLaps: int, track_index: int):
 		player.race_restart()
 	
 	raceInfoNode.resetLaps(numberOfLaps)
+	trackNode.reset_session()
+	
+	if qualify_time > 0:
+		raceInfoNode.start_qualify(qualify_time)
 		
 	add_child(lights)
 	raceCompleted.hide()
+	qualifyCompleted.hide()
 	
 	await get_tree().create_timer(6).timeout
 	lights.queue_free()
@@ -283,11 +295,13 @@ func race_completed(playerState):
 	var i = 0
 	for player in raceCompledPlayers:
 		if player.name == playerState.name:
-			raceCompledPlayers.erase_at(0)
+			raceCompledPlayers.remove_at(i)
 		i += 1
 	
 	raceCompledPlayers.append(playerState)
-	raceCompledPlayers.sort_custom(func(a, b): a.raceTime - b.raceTime)
+	raceCompledPlayers.sort_custom(func(a, b): 
+		return a.raceTime < b.raceTime
+	)
 	
 	for c in raceCompletedGrid.get_children():
 		raceCompletedGrid.remove_child(c)
@@ -320,7 +334,9 @@ func race_completed(playerState):
 		p += 1
 	
 	var champPoints = playerChampionshipPoints.values()
-	champPoints.sort_custom(func(a, b): a.points - b.points)
+	champPoints.sort_custom(func(a, b): 
+		return a.points > b.points
+	)
 	
 	
 	for c in championshipGrid.get_children():
@@ -336,6 +352,7 @@ func race_completed(playerState):
 		labelName.text = player.name
 		var labelPoints = Label.new()
 		labelPoints.text = str(player.points) + "p"
+		labelPoints.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT		
 		
 		championshipGrid.add_child(labelPoistion)
 		championshipGrid.add_child(labelName)
@@ -345,6 +362,52 @@ func race_completed(playerState):
 	
 	if multiplayer.is_server():
 		weather_shift_timer.stop()
+
+func formatDuration(duration: int):
+	var seconds = floor(duration / 1000)
+	var ms = duration % 1000
+	return str(seconds) + ":" + str(ms).pad_zeros(3)
+
+@rpc("any_peer", "call_local")
+func qualify_completed(playerState):
+	var i = 0
+	for player in qualifyCompledPlayers:
+		if player.name == playerState.name:
+			qualifyCompledPlayers.remove_at(i)
+		i += 1
+	
+	qualifyCompledPlayers.append(playerState)
+	print_debug("quali completed: ", multiplayer.get_unique_id(), ": ", qualifyCompledPlayers)
+	
+	qualifyCompledPlayers.sort_custom(func(a, b): 
+		if a.bestLap == 0:
+			return false
+		else:
+			return a.bestLap < b.bestLap
+	)
+	
+	for c in qualifyCompletedGrid.get_children():
+		qualifyCompletedGrid.remove_child(c)
+		c.queue_free()
+	
+	var p = 1
+	for player in qualifyCompledPlayers:
+		var labelPoistion = Label.new()
+		labelPoistion.text = "#" + str(p)
+		var labelName = Label.new()
+		labelName.text = player.name
+		
+		
+		
+		var labelTime = Label.new()
+		labelTime.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		labelTime.text = formatDuration(player.bestLap)
+		
+		qualifyCompletedGrid.add_child(labelPoistion)
+		qualifyCompletedGrid.add_child(labelName)
+		qualifyCompletedGrid.add_child(labelTime)
+		
+		p += 1
 	
 @rpc("any_peer")
 func player_nick_update(peerId: String, nick: String):	
@@ -417,15 +480,14 @@ func _on_address_list_item_selected(index):
 func _on_start_race_button_pressed():
 	raceMenu.hide()
 	var numberOfLaps = raceNumberOfLapsInput.text.to_int();
+	var qualifyTime = qualifyTimeInput.text.to_int();
 	var selected_track_index = 0
 	
 	for selected_track in raceTrackList.get_selected_items():
 		selected_track_index = selected_track
 		
-	rpc("race_restart", numberOfLaps, selected_track_index)
-	race_restart(numberOfLaps, selected_track_index)
-	
-
+	rpc("race_restart", numberOfLaps, selected_track_index, qualifyTime)
+	#race_restart(numberOfLaps, selected_track_index, qualifyTime)
 
 func _on_link_button_pressed():
 	raceMenu.show()
@@ -435,6 +497,32 @@ func on_race_completed(playerState):
 	race_completed(playerState)
 	raceCompleted.show()
 	
+func on_qualify_completed(playerState):
+	playerState.name = playerNameEntry.text
+	playerState.node_name = str(multiplayer.get_unique_id())
+	rpc("qualify_completed", playerState)
+	#rpc("race_completed", playerState)
+	#race_completed(playerState)
+	qualifyCompleted.show()
+	
 func _on_start_new_race_pressed():
 	raceCompleted.hide()
 	raceMenu.show()
+
+
+func _on_qualify_start_race_pressed():
+	qualifyCompleted.hide()
+	var grid_pos = 0
+	for player in qualifyCompledPlayers:
+		rpc_id(int(str(player.node_name)), "set_grid_pos", player.node_name, grid_pos)
+		grid_pos += 1
+		print_debug("player: ", player)
+	
+	var numberOfLaps = raceNumberOfLapsInput.text.to_int();
+	var qualifyTime = 0;
+	var selected_track_index = 0
+	
+	for selected_track in raceTrackList.get_selected_items():
+		selected_track_index = selected_track
+		
+	rpc("race_restart", numberOfLaps, selected_track_index, qualifyTime)

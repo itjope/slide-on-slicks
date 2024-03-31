@@ -18,6 +18,7 @@ var max_speed_reverse = 300
 var tyre_wear_factors = [1.4, 1.2, 0.5, 1]
 var fast_tractions_by_tyre = [0.0027, 0.0025, 0.0022, 0.0020]
 var slow_tractions_by_tyre = [0.025, 0.022, 0.020, 0.018]
+var tyre_wear_base_speed = 60
 
 var tyre_wear_factor = 1
 #var initial_traction_fast = 0.0025
@@ -41,7 +42,7 @@ enum tyre_types {SOFT, MEDIUM, HARD, WET}
 var current_tyre = tyre_types.MEDIUM
 
 enum weather_conditons {SUN, LIGHTRAIN, RAIN, WET}
-var current_weather = weather_conditons.RAIN
+var current_weather = weather_conditons.SUN
 
 var tyre_rim_colors = [
 	Color(0.812, 0.22, 0.957, 0.667),
@@ -91,8 +92,8 @@ func _ready():
 	audio_listener.make_current()
 	update_tyre(current_tyre)
 	tracktion_tween = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
-	tracktion_tween.parallel().tween_property(self, "traction_fast", 0, 30)
-	tracktion_tween.parallel().tween_property(self, "traction_slow", 0, 30)
+	tracktion_tween.parallel().tween_property(self, "traction_fast", 0, tyre_wear_base_speed)
+	tracktion_tween.parallel().tween_property(self, "traction_slow", 0, tyre_wear_base_speed)
 	tracktion_tween.pause()
 	
 func update_tyre(tyre):
@@ -244,6 +245,7 @@ func set_grid(pos: Vector2):
 	
 	gridPosition = pos
 	set_global_position(pos)
+	rotation = 0
 	find_child("Smoothing2D").teleport()
 
 func set_nick(nick: String):
@@ -387,12 +389,14 @@ func _on_right_weel_area_exited(area):
 		return
 	if area.name == "Grass":
 		emit_grass_right = false
+		emit_grass_left = false
 
 func _on_left_wheel_area_exited(area):
 	if not is_multiplayer_authority():
 		return
 	if area.name == "Grass":
 		emit_grass_left = false
+		emit_grass_right = false
 
 func _on_all_wheels_area_entered(area):
 	if not is_multiplayer_authority():

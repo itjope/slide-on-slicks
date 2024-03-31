@@ -8,8 +8,6 @@ signal lap_completed(playerNick)
 signal race_started
 signal checkpoint_completed
 
-var playerLaps = {}
-
 var playerState = {
 	lap = 0,
 	checkpoint = 0,
@@ -52,5 +50,9 @@ func _on_checkpoint_body_entered(body, checkpointIndex):
 		playerState.checkpoint = checkpointIndex + 1
 		checkpoint_completed.emit()
 
+func reset_session():
+	playerState.lap = 0
+	playerState.checkpoint = 0
+	
 func toggle_pit():
 	pitstop_label.visible = !pitstop_label.visible
