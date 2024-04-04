@@ -9,7 +9,6 @@ extends Node2D
 @onready var splashImage = $CanvasLayer/SplashImage
 @onready var networkNode = $Network
 @onready var tracksNode = $tracks
-#@onready var trackNode = $tracks/track1
 @onready var raceInfoNode = $RaceInfo
 @onready var raceCompleted = $RaceCompleted
 @onready var raceCompletedGrid = $RaceCompleted/PanelContainer/MarginContainer/VBoxContainer/GridContainerRace
@@ -43,6 +42,7 @@ var enetPeer = ENetMultiplayerPeer.new()
 var gridPositions = []
 var carColors = ["blue", "pink", "green", "yellow"]
 var isServer = false
+var isDedicatedServer = false
 var trackNode: Node2D
 var pit_node: Node2D
 var pit_is_open: bool = false
@@ -51,6 +51,7 @@ var current_track_index:int = -1
 enum weather_conditons {SUN, LIGHTRAIN, RAIN, WET}
 var current_weather = weather_conditons.SUN
 var weather_shift_timer = Timer.new()
+
 
 var raceCompledPlayers = []
 var qualifyCompledPlayers = []
@@ -65,9 +66,6 @@ var positionToPoint = {
 var rain_tween = null
 
 func _ready():
-	#if OS.is_debug_build():
-	DisplayServer.window_set_size(Vector2i(1920, 1080))
-	playerNameEntry.text = "P" + str(randi() % 100)
 	if OS.is_debug_build():
 		DisplayServer.window_set_size(Vector2i(1920, 1080))
 		playerNameEntry.text = "P" + str(randi() % 100)
@@ -87,6 +85,8 @@ func _ready():
 		add_child(weather_shift_timer)
 		weather_shift_timer.connect("timeout", _on_weather_timeout)
 
+
+		
 func get_car_color():
 	var car_color = "blue"
 	for player in networkNode.get_children():
@@ -166,6 +166,8 @@ func createServer():
 	
 	if not dedicatedServerCheckbox.is_pressed() && not args.has("--server"):
 		addHostedPlayer(multiplayer.get_unique_id())
+	else:
+		isDedicatedServer = true
 		
 	print("Server started")
 
@@ -240,20 +242,20 @@ func set_car_color(peerId: String, color: String):
 		if player.name == peerId:
 			player.car_animation_color = color
 
-func set_weather_timeout():
+func set_weather_timeout(): 
 	weather_shift_timer.stop()
-	var from = 3 * 60 #minutes
-	var to = 7 * 60 #minutes
-	#var from = 30 #minutes
-	#var to = 60 #minutes
+	#var from = 1 * 60 #minutes
+	#var to = 5 * 60 #minutes
+	var from = 10 #minutes
+	var to = 20 #minutes
 	
-	if current_weather == weather_conditons.LIGHTRAIN:
-		from = 10 #seconds
-		to = 1  * 60 #minutes
-	
-	if current_weather == weather_conditons.WET:
-		from = 20 #seconds
-		to = 2  * 60 #minutes
+	#if current_weather == weather_conditons.LIGHTRAIN:
+		#from = 10 #seconds
+		#to = 1  * 60 #minutes
+	#
+	#if current_weather == weather_conditons.WET:
+		#from = 10 #seconds
+		#to = 30 #seconds
 		
 	var next_weather_in = randi() % (to - from + 1) + from
 	weather_shift_timer.wait_time = next_weather_in
@@ -286,9 +288,8 @@ func race_restart(numberOfLaps: int, track_index: int, qualify_time: int):
 	
 	if multiplayer.is_server():
 		set_weather.rpc(current_weather)
-		set_weather_timeout()
-		
-		
+		if weather_shift_timer.is_stopped():
+			set_weather_timeout()
 	
 @rpc("any_peer")
 func race_completed(playerState):
@@ -370,6 +371,11 @@ func formatDuration(duration: int):
 
 @rpc("any_peer", "call_local")
 func qualify_completed(playerState):
+	if isDedicatedServer:
+		print_debug("quali completed as dedicated server")
+		return
+		
+	print_debug("quali completed", playerState.name)
 	var i = 0
 	for player in qualifyCompledPlayers:
 		if player.name == playerState.name:
@@ -377,7 +383,6 @@ func qualify_completed(playerState):
 		i += 1
 	
 	qualifyCompledPlayers.append(playerState)
-	print_debug("quali completed: ", multiplayer.get_unique_id(), ": ", qualifyCompledPlayers)
 	
 	qualifyCompledPlayers.sort_custom(func(a, b): 
 		if a.bestLap == 0:
@@ -396,8 +401,6 @@ func qualify_completed(playerState):
 		labelPoistion.text = "#" + str(p)
 		var labelName = Label.new()
 		labelName.text = player.name
-		
-		
 		
 		var labelTime = Label.new()
 		labelTime.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -419,7 +422,6 @@ func handleConnectedPlayer(peerId):
 	var player = addPlayer(peerId)
 
 func addHostedPlayer(peerId):
-	#var gridPos = networkNode.get_child_count() - 1
 	var player = addPlayer(peerId)
 	player.set_grid(gridPositions[0])
 			
@@ -437,7 +439,6 @@ func toggle_pit():
 
 func removePlayer(peerId): 
 	get_node("Network").get_node(str(peerId)).queue_free()
-
 
 func _on_network_child_entered_tree(node: Node2D):
 	node.visible = false
@@ -476,7 +477,6 @@ func _on_address_list_item_selected(index):
 		addressEntry.visible = true
 		addressEntry.text = "localhost"
 
-
 func _on_start_race_button_pressed():
 	raceMenu.hide()
 	var numberOfLaps = raceNumberOfLapsInput.text.to_int();
@@ -487,7 +487,6 @@ func _on_start_race_button_pressed():
 		selected_track_index = selected_track
 		
 	rpc("race_restart", numberOfLaps, selected_track_index, qualifyTime)
-	#race_restart(numberOfLaps, selected_track_index, qualifyTime)
 
 func _on_link_button_pressed():
 	raceMenu.show()
@@ -498,17 +497,16 @@ func on_race_completed(playerState):
 	raceCompleted.show()
 	
 func on_qualify_completed(playerState):
+	if isDedicatedServer:
+		return
 	playerState.name = playerNameEntry.text
 	playerState.node_name = str(multiplayer.get_unique_id())
 	rpc("qualify_completed", playerState)
-	#rpc("race_completed", playerState)
-	#race_completed(playerState)
 	qualifyCompleted.show()
 	
 func _on_start_new_race_pressed():
 	raceCompleted.hide()
 	raceMenu.show()
-
 
 func _on_qualify_start_race_pressed():
 	qualifyCompleted.hide()
@@ -516,7 +514,6 @@ func _on_qualify_start_race_pressed():
 	for player in qualifyCompledPlayers:
 		rpc_id(int(str(player.node_name)), "set_grid_pos", player.node_name, grid_pos)
 		grid_pos += 1
-		print_debug("player: ", player)
 	
 	var numberOfLaps = raceNumberOfLapsInput.text.to_int();
 	var qualifyTime = 0;
