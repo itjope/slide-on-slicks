@@ -44,8 +44,6 @@ func resetLaps(laps: int):
 	purpleRect.visible = false
 	
 func start_qualify(qualify_time: int):
-	print_debug("start qualify: ", qualify_time)
-	
 	raceState.qualify = (qualify_time * 60) * 1000
 	raceState.qualify_start_time = Time.get_ticks_msec()
 	raceState.qualify_remaining = raceState.qualify

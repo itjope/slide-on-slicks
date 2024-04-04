@@ -245,6 +245,9 @@ func set_grid(pos: Vector2):
 	gridPosition = pos
 	set_global_position(pos)
 	rotation = 0
+	network_position.x = pos.x
+	network_position.y = pos.y
+	network_rotation = rotation
 	find_child("Smoothing2D").teleport()
 
 func set_nick(nick: String):
@@ -320,6 +323,9 @@ func _process(delta):
 	
 
 func predict(delta):
+	var lerp_w = 0.5
+	position.x = lerp(position.x, network_position.x, lerp_w)
+	position.y = lerp(position.y, network_position.y, lerp_w)
 	rotation = lerp(rotation, network_rotation, 1)
 	
 	get_input2()
@@ -332,23 +338,23 @@ func predict(delta):
 	
 	if surface == surfaces.GRASS:
 		velocity = velocity * 0.96
-	var lerp_w = 0.5
-	position.x = lerp(position.x, network_position.x, lerp_w)
-	position.y = lerp(position.y, network_position.y, lerp_w)
 	
-	
-
 func _physics_process(delta):
 	if not is_multiplayer_authority():
 		if race_state == race_states.STARTED: 
 			predict(delta)
 		else:
+			predict(delta)
 			velocity = Vector2.ZERO
 		return
 	
 	
 	if race_state == race_states.GRID: 
 		velocity = Vector2.ZERO
+		network_velocity = velocity
+		network_position.y = position.y
+		network_position.x = position.x
+		network_rotation = rotation
 		if Input.is_action_pressed("accelerate"):
 			jumped_start = min(jumped_start + 2, 50)
 		else: 
