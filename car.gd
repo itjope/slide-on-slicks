@@ -15,7 +15,7 @@ var kryckan_slownown_factor = 0.2
 @export var max_speed = 1000
 var max_speed_reverse = 300
 @export var slip_speed = 190
-var tyre_wear_factors = [1.4, 1.2, 0.5, 1]
+var tyre_wear_factors = [1.4, 1.2, 0.5, 1.2]
 var fast_tractions_by_tyre = [0.0027, 0.0025, 0.0022, 0.0020]
 var slow_tractions_by_tyre = [0.025, 0.022, 0.020, 0.018]
 var tyre_wear_base_speed = 60
@@ -76,7 +76,8 @@ var inputs = {
 	"accelerate": false
 }
 var network_velocity = Vector2.ZERO
-var network_transform = transform
+@export var network_position = position
+@export var network_rotation = rotation
 var player_nick = ""
 var car_animation_color = "blue"
 var tracktion_tween = null
@@ -233,10 +234,8 @@ func calculate_steering(delta):
 	if surface == surfaces.GRASS:
 		traction = traction_grass
 
-	#if d >= 0:
 	velocity = velocity.lerp(new_heading * velocity.length(), traction)
-	#if d < 0:
-		#velocity = -new_heading * min(velocity.length(), max_speed_reverse)
+
 	rotation = new_heading.angle()
 
 func set_grid(pos: Vector2):
@@ -321,8 +320,8 @@ func _process(delta):
 	
 
 func predict(delta):
-	transform.x = lerp(transform.x, network_transform.x, 0.8)
-	transform.y = lerp(transform.y, network_transform.y, 0.8)
+	rotation = lerp(rotation, network_rotation, 1)
+	
 	get_input2()
 	apply_friction()
 	calculate_steering(delta)
@@ -333,6 +332,11 @@ func predict(delta):
 	
 	if surface == surfaces.GRASS:
 		velocity = velocity * 0.96
+	var lerp_w = 0.5
+	position.x = lerp(position.x, network_position.x, lerp_w)
+	position.y = lerp(position.y, network_position.y, lerp_w)
+	
+	
 
 func _physics_process(delta):
 	if not is_multiplayer_authority():
@@ -369,7 +373,9 @@ func _physics_process(delta):
 		velocity = velocity * 0.96
 	
 	network_velocity = velocity
-	network_transform = transform
+	network_position.y = position.y
+	network_position.x = position.x
+	network_rotation = rotation
 	
 func _enter_tree():
 	set_multiplayer_authority(str(name).to_int())
