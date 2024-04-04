@@ -420,6 +420,7 @@ func player_nick_update(peerId: String, nick: String):
 
 func handleConnectedPlayer(peerId):
 	var player = addPlayer(peerId)
+	set_weather.rpc(current_weather)
 
 func addHostedPlayer(peerId):
 	var player = addPlayer(peerId)
