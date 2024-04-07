@@ -4,8 +4,8 @@ extends Node2D
 @export var finishLine: Area2D
 @export var checkpoints: Array[Area2D]
 
-signal lap_completed(playerNick)
-signal race_started
+signal lap_completed(playerNick, playerName)
+signal race_started(playerNick, playerName)
 signal checkpoint_completed
 
 var playerState = {
@@ -26,6 +26,7 @@ func _process(delta):
 	pass
 	
 func _on_finnish_line_body_entered(body):
+	print_debug("body", body.name)
 	if not body.is_class("CharacterBody2D"):
 		return
 	
@@ -33,11 +34,11 @@ func _on_finnish_line_body_entered(body):
 		return
 		
 	if playerState.lap < 1:
-		race_started.emit()
+		race_started.emit(body.player_nick, body.name)
 	
 	if playerState.checkpoint == checkpoints.size():
 		playerState.checkpoint = 0
-		lap_completed.emit(body.player_nick)
+		lap_completed.emit(body.player_nick, body.name)
 	
 func _on_checkpoint_body_entered(body, checkpointIndex):
 	if not body.is_class("CharacterBody2D"):

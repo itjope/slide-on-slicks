@@ -137,8 +137,8 @@ func init_track(track_index: int):
 	
 	current_track_index = track_index
 
-func on_lap_completed(player_nick: String):
-	raceInfoNode.lap_completed(player_nick)
+func on_lap_completed(player_nick: String, player_name: String):
+	raceInfoNode.lap_completed(player_nick, player_name)
 	if pit_is_open:
 		pit_node.car_color = get_car_color()
 		pit_node.visible = true
@@ -313,13 +313,14 @@ func race_completed(playerState):
 		var labelPoistion = Label.new()
 		labelPoistion.text = "#" + str(p)
 		var labelName = Label.new()
-		labelName.text = player.name
+		labelName.text = player.nick
 		
 		if (player.name == playerState.name):
 			if (not playerChampionshipPoints.has(playerState.name)):
 				playerChampionshipPoints[playerState.name] = {
 					points = 0,
-					name = playerState.name
+					name = playerState.name,
+					nick = playerState.nick
 				}
 			
 			playerChampionshipPoints[playerState.name].merge({
@@ -350,7 +351,7 @@ func race_completed(playerState):
 		var labelPoistion = Label.new()
 		labelPoistion.text = "#" + str(cp)
 		var labelName = Label.new()
-		labelName.text = player.name
+		labelName.text = player.nick
 		var labelPoints = Label.new()
 		labelPoints.text = str(player.points) + "p"
 		labelPoints.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT		
@@ -400,7 +401,7 @@ func qualify_completed(playerState):
 		var labelPoistion = Label.new()
 		labelPoistion.text = "#" + str(p)
 		var labelName = Label.new()
-		labelName.text = player.name
+		labelName.text = player.nick
 		
 		var labelTime = Label.new()
 		labelTime.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -500,8 +501,8 @@ func on_race_completed(playerState):
 func on_qualify_completed(playerState):
 	if isDedicatedServer:
 		return
-	playerState.name = playerNameEntry.text
-	playerState.node_name = str(multiplayer.get_unique_id())
+	
+	#playerState.node_name = str(multiplayer.get_unique_id())
 	rpc("qualify_completed", playerState)
 	qualifyCompleted.show()
 	
@@ -513,7 +514,7 @@ func _on_qualify_start_race_pressed():
 	qualifyCompleted.hide()
 	var grid_pos = 0
 	for player in qualifyCompledPlayers:
-		rpc_id(int(str(player.node_name)), "set_grid_pos", player.node_name, grid_pos)
+		rpc_id(int(str(player.name)), "set_grid_pos", player.name, grid_pos)
 		grid_pos += 1
 	
 	var numberOfLaps = raceNumberOfLapsInput.text.to_int();

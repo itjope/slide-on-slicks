@@ -26,7 +26,8 @@ var playerState = {
 	bestLap = 0,
 	lastLapTime = 0,
 	raceTime = 0,
-	name = ""
+	name = "",
+	nick = ""
 }
 
 var tyre_temp = 100
@@ -98,11 +99,13 @@ func update_qualify_time():
 	else: 
 		qualify_time_label.visible = false
 	
-func lap_completed(playerNick): 
+func lap_completed(playerNick, player_name): 
 	var currentTime = Time.get_ticks_msec()
 	var duration = currentTime - playerState.lapStartTime
 		
-	playerState.name = playerNick
+	playerState.nick = playerNick
+	playerState.name = player_name
+	
 	
 	if duration < playerState.bestLap || playerState.bestLap == 0:
 		playerState.bestLap = duration
@@ -121,7 +124,9 @@ func lap_completed(playerNick):
 func checkpoint_completed():
 	purpleRect.visible = false
 	
-func race_started():
+func race_started(player_nick, player_name):
+	playerState.nick = player_nick
+	playerState.name = player_name
 	playerState.raceStartTime = Time.get_ticks_msec()
 	self.visible = true
 	
