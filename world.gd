@@ -37,6 +37,7 @@ var track_scenes = [{
 	name = "Olovs Oval",
 	scene = preload("res://track2.tscn")
 }]
+var player_nodes = []
 var PORT = 9999
 var enetPeer = ENetMultiplayerPeer.new()
 var gridPositions = []
@@ -236,7 +237,7 @@ func set_grid_pos(peerId: String, pos: int):
 		if player.name == peerId:
 			player.set_grid(gridPositions[pos])
 		
-@rpc("any_peer")
+@rpc("any_peer", "call_local")
 func set_car_color(peerId: String, color: String):
 	for player in networkNode.get_children():
 		if player.name == peerId:
@@ -290,6 +291,9 @@ func race_restart(numberOfLaps: int, track_index: int, qualify_time: int):
 		set_weather.rpc(current_weather)
 		if weather_shift_timer.is_stopped():
 			set_weather_timeout()
+			
+	if not isDedicatedServer:
+		send_player_nick_update()
 	
 @rpc("any_peer")
 func race_completed(playerState):
@@ -412,8 +416,10 @@ func qualify_completed(playerState):
 		qualifyCompletedGrid.add_child(labelTime)
 		
 		p += 1
+		
+
 	
-@rpc("any_peer")
+@rpc("any_peer", "call_local")
 func player_nick_update(peerId: String, nick: String):	
 	for player in networkNode.get_children():
 		if player.name == peerId:
@@ -441,36 +447,47 @@ func toggle_pit():
 
 func removePlayer(peerId): 
 	get_node("Network").get_node(str(peerId)).queue_free()
-
+	
+func send_player_nick_update():
+	rpc("player_nick_update", str(multiplayer.get_unique_id()), playerNameEntry.text)
+	
+@rpc("any_peer")
+func client_connected(): 
+	send_player_nick_update()
+	
 func _on_network_child_entered_tree(node: Node2D):
+	if is_multiplayer_authority() && not isDedicatedServer:
+		rpc_id(int(str(node.name)), "client_connected")
+	
+	_on_player_node_ready(node)
+	
+func _on_player_node_ready(node):
+	player_nodes.append(node)
 	node.visible = false
-	await get_tree().create_timer(2).timeout
+	await get_tree().create_timer(1).timeout
 	node.visible = true
 	race_settings.visible = true
 	
-	rpc("player_nick_update", str(multiplayer.get_unique_id()), playerNameEntry.text)
+	send_player_nick_update()
 	if str(multiplayer.get_unique_id()) == node.name:
-		node.set_nick(playerNameEntry.text)
 		node.connect("tyre_health_changed", raceInfoNode.set_tyre_health)
 		node.connect("toggle_pit", toggle_pit)
 	
 	if isServer:
-		var carColor = carColors[networkNode.get_child_count() - 1]
+		var carColor = carColors[len(player_nodes) - 1]
 		node.car_animation_color = carColor
 		var carColorIndex = 0
-		for player in networkNode.get_children():
-			if carColorIndex >= networkNode.get_child_count():
+		for player in player_nodes:
+			if carColorIndex >= len(player_nodes):
 				carColorIndex = 0
 			carColor = carColors[carColorIndex]
 			rpc("set_car_color", player.name, carColor)
 			carColorIndex += 1
-	else:
-		rpc("set_car_color", node.name, node.car_animation_color)
 		
 	if isServer:
-		var gridPos = networkNode.get_child_count() - 1
+		var gridPos = len(player_nodes) - 1
 		rpc_id(int(str(node.name)), "set_grid_pos", node.name, gridPos)
-		
+	
 func _on_address_list_item_selected(index):
 	if index == 0:
 		addressEntry.text = "46.246.39.82"
@@ -525,3 +542,7 @@ func _on_qualify_start_race_pressed():
 		selected_track_index = selected_track
 		
 	rpc("race_restart", numberOfLaps, selected_track_index, qualifyTime)
+
+
+func _on_network_child_exiting_tree(node):
+	player_nodes.erase(node)
