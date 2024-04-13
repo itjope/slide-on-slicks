@@ -245,18 +245,18 @@ func set_car_color(peerId: String, color: String):
 
 func set_weather_timeout(): 
 	weather_shift_timer.stop()
-	#var from = 1 * 60 #minutes
-	#var to = 5 * 60 #minutes
-	var from = 10 #minutes
-	var to = 20 #minutes
+	var from = 1 * 60 #minutes
+	var to = 3 * 60 #minutes
+	#var from = 10 #minutes
+	#var to = 20 #minutes
 	
-	#if current_weather == weather_conditons.LIGHTRAIN:
-		#from = 10 #seconds
-		#to = 1  * 60 #minutes
-	#
-	#if current_weather == weather_conditons.WET:
-		#from = 10 #seconds
-		#to = 30 #seconds
+	if current_weather == weather_conditons.LIGHTRAIN:
+		from = 10 #seconds
+		to = 20 #minutes
+	
+	if current_weather == weather_conditons.WET:
+		from = 5 #seconds
+		to = 15 #seconds
 		
 	var next_weather_in = randi() % (to - from + 1) + from
 	weather_shift_timer.wait_time = next_weather_in
