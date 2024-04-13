@@ -267,7 +267,7 @@ func exit_pit(tyre):
 		return
 	surface = surfaces.TARMAC
 	update_tyre(tyre)
-	
+	await get_tree().create_timer(1).timeout
 	collision_shape.disabled = false
 	animation_node.self_modulate = Color(1, 1, 1, 1)
 	
@@ -355,6 +355,10 @@ func _physics_process(delta):
 		network_position.y = position.y
 		network_position.x = position.x
 		network_rotation = rotation
+		
+		if Input.is_action_just_pressed("togglePit"):
+			toggle_pit.emit()
+			
 		if Input.is_action_pressed("accelerate"):
 			jumped_start = min(jumped_start + 2, 50)
 		else: 

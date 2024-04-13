@@ -129,7 +129,7 @@ func init_track(track_index: int):
 	tracksNode.add_child(trackNode)
 	
 	trackNode.lap_completed.connect(on_lap_completed)
-	trackNode.race_started.connect(raceInfoNode.race_started)
+	trackNode.race_started.connect(on_race_started)
 	trackNode.checkpoint_completed.connect(raceInfoNode.checkpoint_completed)
 	raceInfoNode.race_completed.connect(on_race_completed)
 	raceInfoNode.qualify_completed.connect(on_qualify_completed)
@@ -137,15 +137,23 @@ func init_track(track_index: int):
 	raceInfoNode.reset_session()
 	
 	current_track_index = track_index
+	
+func enter_pit():
+	pit_node.car_color = get_car_color()
+	pit_node.visible = true
+	sun_canvas.visible = false
+	for player in networkNode.get_children():
+		player.enter_pit()
+
+func on_race_started(player_nick: String, player_name: String):
+	raceInfoNode.race_started(player_nick, player_name)
+	if pit_is_open:
+		enter_pit()	
 
 func on_lap_completed(player_nick: String, player_name: String):
 	raceInfoNode.lap_completed(player_nick, player_name)
 	if pit_is_open:
-		pit_node.car_color = get_car_color()
-		pit_node.visible = true
-		sun_canvas.visible = false
-		for player in networkNode.get_children():
-			player.enter_pit()
+		enter_pit()	
 
 func createServer():
 	print("Starting server...")
